@@ -1,0 +1,15 @@
+{
+    "name": "mattia.teriaca/opalix_server",
+    "description": "Webapp gestionale per gioiellerie",
+    "autoload": {
+        "psr-4": {
+            "MattiaTeriaca\\OpalixServer\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Mattia Teriaca"
+        }
+    ],
+    "require": {}
+}
