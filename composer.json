@@ -11,5 +11,7 @@
             "name": "Mattia Teriaca"
         }
     ],
-    "require": {}
+    "require": {
+        "firebase/php-jwt": "^6.0"
+    }
 }

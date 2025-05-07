@@ -11,12 +11,20 @@ class ComposerStaticInit2464cb6205d5a710f1e5e5e9bd4c1c19
         array (
             'MattiaTeriaca\\OpalixServer\\' => 27,
         ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'MattiaTeriaca\\OpalixServer\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
     );
 

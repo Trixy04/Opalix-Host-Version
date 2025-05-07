@@ -1,0 +1,22 @@
+# Abilita il modulo di riscrittura delle URL
+RewriteEngine On
+
+# Imposta la base per il progetto
+RewriteBase /opalix_server/public/
+
+# Se la richiesta è per una rotta che inizia con "/api", la instrada a api.php
+RewriteCond %{REQUEST_URI} ^/opalix_server/public/api
+RewriteRule ^(.*)$ api.php [QSA,L]
+
+# Nascondi l'estensione .html
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^/]+)$ $1.html [L]
+
+# Riscrive tutte le altre richieste verso index.php (frontend)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+
+# Se qualcuno prova a visitare un URL con .html, reindirizza senza .html
+RewriteCond %{THE_REQUEST} \s/([^/]+)\.html\s [NC]
+RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
