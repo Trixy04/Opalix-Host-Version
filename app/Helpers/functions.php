@@ -10,13 +10,20 @@ function sendJsonResponse($data, $statusCode = 200) {
     exit;
 }
 
-function generateJWT($userId) {
+function generateJWT($userId, $nome, $cognome) {
+    $key = "test"; // La tua chiave segreta per JWT
+    $issuedAt = time();
+    $expirationTime = $issuedAt + 3600;  // JWT valido per 1 ora da ora
     $payload = [
-        'userId' => $userId,
-        'exp' => time() + 3600
+        'iat' => $issuedAt,
+        'exp' => $expirationTime,
+        'sub' => $userId,
+        'nome' => $nome,
+        'cognome' => $cognome
     ];
 
-    return JWT::encode($payload, JWT_SECRET, 'HS256');
+    // Ora includiamo anche l'algoritmo di hashing come terzo parametro
+    return JWT::encode($payload, $key, 'HS256');  // 'HS256' è l'algoritmo di hashing
 }
 
 function verifyJWT($token) {

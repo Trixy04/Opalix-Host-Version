@@ -26,7 +26,7 @@ class AuthController
 
         try {
             // Verifica se l'utente esiste nel database
-            $stmt = $conn->prepare("SELECT id, email, password FROM users WHERE email = :email LIMIT 1");
+            $stmt = $conn->prepare("SELECT id, nome, cognome, email, password FROM users WHERE email = :email LIMIT 1");
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
 
@@ -37,11 +37,15 @@ class AuthController
                 return;
             }
 
-            // Crea il token JWT
-            $token = generateJWT($user['id']);
+            // Crea il token JWT includendo nome e cognome
+            $token = generateJWT($user['id'], $user['nome'], $user['cognome']);
 
-            // Restituisci il token al client
-            sendJsonResponse(['token' => $token]);
+            // Restituisci il token, nome e cognome al client
+            sendJsonResponse([
+                'token' => $token,
+                'nome' => $user['nome'],
+                'cognome' => $user['cognome']
+            ]);
         } catch (PDOException $e) {
             sendJsonResponse(['error' => 'Errore nel database: ' . $e->getMessage()], 500);
         }
