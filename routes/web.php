@@ -4,6 +4,7 @@
 // Includi i controller
 require_once '../app/Controllers/GioielliController.php';
 require_once '../app/Controllers/CategorieController.php';
+require_once '../app/Controllers/ClientiController.php';
 
 // Configura il router
 $router = new Router();
@@ -18,6 +19,10 @@ $router->post('/categorie', 'CategorieController@createCategoria'); // Crea una 
 
 //Rotta per login
 $router->post('/login', 'AuthController@login');
+
+//Rotta per clienti
+$router->get('/api/clienti', 'ClientiController@getClienti');
+
 
 
 // Dispatch delle richieste

@@ -79,9 +79,18 @@
     border-radius: 5px;
     transition: background 0.2s ease;
   }
+
+  .menu-section a {
+    text-decoration: none;
+    color: black;
+  }
   
   .menu-section li:hover {
     color: #007EFF;
+  }
+
+  .menu-section a {
+    color: inherit;
   }
   
   .menu-section .active {
@@ -138,6 +147,12 @@
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
     text-align: start;
     height: 440px;
+  }
+
+  .div-customer{
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
   }
 
   /* GRAFICO */
@@ -403,3 +418,35 @@
     from { opacity: 0; }
     to { opacity: 1; }
   }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  .avatar-initials {
+    width: 40px;
+    height: 40px;
+    background-color: #6c757d;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+  }
+  .customer-name {
+    font-weight: 600;
+  }
+  .actions-btn {
+    border: none;
+    background: none;
+  }
+
+  .custom-thead {
+    background-color: #EDF2F9 !important;
+    color: rgb(82, 76, 76) !important;
+    font-size: small !important;
+  }
+

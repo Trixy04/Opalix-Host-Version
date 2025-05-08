@@ -4,19 +4,21 @@ RewriteEngine On
 # Imposta la base per il progetto
 RewriteBase /opalix_server/public/
 
-# Se la richiesta è per una rotta che inizia con "/api", la instrada a api.php
+# Gestione API (instrada le chiamate a /api verso api.php)
 RewriteCond %{REQUEST_URI} ^/opalix_server/public/api
 RewriteRule ^(.*)$ api.php [QSA,L]
 
-# Nascondi l'estensione .html
-RewriteCond %{REQUEST_FILENAME}.html -f
-RewriteRule ^([^/]+)$ $1.html [L]
+# Reindirizza da /pages/nome.html → /nome (rimuove visibilità .html e /pages)
+RewriteCond %{THE_REQUEST} \s/+pages/([^\s]+)\.html[\s?] [NC]
+RewriteRule ^pages/(.+)\.html$ /opalix_server/public/$1 [R=301,L]
 
-# Riscrive tutte le altre richieste verso index.php (frontend)
+# Mappa URL come /nome a /pages/nome.html (nasconde sia 'pages/' che '.html')
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{DOCUMENT_ROOT}/opalix_server/public/pages/$1.html -f
+RewriteRule ^([^/]+)/?$ pages/$1.html [L]
+
+# Tutto il resto verso index.php (SPA fallback o gestione errori)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php [QSA,L]
-
-# Se qualcuno prova a visitare un URL con .html, reindirizza senza .html
-RewriteCond %{THE_REQUEST} \s/([^/]+)\.html\s [NC]
-RewriteRule ^([^/]+)\.html$ /$1 [R=301,L]
