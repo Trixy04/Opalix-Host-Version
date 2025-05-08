@@ -20,14 +20,15 @@
     <title>CLIENTI - Opalix</title>
 
     <style>
-          .table-striped tbody tr:nth-child(odd) {
-    background-color: #e0f7fa !important; /* colore azzurro chiaro */
-  }
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #e0f7fa !important;
+            /* colore azzurro chiaro */
+        }
 
-  /* Cambia colore righe pari (opzionale) */
-  .table-striped tbody tr:nth-child(even) {
-    background-color: white !important;
-  }
+        /* Cambia colore righe pari (opzionale) */
+        .table-striped tbody tr:nth-child(even) {
+            background-color: white !important;
+        }
     </style>
 
 </head>
@@ -92,7 +93,9 @@
 
         <ul class="menu-section">
             <li class="menu-title">Gestione</li>
-            <a href="../public"><li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li></a>
+            <a href="../public">
+                <li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li>
+            </a>
             <li class="has-submenu" onclick="toggleSubmenu(this)">
                 <div class="menu-item-left">
                     <i class="bi bi-boxes"></i>
@@ -107,7 +110,9 @@
                 <li><i class="bi bi-search"></i> Giacenze</li>
             </ul>
             <li><i class="bi bi-tools"></i> Laboratorio</li>
-            <a href="customers"><li class="active"><i class="bi bi-people-fill"></i>Clienti</li></a>
+            <a href="customers">
+                <li class="active"><i class="bi bi-people-fill"></i>Clienti</li>
+            </a>
         </ul>
 
         <ul class="menu-section">
@@ -130,13 +135,19 @@
                     <div class="d-flex justify-content-between mb-3">
                         <h5>Clienti</h5>
                         <div>
-                            <button class="btn btn-sm" style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+ Nuovo</b></button>
-                            <button class="btn btn-sm" style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i class="bi bi-funnel-fill"></i> Filtra</b></button>
-                            <button class="btn btn-sm" style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i class="bi bi-folder-symlink"></i> Esporta</b></button>
+                            <button class="btn btn-sm"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
+                                    Nuovo</b></button>
+                            <button class="btn btn-sm"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
+                                        class="bi bi-funnel-fill"></i> Filtra</b></button>
+                            <button class="btn btn-sm"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
+                                        class="bi bi-folder-symlink"></i> Esporta</b></button>
                         </div>
                     </div>
 
-                    <table class="table table-striped align-middle">
+                    <table class="table table-striped align-middle" id="tabella-clienti">
                         <thead class="custom-thead">
                             <tr class="text-start">
                                 <th class="custom-thead"><input type="checkbox"></th>
@@ -148,7 +159,7 @@
                                 <th class="custom-thead"></th>
                             </tr>
                         </thead>
-                        <tbody class="text-start" style="font-size: smaller;">
+                        <tbody class="text-start" style="font-size: smaller;" id="clienti-table-body">
                             <!-- Le righe verranno aggiunte qui tramite JS -->
                         </tbody>
                     </table>
@@ -157,8 +168,58 @@
         </div>
     </div>
 
-    <script src="../js/customers.js"></script>
-    <script src="../js/auth.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('api/clienti')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabella-clienti tbody');
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="7">Nessun cliente trovato</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = '';
+
+                    data.forEach(cliente => {
+                        const tr = document.createElement('tr');
+
+                        tr.innerHTML = `
+                            <td><input type="checkbox"></td>
+                            <td class="d-flex align-items-center">
+                                <div class="avatar-initials me-2" style="background-color: ${getRandomColor()}">
+                                ${getInitials(cliente.nome, cliente.cognome)}
+                                </div>
+                                <span class="customer-name">${cliente.nome} ${cliente.cognome}</span>
+                            </td>
+                            <td>${cliente.email || '-'}</td>
+                            <td>${cliente.cellulare || '-'}</td>
+                            <td>${cliente.via ? `${cliente.via}, ${cliente.citta}, ${cliente.cap}, ${cliente.provincia}, ${cliente.paese}` : '-'}</td>
+                            <td>${new Date(cliente.data_creazione).toLocaleDateString()}</td>
+                            <td><button class="actions-btn">⋮</button></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Errore caricamento clienti:', error);
+                });
+
+            function getInitials(nome, cognome) {
+                return `${(nome[0] || '').toUpperCase()}${(cognome[0] || '').toUpperCase()}`;
+            }
+
+            function getRandomColor() {
+                const colors = ['#FF6B6B', '#6BCB77', '#4D96FF', '#FFC300', '#FF5733', '#6A67CE', '#00C49A'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+        });
+    </script>
+
+
 
     <script>
         // Recupero nome e cognome dall'archivio locale
@@ -207,29 +268,6 @@
 
         updateDateTime();
         setInterval(updateDateTime, 60000); // aggiorna ogni minuto
-    </script>
-
-    <script>
-        const ctxi = document.getElementById('marketChart').getContext('2d');
-        new Chart(ctxi, {
-            type: 'doughnut',
-            data: {
-                labels: ['Samsung', 'Huawei', 'Apple'],
-                datasets: [{
-                    data: [12, 8, 6],
-                    backgroundColor: ['#007bff', '#00cfff', '#dfe6ed'],
-                    borderWidth: 0,
-                    cutout: '88%'
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: { display: false }
-                },
-                responsive: true,
-                maintainAspectRatio: false
-            }
-        });
     </script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
