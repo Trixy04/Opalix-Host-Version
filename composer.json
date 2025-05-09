@@ -1,6 +1,5 @@
 {
     "name": "mattia.teriaca/opalix_server",
-    "description": "Webapp gestionale per gioiellerie",
     "autoload": {
         "psr-4": {
             "MattiaTeriaca\\OpalixServer\\": "src/"
@@ -12,10 +11,8 @@
         }
     ],
     "require": {
-        "firebase/php-jwt": "^6.0",
-        "tecnickcom/tcpdf": "^6.4"
+        "twig/twig": "^3.21",
+        "dompdf/dompdf": "^3.1",
+        "firebase/php-jwt": "^6.11"
     }
-    
-}
-    
 }

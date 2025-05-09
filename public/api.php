@@ -7,6 +7,7 @@ require_once '../app/Controllers/CategorieController.php';
 require_once '../app/Helpers/functions.php';
 require_once '../app/Controllers/AuthController.php';
 require_once '../app/Controllers/ClientiController.php';
+require_once '../app/Controllers/AziendaController.php';
 
 
 // Crea un'istanza del router
@@ -20,6 +21,9 @@ $router->post('/api/categorie', 'CategorieController@createCategoria');
 
 //Rotta per clienti
 $router->get('/api/clienti', 'ClientiController@getClienti');
+
+//Rotta per dati aziendali
+$router->get('/api/azienda', 'AziendaController@getAzienda');
 
 
 
