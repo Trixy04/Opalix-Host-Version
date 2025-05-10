@@ -1,33 +1,31 @@
-<?php
+<?php 
 // public/api.php
 
 require_once __DIR__ . '/../vendor/autoload.php';
 require_once '../app/Router.php';
 require_once '../app/Controllers/CategorieController.php';
-require_once '../app/Helpers/functions.php';
 require_once '../app/Controllers/AuthController.php';
 require_once '../app/Controllers/ClientiController.php';
 require_once '../app/Controllers/AziendaController.php';
+require_once '../app/Helpers/functions.php';
 
-
-// Crea un'istanza del router
 $router = new Router();
 
-// Definisci le rotte per le API
+// Autenticazione
 $router->post('/api/login', 'AuthController@login');
 
+// Categorie
 $router->get('/api/categorie', 'CategorieController@getCategorie');
 $router->post('/api/categorie', 'CategorieController@createCategoria');
 
-//Rotta per clienti
+// Clienti
 $router->get('/api/clienti', 'ClientiController@getClienti');
+$router->post('/api/clienti', 'ClientiController@creaCliente');
+$router->put('/api/clienti/{id}', 'ClientiController@aggiornaCliente');
+$router->delete('/api/clienti/{id}', 'ClientiController@eliminaCliente'); // se lo prevedi
 
-//Rotta per dati aziendali
+// Azienda
 $router->get('/api/azienda', 'AziendaController@getAzienda');
 
-
-
-
-// Esegui il dispatch della richiesta
+// Dispatch finale
 $router->dispatch();
-

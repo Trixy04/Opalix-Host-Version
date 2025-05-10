@@ -135,15 +135,15 @@
                     <div class="d-flex justify-content-between mb-3">
                         <h5>Clienti</h5>
                         <div>
-                            <button class="btn btn-sm"
+                            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuovoCliente"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
                                     Nuovo</b></button>
-                            <button class="btn btn-sm"
+                            <!--<button class="btn btn-sm"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
-                                        class="bi bi-funnel-fill"></i> Filtra</b></button>
+                                        class="bi bi-funnel-fill"></i> Filtra</b></button>-->
                             <a href="report/esporta_clienti_pdf.php" class="btn btn-sm"
-                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
-                                        class="bi bi-folder-symlink"></i> Esporta</b></a>
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"
+                                target="_blank"><b><i class="bi bi-folder-symlink"></i> Esporta</b></a>
                         </div>
                     </div>
 
@@ -168,7 +168,297 @@
         </div>
     </div>
 
+    <div class="modal fade" id="modalNuovoCliente" tabindex="-1" aria-labelledby="modalNuovoClienteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+
+                <div class="modal-header"
+                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <h5 class="modal-title fw-bold" id="modalNuovoClienteLabel">
+                        <i class="fas fa-user-plus me-2"></i>Nuovo Cliente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Chiudi"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCliente" class="p-3">
+
+                        <!-- Dati Cliente -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati Cliente</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nome" class="form-label">Nome</label>
+                                        <input type="text" class="form-control rounded-3" id="nome" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cognome" class="form-label">Cognome</label>
+                                        <input type="text" class="form-control rounded-3" id="cognome" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cf" class="form-label">Codice Fiscale</label>
+                                        <input type="text" class="form-control rounded-3" id="cf" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dataNascita" class="form-label">Data di Nascita</label>
+                                        <input type="date" class="form-control rounded-3" id="dataNascita" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indirizzo -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="via" class="form-label">Via</label>
+                                        <input type="text" class="form-control rounded-3" id="via" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cap" class="form-label">CAP</label>
+                                        <input type="text" class="form-control rounded-3" id="cap" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="citta" class="form-label">Città</label>
+                                        <input type="text" class="form-control rounded-3" id="citta" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="provincia" class="form-label">Provincia</label>
+                                        <input type="text" class="form-control rounded-3" id="provincia" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
+                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                    <div class=" col-md-6">
+                                        <label for="paese" class="form-label">Nazione</label>
+                                        <input type="text" class="form-control rounded-3" id="paese" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contatti -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="telefono" class="form-label">Telefono</label>
+                                        <input type="text" class="form-control rounded-3" id="telefono" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control rounded-3" id="email" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer"
+                            style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                            <button type="button" class="btn btn-secondary rounded-3"
+                                data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" form="formCliente" class="btn btn-primary rounded-3"
+                                style="background-color: #2C3E50; border-color: #2C3E50;">Salva Cliente</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+
+                <div class="modal-header"
+                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <h5 class="modal-title fw-bold" id="modalClienteLabel">
+                        <i class="fas fa-user-edit me-2"></i>Modifica Cliente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Chiudi"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formClienteModal" class="p-3">
+
+                        <!-- Dati Cliente -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati Cliente</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nomeModal" class="form-label">Nome</label>
+                                        <input type="text" class="form-control rounded-3" id="nomeModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cognomeModal" class="form-label">Cognome</label>
+                                        <input type="text" class="form-control rounded-3" id="cognomeModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cfModal" class="form-label">Codice Fiscale</label>
+                                        <input type="text" class="form-control rounded-3" id="cfModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dataNascitaModal" class="form-label">Data di Nascita</label>
+                                        <input type="date" class="form-control rounded-3" id="dataNascitaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indirizzo -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="viaModal" class="form-label">Via</label>
+                                        <input type="text" class="form-control rounded-3" id="viaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="capModal" class="form-label">CAP</label>
+                                        <input type="text" class="form-control rounded-3" id="capModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cittaModal" class="form-label">Città</label>
+                                        <input type="text" class="form-control rounded-3" id="cittaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="provinciaModal" class="form-label">Provincia</label>
+                                        <input type="text" class="form-control rounded-3" id="provinciaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
+                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="paeseModal" class="form-label">Nazione</label>
+                                        <input type="text" class="form-control rounded-3" id="paeseModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contatti -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="telefonoModal" class="form-label">Telefono</label>
+                                        <input type="text" class="form-control rounded-3" id="telefonoModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="emailModal" class="form-label">Email</label>
+                                        <input type="email" class="form-control rounded-3" id="emailModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer"
+                    style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                    <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" form="formClienteModal" class="btn btn-primary rounded-3"
+                        style="background-color: #2C3E50; border-color: #2C3E50;">Salva modifiche</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
     <script src="js/auth.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("formCliente");
+
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                console.log("📤 Invio form...");
+
+                // Raccogli i dati
+                const cliente = {
+                    nome: document.getElementById("nome")?.value.trim(),
+                    cognome: document.getElementById("cognome")?.value.trim(),
+                    codice_fiscale: document.getElementById("cf")?.value.trim(),
+                    data_nascita: document.getElementById("dataNascita")?.value,
+
+                    indirizzo: {
+                        via: document.getElementById("via")?.value.trim(),
+                        cap: document.getElementById("cap")?.value.trim(),
+                        citta: document.getElementById("citta")?.value.trim(),
+                        provincia: document.getElementById("provincia")?.value.trim(),
+                        paese: document.getElementById("paese")?.value.trim(),
+                    },
+
+                    contatto: {
+                        cellulare: document.getElementById("telefono")?.value.trim(),
+                        email: document.getElementById("email")?.value.trim()
+                    }
+                };
+
+                try {
+                    const res = await fetch("/opalix_server/public/api/clienti", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(cliente)
+                    });
+
+                    const result = await res.json();
+
+                    if (res.ok) {
+                        alert("✅ Cliente salvato con successo!");
+                        form.reset();
+                        // Chiudi il modal
+                    } else {
+                        alert("❌ Errore: " + result.error);
+                    }
+                } catch (err) {
+                    console.error("Errore nella richiesta:", err);
+                    alert("❌ Errore di rete o server.");
+                }
+            });
+        });
+
+    </script>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
@@ -188,20 +478,55 @@
                         const tr = document.createElement('tr');
 
                         tr.innerHTML = `
-                            <td><input type="checkbox"></td>
-                            <td class="d-flex align-items-center">
-                                <div class="avatar-initials me-2" style="background-color: ${getRandomColor()}">
-                                ${getInitials(cliente.nome, cliente.cognome)}
-                                </div>
-                                <span class="customer-name">${cliente.nome} ${cliente.cognome}</span>
-                            </td>
-                            <td>${cliente.email || '-'}</td>
-                            <td>${cliente.cellulare || '-'}</td>
-                            <td>${cliente.via ? `${cliente.via}, ${cliente.citta}, ${cliente.cap}, ${cliente.provincia}, ${cliente.paese}` : '-'}</td>
-                            <td>${new Date(cliente.data_creazione).toLocaleDateString()}</td>
-                            <td><button class="actions-btn">⋮</button></td>
-                        `;
+                        <td><input type="checkbox"></td>
+                        <td class="d-flex align-items-center">
+                            <div class="avatar-initials me-2" style="background-color: ${getRandomColor()}">
+                                ${getInitials(cliente.cognome, cliente.nome)}
+                            </div>
+                            <span class="customer-name">${cliente.cognome} ${cliente.nome}</span>
+                        </td>
+                        <td>${cliente.email || '-'}</td>
+                        <td>${cliente.cellulare || '-'}</td>
+                        <td>${cliente.via ? `${cliente.via}, ${cliente.citta}, ${cliente.cap}, ${cliente.provincia}, ${cliente.paese}` : '-'}</td>
+                        <td>${new Date(cliente.data_creazione).toLocaleDateString()}</td>
+                        <td><button class="actions-btn" data-id="${cliente.id}"><i class="bi bi-pencil"></i></button></td>
+                    `;
                         tbody.appendChild(tr);
+                    });
+
+                    // Aggiungi il listener per aprire il modal e modificare i dati
+                    const buttons = document.querySelectorAll('.actions-btn');
+                    buttons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const clienteId = button.getAttribute('data-id');
+                            const cliente = data.find(c => c.id == clienteId);
+
+                            if (cliente) {
+                                // Popola il modal con i dati del cliente
+                                document.getElementById('nomeModal').value = cliente.nome;
+                                document.getElementById('cognomeModal').value = cliente.cognome;
+                                document.getElementById('cfModal').value = cliente.codice_fiscale;
+                                document.getElementById('dataNascitaModal').value = cliente.data_nascita;
+                                document.getElementById('viaModal').value = cliente.via;
+                                document.getElementById('capModal').value = cliente.cap;
+                                document.getElementById('cittaModal').value = cliente.citta;
+                                document.getElementById('provinciaModal').value = cliente.provincia;
+                                document.getElementById('paeseModal').value = cliente.paese;
+                                document.getElementById('telefonoModal').value = cliente.cellulare;
+                                document.getElementById('emailModal').value = cliente.email;
+
+                                // Mostra il modal
+                                const modal = new bootstrap.Modal(document.getElementById('modalCliente'));
+                                modal.show();
+
+                                // Aggiungi evento per inviare i dati modificati
+                                const form = document.getElementById('formClienteModal');
+                                form.addEventListener('submit', function (event) {
+                                    event.preventDefault();
+                                    updateCliente(clienteId);
+                                });
+                            }
+                        });
                     });
                 })
                 .catch(error => {
@@ -216,6 +541,50 @@
                 const colors = ['#FF6B6B', '#6BCB77', '#4D96FF', '#FFC300', '#FF5733', '#6A67CE', '#00C49A'];
                 return colors[Math.floor(Math.random() * colors.length)];
             }
+
+            // Funzione per aggiornare i dati del cliente
+            function updateCliente(clienteId) {
+                // Crea l'oggetto cliente con la struttura corretta
+                const cliente = {
+                    nome: document.getElementById('nomeModal').value,
+                    cognome: document.getElementById('cognomeModal').value,
+                    codice_fiscale: document.getElementById('cfModal').value,
+                    data_nascita: document.getElementById('dataNascitaModal').value,
+                    indirizzo: {
+                        via: document.getElementById('viaModal').value,
+                        cap: document.getElementById('capModal').value,
+                        citta: document.getElementById('cittaModal').value,
+                        provincia: document.getElementById('provinciaModal').value,
+                        paese: document.getElementById('paeseModal').value
+                    },
+                    contatto: {
+                        cellulare: document.getElementById('telefonoModal').value,
+                        email: document.getElementById('emailModal').value
+                    }
+                };
+
+                // Esegui la richiesta PUT per aggiornare il cliente
+                fetch(`/opalix_server/public/api/clienti/${clienteId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(cliente)  // Invia i dati formattati correttamente
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Cliente aggiornato con successo!');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalCliente'));
+                        modal.hide(); // Chiude il modal
+                        // Ricarica i dati o aggiorna la tabella senza ricaricare
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Errore nell\'aggiornamento cliente:', error);
+                        alert('Errore durante l\'aggiornamento');
+                    });
+            }
+
         });
     </script>
 

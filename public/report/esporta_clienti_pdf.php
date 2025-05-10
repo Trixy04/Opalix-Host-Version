@@ -22,12 +22,15 @@ if (!$clienti || !is_array($clienti)) {
     die('Errore nel recupero dei dati clienti.');
 }
 
-if(!$azienda || !is_array($azienda)) {
-    die('Errore nel recupero dei dati della azienda.');
+if (!$azienda || !is_array($azienda)) {
+    die('Errore nel recupero dei dati dell\'azienda.');
 }
 
 // Renderizza il template
-$html = $twig->render('clienti_template.html.twig', ['clienti' => $clienti, 'azienda' => $azienda]);
+$html = $twig->render('clienti_template.html.twig', [
+    'clienti' => $clienti,
+    'azienda' => $azienda // Ora è un oggetto associativo, NON un array di oggetti
+]);
 
 // Genera il PDF
 $dompdf = new Dompdf();
