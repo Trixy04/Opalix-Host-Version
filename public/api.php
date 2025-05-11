@@ -8,6 +8,8 @@ require_once '../app/Controllers/AuthController.php';
 require_once '../app/Controllers/ClientiController.php';
 require_once '../app/Controllers/AziendaController.php';
 require_once '../app/Controllers/MarcheController.php';
+require_once '../app/Controllers/MaterialiController.php';
+require_once '../app/Controllers/ArticoliController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -31,6 +33,11 @@ $router->get('/api/azienda', 'AziendaController@getAzienda');
 // Marche
 $router->get('/api/marche', 'MarcheController@getMarche');
 
+// Materiali
+$router->get('/api/materiali', 'MaterialiController@getMateriali');
+
+// Articoli
+$router->get('/api/articoli', 'ArticoliController@getArticoli');
 
 // Dispatch finale
 $router->dispatch();

@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Verifica se esiste un JWT
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            // Se non esiste, reindirizza al login
+            window.location.href = '../login';
+        }
+    </script>
+    <title>ARTICOLI - Opalix</title>
+
+    <style>
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #e0f7fa !important;
+            /* colore azzurro chiaro */
+        }
+
+        /* Cambia colore righe pari (opzionale) */
+        .table-striped tbody tr:nth-child(even) {
+            background-color: white !important;
+        }
+    </style>
+
+</head>
+
+<body class="back-color">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top"
+        style="box-shadow: 2px 0 5px rgba(0,0,0,0.1); background-color: #2C3E50;">
+        <div class="container-fluid">
+            <!-- LOGO + NOME -->
+            <a class="navbar-brand" href="#"><span class="font-cinzel"><i class="bi bi-gem me-2"></i>OPALIX</span></a>
+
+            <!-- TOGGLER MOBILE -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- CONTENUTO NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+
+                <!-- SINISTRA: eventualmente shortcut -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Esempi di shortcut -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-plus-circle me-1"></i>Nuova
+                            Riparazione</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-box-seam me-1"></i>Articoli</a>
+                    </li>
+                </ul>
+
+                <!-- DESTRA: barra ricerca, notifiche, utente -->
+                <form class="d-flex me-3" role="search">
+                    <input class="form-control form-control-sm me-2" type="search" placeholder="Cerca..."
+                        aria-label="Search">
+                    <button class="btn btn-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+
+                <button class="btn btn-outline-light btn-sm me-3 position-relative">
+                    <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class=" sidebar">
+        <div class="sidebar-header">
+            <h4>Roddi Gioielli</h4>
+            <h5 class="datetime mt-3" id="datetime"></h5>
+        </div>
+
+        <div class="user-info">
+            <img src="assets/images/user.jfif" alt="Profilo" class="user-avatar">
+            <span id="sidebarUser"></span>
+        </div>
+
+        <ul class="menu-section">
+            <li class="menu-title">Gestione</li>
+            <a href="../public">
+                <li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li>
+            </a>
+            <li class="has-submenu" onclick="toggleSubmenu(this)">
+                <div class="menu-item-left">
+                    <i class="bi bi-boxes"></i>
+                    <span>Magazzino</span>
+                </div>
+                <i class="bi bi-chevron-down submenu-arrow"></i>
+            </li>
+            <ul class="submenu">
+                <li class="active"><i class="bi bi-collection"></i>Articoli</li>
+                <li><i class="bi bi-box-arrow-in-down"></i> Carico merce</li>
+                <li><i class="bi bi-box-arrow-up"></i> Scarico merce</li>
+                <li><i class="bi bi-search"></i> Giacenze</li>
+            </ul>
+            <li><i class="bi bi-tools"></i> Laboratorio</li>
+            <a href="customers">
+                <li class=""><i class="bi bi-people-fill"></i>Clienti</li>
+            </a>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Reportistica</li>
+            <li><i class="bi bi-printer"></i> Report</li>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Impostazioni</li>
+            <li><i class="bi bi-gear-wide-connected"></i><a href="controlpanel">Control Panel</a></li>
+            <li class="text-danger"><i class="bi bi-box-arrow-left"></i> <a href="#" class="logoutLink text-danger"
+                    style="text-decoration: none;">Logout</a></li>
+        </ul>
+    </div>
+
+
+
+    <div class="content">
+
+        <div class="container text-center">
+            <div class="div-customer">
+                <div class="container bg-white p-4 rounded shadow">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5>Articoli</h5>
+                        <div>
+                            <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuovoCliente"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
+                                    Nuovo</b></button>
+                            <!--<button class="btn btn-sm"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
+                                        class="bi bi-funnel-fill"></i> Filtra</b></button>-->
+                            <a href="report/esporta_clienti_pdf.php" class="btn btn-sm"
+                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"
+                                target="_blank"><b><i class="bi bi-folder-symlink"></i> Esporta</b></a>
+                        </div>
+                    </div>
+
+                    <table class="table table-striped align-middle" id="tabella-articoli">
+                        <thead class="custom-thead">
+                            <tr class="text-start">
+                                <th class="custom-thead"><input type="checkbox"></th>
+                                <th class="custom-thead">Immagine</th>
+                                <th class="custom-thead">Codice</th>
+                                <th class="custom-thead">Nome</th>
+                                <th class="custom-thead">Categoria</th>
+                                <th class="custom-thead">Marca</th>
+                                <th class="custom-thead">Materiale</th>
+                                <th class="custom-thead">Carati</th>
+                                <th class="custom-thead">Peso</th>
+                                <th class="custom-thead">Pietre</th>
+                                <th class="custom-thead">Stato</th>
+                                <th class="custom-thead">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-start" style="font-size: smaller;">
+                            <!-- Le righe verranno aggiunte qui tramite JS -->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalNuovoCliente" tabindex="-1" aria-labelledby="modalNuovoClienteLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+
+                <div class="modal-header"
+                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <h5 class="modal-title fw-bold" id="modalNuovoClienteLabel">
+                        <i class="fas fa-user-plus me-2"></i>Nuovo Cliente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Chiudi"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formCliente" class="p-3">
+
+                        <!-- Dati Cliente -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati
+                                    Cliente</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nome" class="form-label">Nome</label>
+                                        <input type="text" class="form-control rounded-3" id="nome" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cognome" class="form-label">Cognome</label>
+                                        <input type="text" class="form-control rounded-3" id="cognome" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cf" class="form-label">Codice Fiscale</label>
+                                        <input type="text" class="form-control rounded-3" id="cf" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dataNascita" class="form-label">Data di Nascita</label>
+                                        <input type="date" class="form-control rounded-3" id="dataNascita" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indirizzo -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="via" class="form-label">Via</label>
+                                        <input type="text" class="form-control rounded-3" id="via" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cap" class="form-label">CAP</label>
+                                        <input type="text" class="form-control rounded-3" id="cap" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="citta" class="form-label">Città</label>
+                                        <input type="text" class="form-control rounded-3" id="citta" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="provincia" class="form-label">Provincia</label>
+                                        <input type="text" class="form-control rounded-3" id="provincia" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
+                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                    <div class=" col-md-6">
+                                        <label for="paese" class="form-label">Nazione</label>
+                                        <input type="text" class="form-control rounded-3" id="paese" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contatti -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="telefono" class="form-label">Telefono</label>
+                                        <input type="text" class="form-control rounded-3" id="telefono" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control rounded-3" id="email" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer"
+                            style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                            <button type="button" class="btn btn-secondary rounded-3"
+                                data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" form="formCliente" class="btn btn-primary rounded-3"
+                                style="background-color: #2C3E50; border-color: #2C3E50;">Salva Cliente</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+
+                <div class="modal-header"
+                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <h5 class="modal-title fw-bold" id="modalClienteLabel">
+                        <i class="fas fa-user-edit me-2"></i>Modifica Cliente
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Chiudi"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form id="formClienteModal" class="p-3">
+
+                        <!-- Dati Cliente -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati
+                                    Cliente</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="nomeModal" class="form-label">Nome</label>
+                                        <input type="text" class="form-control rounded-3" id="nomeModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cognomeModal" class="form-label">Cognome</label>
+                                        <input type="text" class="form-control rounded-3" id="cognomeModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cfModal" class="form-label">Codice Fiscale</label>
+                                        <input type="text" class="form-control rounded-3" id="cfModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dataNascitaModal" class="form-label">Data di Nascita</label>
+                                        <input type="date" class="form-control rounded-3" id="dataNascitaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Indirizzo -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="viaModal" class="form-label">Via</label>
+                                        <input type="text" class="form-control rounded-3" id="viaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="capModal" class="form-label">CAP</label>
+                                        <input type="text" class="form-control rounded-3" id="capModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cittaModal" class="form-label">Città</label>
+                                        <input type="text" class="form-control rounded-3" id="cittaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="provinciaModal" class="form-label">Provincia</label>
+                                        <input type="text" class="form-control rounded-3" id="provinciaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
+                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="paeseModal" class="form-label">Nazione</label>
+                                        <input type="text" class="form-control rounded-3" id="paeseModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contatti -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="telefonoModal" class="form-label">Telefono</label>
+                                        <input type="text" class="form-control rounded-3" id="telefonoModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="emailModal" class="form-label">Email</label>
+                                        <input type="email" class="form-control rounded-3" id="emailModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="modal-footer"
+                    style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                    <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annulla</button>
+                    <button type="submit" form="formClienteModal" class="btn btn-primary rounded-3"
+                        style="background-color: #2C3E50; border-color: #2C3E50;">Salva modifiche</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <script src="js/auth.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("formCliente");
+
+            form.addEventListener("submit", async function (e) {
+                e.preventDefault();
+                console.log("📤 Invio form...");
+
+                // Raccogli i dati
+                const cliente = {
+                    nome: document.getElementById("nome")?.value.trim(),
+                    cognome: document.getElementById("cognome")?.value.trim(),
+                    codice_fiscale: document.getElementById("cf")?.value.trim(),
+                    data_nascita: document.getElementById("dataNascita")?.value,
+
+                    indirizzo: {
+                        via: document.getElementById("via")?.value.trim(),
+                        cap: document.getElementById("cap")?.value.trim(),
+                        citta: document.getElementById("citta")?.value.trim(),
+                        provincia: document.getElementById("provincia")?.value.trim(),
+                        paese: document.getElementById("paese")?.value.trim(),
+                    },
+
+                    contatto: {
+                        cellulare: document.getElementById("telefono")?.value.trim(),
+                        email: document.getElementById("email")?.value.trim()
+                    }
+                };
+
+                try {
+                    const res = await fetch("/opalix_server/public/api/clienti", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify(cliente)
+                    });
+
+                    const result = await res.json();
+
+                    if (res.ok) {
+                        alert("✅ Cliente salvato con successo!");
+                        form.reset();
+                        // Chiudi il modal
+                    } else {
+                        alert("❌ Errore: " + result.error);
+                    }
+                } catch (err) {
+                    console.error("Errore nella richiesta:", err);
+                    alert("❌ Errore di rete o server.");
+                }
+            });
+        });
+
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('api/articoli')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabella-articoli tbody');
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="10">Nessun articolo trovato</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = '';
+
+                    data.forEach(articolo => {
+                        const tr = document.createElement('tr');
+
+                        tr.innerHTML = `
+                    <td><input type="checkbox"></td>
+                    <td><img src="${'./' + articolo.foto}" alt="foto articolo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
+                    <td>${articolo.codice_articolo}</td>
+                    <td>${articolo.nome_articolo}</td>
+                    <td>${articolo.categoria}</td>
+                    <td>${articolo.marca}</td>
+                    <td>${articolo.materiale}</td>
+                    <td>${articolo.carati || '-'}</td>
+                    <td>${articolo.peso || '-'}</td>
+                    <td>${articolo.pietre || '-'}</td>
+                    <td>${articolo.stato}</td>
+                    <td><button class="actions-btn" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button></td>
+                `;
+                        tbody.appendChild(tr);
+                    });
+
+                    const buttons = document.querySelectorAll('.actions-btn');
+                    buttons.forEach(button => {
+                        button.addEventListener('click', function () {
+                            const articoloId = button.getAttribute('data-id');
+                            const articolo = data.find(a => a.id == articoloId);
+
+                            if (articolo) {
+                                document.getElementById('codiceModal').value = articolo.codice_articolo;
+                                document.getElementById('nomeModal').value = articolo.nome_articolo;
+                                document.getElementById('descrizioneModal').value = articolo.descrizione;
+                                document.getElementById('caratiModal').value = articolo.carati;
+                                document.getElementById('pesoModal').value = articolo.peso;
+                                document.getElementById('prezzoAcquistoModal').value = articolo.prezzo_acquisto;
+                                document.getElementById('prezzoVenditaModal').value = articolo.prezzo_vendita;
+                                document.getElementById('quantitaModal').value = articolo.quantita;
+                                document.getElementById('ubicazioneModal').value = articolo.ubicazione;
+                                document.getElementById('noteModal').value = articolo.note;
+
+                                // Selects (assumendo che abbiano id coerenti con questi)
+                                document.getElementById('categoriaModal').value = articolo.categoria_id;
+                                document.getElementById('marcaModal').value = articolo.marca_id;
+                                document.getElementById('materialeModal').value = articolo.materiale_id;
+                                document.getElementById('statoModal').value = articolo.stato_id;
+
+                                const modal = new bootstrap.Modal(document.getElementById('modalArticolo'));
+                                modal.show();
+
+                                const form = document.getElementById('formArticoloModal');
+                                form.addEventListener('submit', function (event) {
+                                    event.preventDefault();
+                                    updateArticolo(articoloId);
+                                });
+                            }
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Errore caricamento articoli:', error);
+                });
+
+            function updateArticolo(articoloId) {
+                const articolo = {
+                    codice_articolo: document.getElementById('codiceModal').value,
+                    nome: document.getElementById('nomeModal').value,
+                    descrizione: document.getElementById('descrizioneModal').value,
+                    carati: parseFloat(document.getElementById('caratiModal').value),
+                    peso: parseFloat(document.getElementById('pesoModal').value),
+                    prezzo_acquisto: parseFloat(document.getElementById('prezzoAcquistoModal').value),
+                    prezzo_vendita: parseFloat(document.getElementById('prezzoVenditaModal').value),
+                    quantita: parseInt(document.getElementById('quantitaModal').value),
+                    ubicazione: document.getElementById('ubicazioneModal').value,
+                    note: document.getElementById('noteModal').value,
+                    categoria_id: parseInt(document.getElementById('categoriaModal').value),
+                    marca_id: parseInt(document.getElementById('marcaModal').value),
+                    materiale_id: parseInt(document.getElementById('materialeModal').value),
+                    stato_id: parseInt(document.getElementById('statoModal').value)
+                };
+
+                fetch(`/opalix_server/public/api/articoli/${articoloId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(articolo)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Articolo aggiornato con successo!');
+                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalArticolo'));
+                        modal.hide();
+                        location.reload();
+                    })
+                    .catch(error => {
+                        console.error('Errore aggiornamento articolo:', error);
+                        alert('Errore durante l\'aggiornamento');
+                    });
+            }
+        });
+    </script>
+
+
+
+
+    <script>
+        // Recupero nome e cognome dall'archivio locale
+        const nome = localStorage.getItem('nome');
+        const cognome = localStorage.getItem('cognome');
+
+        if (nome && cognome) {
+            const sidebarUser = document.getElementById('sidebarUser');
+            if (sidebarUser) {
+                sidebarUser.innerHTML = `${nome} ${cognome}`; // Visualizza il nome e cognome
+            }
+        }
+    </script>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('jwt');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+    <script>
+        function toggleSubmenu(el) {
+            el.classList.toggle('submenu-open');
+            const submenu = el.nextElementSibling;
+            if (submenu.style.display === "block") {
+                submenu.style.display = "none";
+            } else {
+                submenu.style.display = "block";
+            }
+        }
+    </script>
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleString('it-IT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('datetime').textContent = formatted;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 60000); // aggiorna ogni minuto
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

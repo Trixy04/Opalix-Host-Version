@@ -1,7 +1,7 @@
 <?php
 // app/Controllers/MaterialiController.php
 
-class MarcheController {
+class MaterialiController {
     public function getMateriali()
 {
     global $conn;
@@ -16,7 +16,7 @@ class MarcheController {
         $materiali = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         if (empty($materiali)) {
-            sendJsonResponse(['message' => 'Nessuna categoria trovata']);
+            sendJsonResponse(['message' => 'Nessun materiale trovata']);
         } else {
             sendJsonResponse($materiali);
         }
