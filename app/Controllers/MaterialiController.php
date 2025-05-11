@@ -1,8 +1,8 @@
 <?php
-// app/Controllers/CategorieController.php
+// app/Controllers/MaterialiController.php
 
-class CategorieController {
-    public function getCategorie()
+class MarcheController {
+    public function getMateriali()
 {
     global $conn;
 
@@ -10,15 +10,15 @@ class CategorieController {
         $stmt = $conn->query("
             SELECT 
                 *
-            FROM categorie
+            FROM materiali
         ");
 
-        $categorie = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $materiali = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        if (empty($categorie)) {
+        if (empty($materiali)) {
             sendJsonResponse(['message' => 'Nessuna categoria trovata']);
         } else {
-            sendJsonResponse($categorie);
+            sendJsonResponse($materiali);
         }
     } catch (PDOException $e) {
         sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);

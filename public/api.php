@@ -7,6 +7,7 @@ require_once '../app/Controllers/CategorieController.php';
 require_once '../app/Controllers/AuthController.php';
 require_once '../app/Controllers/ClientiController.php';
 require_once '../app/Controllers/AziendaController.php';
+require_once '../app/Controllers/MarcheController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -26,6 +27,10 @@ $router->delete('/api/clienti/{id}', 'ClientiController@eliminaCliente'); // se 
 
 // Azienda
 $router->get('/api/azienda', 'AziendaController@getAzienda');
+
+// Marche
+$router->get('/api/marche', 'MarcheController@getMarche');
+
 
 // Dispatch finale
 $router->dispatch();
