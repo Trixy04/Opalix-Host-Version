@@ -7,7 +7,7 @@ function checkAuth() {
   // Protezione per la home
   if (window.location.pathname.includes('index.html')) {
     if (!token) {
-      window.location.href = 'login.html'; // se non loggato, redirect al login
+      window.location.href = 'login'; // se non loggato, redirect al login
     } else {
       // Se l'utente è loggato, recupera nome e cognome dal localStorage
       const nome = localStorage.getItem('nome');
@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', function () {
       localStorage.removeItem('jwt');
       localStorage.removeItem('nome');
       localStorage.removeItem('cognome');
-      window.location.href = 'login.html';
+      window.location.href = '/opalix_server/public/pages/login.html';
     });
   });
 });

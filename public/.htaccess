@@ -4,12 +4,18 @@ RewriteEngine On
 # Imposta la base per il progetto
 RewriteBase /opalix_server/public/
 
+# Gestione URL senza estensione .html (mappa /login a /pages/login.html)
+RewriteRule ^login/?$ /opalix_server/public/pages/login.html [L]
+
+# Gestione URL con estensione .html (mappa /login.html a /pages/login.html)
+RewriteRule ^login\.html$ /opalix_server/public/pages/login.html [L]
+
 # Gestione API (instrada le chiamate a /api verso api.php)
 RewriteCond %{REQUEST_URI} ^/opalix_server/public/api
 RewriteRule ^(.*)$ api.php [QSA,L]
 
 # Reindirizza da /pages/nome.html → /nome (rimuove visibilità .html e /pages)
-RewriteCond %{THE_REQUEST} \s/+pages/([^\s]+)\.html[\s?] [NC]
+RewriteCond %{THE_REQUEST} \s+/pages/([^\s]+)\.html[\s?] [NC]
 RewriteRule ^pages/(.+)\.html$ /opalix_server/public/$1 [R=301,L]
 
 # Mappa URL come /nome a /pages/nome.html (nasconde sia 'pages/' che '.html')
