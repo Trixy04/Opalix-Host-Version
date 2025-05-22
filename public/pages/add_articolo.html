@@ -9,6 +9,10 @@
         integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="js/BrowserPrint-3.1.250.min.js"></script>
+
+
     <script>
         // Verifica se esiste un JWT
         const token = localStorage.getItem('jwt');
@@ -140,12 +144,12 @@
                 <div class="container bg-white p-4 rounded shadow">
                     <div class="d-flex justify-content-between">
                         <h4>Inserisci articolo</h4>
-                        <div class="btn-group">
-                            <a href="articoli" style="margin-right: 5%;"><button
-                                    class="btn btn-light">Annulla</button></a>
-                            <button class="btn" style="background-color: #2C3E50; color: white;">Inserisci</button>
-                        </div>
-
+                        <form action="" id="formArticolo" name="formArticolo">
+                            <div class="btn-group">
+                                <a href="articoli" style="margin-right: 5%;"><button
+                                        class="btn btn-light">Annulla</button></a>
+                                <button class="btn" style="background-color: #2C3E50; color: white;">Inserisci</button>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -154,6 +158,7 @@
                 <div class="row ">
                     <div class="col-8">
                         <div class="div-customer">
+
                             <div class="d-flex justify-content-between align-items-start mb-2 title-card">
                                 <h6 class="mb-0 text-muted"><i class="bi bi-info-square"></i>
                                     Informazioni di base
@@ -161,15 +166,15 @@
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;" style="margin-bottom: -1%;">
                                 <label for="exampleInputEmail1" class="form-label">Codice articolo</label>
-                                <input type="email" class="form-control" id="exampleInputEmail1">
+                                <input type="text" class="form-control" id="codice" name="codice" required>
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <label for="exampleInputPassword1" class="form-label">Nome articolo</label>
-                                <input type="password" class="form-control" id="exampleInputPassword1">
+                                <input type="text" class="form-control" id="nome" name="nome" required>
                             </div>
                             <div class="mb-3 p-3">
                                 <label for="exampleFormControlTextarea1" class="form-label">Descrizione</label>
-                                <textarea class="form-control" id="exampleFormControlTextarea1" rows="5"></textarea>
+                                <textarea class="form-control" id="descrizione" name="descrizione" rows="5"></textarea>
                             </div>
                         </div>
                         <div class="div-customer mt-4">
@@ -187,7 +192,7 @@
                                                 style="text-decoration: underline;">Browse</span>
                                         </p>
                                     </div>
-                                    <input type="file" id="fileInput" accept="image/*" hidden />
+                                    <input type="file" id="foto" name="foto" accept="image/*" hidden />
                                 </div>
 
                                 <div class="preview mt-3 text-center" id="preview"></div>
@@ -203,12 +208,8 @@
                                 <div class="row" style="margin-bottom: 0%;">
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Materiale</label>
-                                        <select class="form-select" aria-label="Default select example" id="categoria"
-                                            name="categoria">
-                                            <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
+                                        <select class="form-select" id="materiale_id" name="materiale_id">
+                                            <option selected>Scegli il materiale</option>
                                         </select>
 
                                     </div>
@@ -216,14 +217,16 @@
                                         <label for="categoria" class="form-label">Peso</label>
                                         <div class="input-group">
                                             <div class="input-group-text">gr</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="peso_materiale"
+                                                name="peso_materiale">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Carati</label>
                                         <div class="input-group">
                                             <div class="input-group-text">Ct</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="carati_materiale"
+                                                name="carati_materiali">
                                         </div>
                                     </div>
                                 </div>
@@ -232,34 +235,36 @@
 
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <hr>
-                                <h5><i>Pietre</i><span data-bs-toggle="tooltip" title="Di default il sistema permette l'inserimento di 4 tipologie di pietre per gioiello, nel caso ne fossero presenti dipù censire le prime tre e aggiungerle dopo il salvataggio dell'articolo nella maschera di modifica">
-                                    <span style="font-size: medium;" class="bi bi-question-circle text-secondary"></span style="font-size: small;">
-                                </span></h5>
+                                <h5><i>Pietre</i><span data-bs-toggle="tooltip"
+                                        title="Di default il sistema permette l'inserimento di 4 tipologie di pietre per gioiello, nel caso ne fossero presenti dipù censire le prime tre e aggiungerle dopo il salvataggio dell'articolo nella maschera di modifica">
+                                        <span style="font-size: medium;"
+                                            class="bi bi-question-circle text-secondary"></span
+                                            style="font-size: small;">
+                                    </span></h5>
                                 <hr>
                                 <div class="row" style="margin-bottom: 0%;">
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Pietra</label>
-                                        <select class="form-select" aria-label="Default select example" id="categoria"
-                                            name="categoria">
+                                        <select class="form-select" id="pietra_1" name="pietra_1">
                                             <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
                                         </select>
+
 
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Quantità</label>
                                         <div class="input-group">
                                             <div class="input-group-text">u</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_qta_1"
+                                                name="pietra_qta_1">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Carati</label>
                                         <div class="input-group">
                                             <div class="input-group-text">Ct</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_carati_1"
+                                                name="pietra_carati_1">
                                         </div>
                                     </div>
                                 </div>
@@ -268,12 +273,8 @@
                                 <div class="row" style="margin-bottom: 0%;">
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Pietra</label>
-                                        <select class="form-select" aria-label="Default select example" id="categoria"
-                                            name="categoria">
+                                        <select class="form-select" id="pietra_2" name="pietra_2">
                                             <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
                                         </select>
 
                                     </div>
@@ -281,14 +282,16 @@
                                         <label for="categoria" class="form-label">Quantità</label>
                                         <div class="input-group">
                                             <div class="input-group-text">u</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_qta_2"
+                                                name="pietra_qta_2">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Carati</label>
                                         <div class="input-group">
                                             <div class="input-group-text">Ct</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_carati_2"
+                                                name="pietra_carati_2">
                                         </div>
                                     </div>
                                 </div>
@@ -297,12 +300,8 @@
                                 <div class="row" style="margin-bottom: 0%;">
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Pietra</label>
-                                        <select class="form-select" aria-label="Default select example" id="categoria"
-                                            name="categoria">
+                                        <select class="form-select" id="pietra_3" name="pietra_3">
                                             <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
                                         </select>
 
                                     </div>
@@ -310,14 +309,16 @@
                                         <label for="categoria" class="form-label">Quantità</label>
                                         <div class="input-group">
                                             <div class="input-group-text">u</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_qta_3"
+                                                name="pietra_qta_3">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Carati</label>
                                         <div class="input-group">
                                             <div class="input-group-text">Ct</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_carati_3"
+                                                name="pietra_carati_3">
                                         </div>
                                     </div>
                                 </div>
@@ -326,12 +327,8 @@
                                 <div class="row" style="margin-bottom: 0%;">
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Pietra</label>
-                                        <select class="form-select" aria-label="Default select example" id="categoria"
-                                            name="categoria">
+                                        <select class="form-select" id="pietra_4" name="pietra_4">
                                             <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
                                         </select>
 
                                     </div>
@@ -339,14 +336,16 @@
                                         <label for="categoria" class="form-label">Quantità</label>
                                         <div class="input-group">
                                             <div class="input-group-text">u</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_qta_4"
+                                                name="pietra_qta_4">
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <label for="categoria" class="form-label">Carati</label>
                                         <div class="input-group">
                                             <div class="input-group-text">Ct</div>
-                                            <input type="number" class="form-control" id="autoSizingInputGroup">
+                                            <input type="number" class="form-control" id="pietra_carati_4"
+                                                name="pietra_carati_4">
                                         </div>
                                     </div>
                                 </div>
@@ -362,21 +361,15 @@
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <label for="categoria" class="form-label">Categoria</label>
-                                <select class="form-select" aria-label="Default select example" id="categoria"
-                                    name="categoria">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select class="form-select" aria-label="Default select example" id="categoria_id"
+                                    name="categoria_id" required>
+
                                 </select>
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <label for="marca" class="form-label">Marchio</label>
-                                <select class="form-select" aria-label="Default select example" id="marca" name="marca">
-                                    <option selected>Open this select menu</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
+                                <select class="form-select" aria-label="Default select example" id="marca_id"
+                                    name="marca_id">
                                 </select>
                             </div>
                         </div>
@@ -390,11 +383,12 @@
                                 <div class="row" style="margin-bottom: -1%;">
                                     <div class="col-8">
                                         <label for="exampleInputPassword1" class="form-label">Costo di acquisto</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1">
+                                        <input type="number" class="form-control" id="prezzo_acquisto"
+                                            name="prezzo_acquisto">
                                     </div>
                                     <div class="col-4">
                                         <label for="exampleInputPassword1" class="form-label">Valuta</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1"
+                                        <input type="password" class="form-control" id="exampleInputPassword11"
                                             placeholder="EUR" disabled>
                                     </div>
                                 </div>
@@ -403,14 +397,15 @@
                                 <label for="marca" class="form-label">Ricarico in percentuale</label>
                                 <div class="input-group">
                                     <div class="input-group-text">%</div>
-                                    <input type="number" class="form-control" id="autoSizingInputGroup">
+                                    <input type="number" class="form-control" id="ricarico_percentuale">
                                 </div>
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <div class="row" style="margin-bottom: -1%;">
                                     <div class="col-8">
                                         <label for="exampleInputPassword1" class="form-label">Costo di vendita</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1">
+                                        <input type="number" class="form-control" id="prezzo_vendita"
+                                            name="prezzo_vendita">
                                     </div>
                                     <div class="col-4">
                                         <label for="exampleInputPassword1" class="form-label">Valuta</label>
@@ -422,47 +417,77 @@
                         </div>
                         <div class="div-customer mt-4">
                             <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
-                                <h6 class="mb-0 text-muted"><i class="bi bi-currency-euro"></i>
-                                    Costo articolo
+                                <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i>
+                                    Disponibilità
                                 </h6>
                             </div>
                             <div class="p-3" style="margin-bottom: -1%;">
-                                <div class="row" style="margin-bottom: -1%;">
-                                    <div class="col-8">
-                                        <label for="exampleInputPassword1" class="form-label">Costo di acquisto</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1">
-                                    </div>
-                                    <div class="col-4">
-                                        <label for="exampleInputPassword1" class="form-label">Valuta</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1"
-                                            placeholder="EUR" disabled>
-                                    </div>
+                                <h6 class="mb-3">Stato disponibilità prodotto:</h6>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" required>
+                                    <label class="form-check-label" for="radioDefault1">
+                                        Disponibile
+                                    </label>
                                 </div>
-                            </div>
-                            <div class="p-3" style="margin-bottom: -1%;">
-                                <label for="marca" class="form-label">Ricarico in percentuale</label>
-                                <div class="input-group">
-                                    <div class="input-group-text">%</div>
-                                    <input type="number" class="form-control" id="autoSizingInputGroup">
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" checked
+                                        required>
+                                    <label class="form-check-label" for="radioDefault2">
+                                        Non disponibile
+                                    </label>
                                 </div>
-                            </div>
-                            <div class="p-3" style="margin-bottom: -1%;">
-                                <div class="row" style="margin-bottom: -1%;">
-                                    <div class="col-8">
-                                        <label for="exampleInputPassword1" class="form-label">Costo di vendita</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1">
-                                    </div>
-                                    <div class="col-4">
-                                        <label for="exampleInputPassword1" class="form-label">Valuta</label>
-                                        <input type="password" class="form-control" id="exampleInputPassword1"
-                                            placeholder="EUR" disabled>
-                                    </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" checked
+                                        required>
+                                    <label class="form-check-label" for="radioDefault2">
+                                        In ordine
+                                    </label>
                                 </div>
                             </div>
                         </div>
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-box-seam"></i>
+                                    Informazioni di magazzino
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="categoria" class="form-label">Quantità in giacenza</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">Pezzi</div>
+                                    <input type="number" class="form-control" id="quantita" name="quantita" required>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="marca" class="form-label">Posizione</label>
+                                <input type="text" class="form-control" id="ubicazione" name="ubicazione"
+                                    placeholder="Vetrica, cassaforte ...">
+                            </div>
+                        </div>
+
+                        <div class="div-customer mt-4" style="height: 286px;">
+                            <div class="d-flex justify-content-between align-items-start title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-upc-scan"></i>
+                                    Anteprima etichetta
+                                </h6>
+                                <button class="btn p-0" onclick="stampaEtichetta()"><i
+                                        class="bi bi-printer"></i></button>
+                            </div>
+                            <div id="anteprima" class="eti mt-2 mb-4 d-flex justify-content-center align-items-center"
+                                style="min-height: 200px;">
+                                <div class="etichetta" id="etichetta">
+                                    <svg id="barcode"></svg>
+                                    <div id="nome-articolo">...</div>
+                                    <div class="prezzo">€ 0.00</div>
+                                </div>
+                            </div>
+
+                        </div>
+
                     </div>
                 </div>
             </div>
+
             <div class="div-customer mb-3">
                 <div class="container bg-white p-4 rounded shadow">
                     <div class="d-flex justify-content-between">
@@ -476,7 +501,7 @@
                     </div>
                 </div>
             </div>
-
+            </form>
         </div>
     </div>
 
@@ -497,60 +522,58 @@
 
     <script src="js/auth.js"></script>
 
+    <script src="js/labelgenerator.js"></script>
+
+    <script src="js/selectgenerator_articolo.js"></script>
+
+    <script src="js/pricecalculator.js"></script>
+
+    <script src="js/labelprinter.js"></script>
+
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const form = document.getElementById("formCliente");
+        document.getElementById('formArticolo').addEventListener('submit', function (e) {
+            e.preventDefault();
 
-            form.addEventListener("submit", async function (e) {
-                e.preventDefault();
-                console.log("📤 Invio form...");
+            const articolo = {
+                codice_articolo: document.getElementById('codice').value,
+                nome: document.getElementById('nome').value,
+                categoria_id: document.getElementById('categoria_id').value,
+                descrizione: document.getElementById('descrizione').value || null,
+                marca_id: document.getElementById('marca_id').value || null,
+                materiale_id: document.getElementById('materiale_id').value || null,
+                peso: document.getElementById('peso_materiale').value || null,
+                carati: document.getElementById('carati_materiale').value || null,
+                prezzo_acquisto: document.getElementById('prezzo_acquisto').value || null,
+                prezzo_vendita: document.getElementById('prezzo_vendita').value || null,
+                quantita: document.getElementById('quantita').value || null,
+                ubicazione: document.getElementById('ubicazione').value || null,
+                stato_id: document.getElementById('stato_id').value || null,
+                note: document.getElementById('note').value || null,
+                foto: document.getElementById('foto').value || null
+            };
 
-                // Raccogli i dati
-                const cliente = {
-                    nome: document.getElementById("nome")?.value.trim(),
-                    cognome: document.getElementById("cognome")?.value.trim(),
-                    codice_fiscale: document.getElementById("cf")?.value.trim(),
-                    data_nascita: document.getElementById("dataNascita")?.value,
-
-                    indirizzo: {
-                        via: document.getElementById("via")?.value.trim(),
-                        cap: document.getElementById("cap")?.value.trim(),
-                        citta: document.getElementById("citta")?.value.trim(),
-                        provincia: document.getElementById("provincia")?.value.trim(),
-                        paese: document.getElementById("paese")?.value.trim(),
-                    },
-
-                    contatto: {
-                        cellulare: document.getElementById("telefono")?.value.trim(),
-                        email: document.getElementById("email")?.value.trim()
+            fetch('/opalix_server/public/api/articoli', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(articolo)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert('Inserimento andato a buon fine!');
+                        // Puoi anche resettare il form se vuoi:
+                        document.getElementById('formArticolo').reset();
+                    } else if (data.error) {
+                        alert('Errore: ' + data.error);
                     }
-                };
-
-                try {
-                    const res = await fetch("/opalix_server/public/api/clienti", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(cliente)
-                    });
-
-                    const result = await res.json();
-
-                    if (res.ok) {
-                        alert("✅ Cliente salvato con successo!");
-                        form.reset();
-                        // Chiudi il modal
-                    } else {
-                        alert("❌ Errore: " + result.error);
-                    }
-                } catch (err) {
-                    console.error("Errore nella richiesta:", err);
-                    alert("❌ Errore di rete o server.");
-                }
-            });
+                })
+                .catch(error => {
+                    console.error('Errore durante l\'inserimento:', error);
+                    alert('Errore durante l\'inserimento.');
+                });
         });
-
     </script>
 
     <script>
@@ -606,124 +629,6 @@
             fileInput.value = '';
         }
     </script>
-
-
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            fetch('api/articoli')
-                .then(response => response.json())
-                .then(data => {
-                    const tbody = document.querySelector('#tabella-articoli tbody');
-
-                    if (data.length === 0) {
-                        tbody.innerHTML = '<tr><td colspan="10">Nessun articolo trovato</td></tr>';
-                        return;
-                    }
-
-                    tbody.innerHTML = '';
-
-                    data.forEach(articolo => {
-                        const tr = document.createElement('tr');
-
-                        tr.innerHTML = `
-                    <td><input type="checkbox"></td>
-                    <td><img src="${'./' + articolo.foto}" alt="foto articolo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
-                    <td>${articolo.codice_articolo}</td>
-                    <td>${articolo.nome_articolo}</td>
-                    <td>${articolo.categoria}</td>
-                    <td>${articolo.marca}</td>
-                    <td>${articolo.materiale}</td>
-                    <td>${articolo.carati || '-'}</td>
-                    <td>${articolo.peso || '-'}</td>
-                    <td>${articolo.pietre || '-'}</td>
-                    <td>${articolo.stato}</td>
-                    <td><button class="actions-btn" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button></td>
-                `;
-                        tbody.appendChild(tr);
-                    });
-
-                    const buttons = document.querySelectorAll('.actions-btn');
-                    buttons.forEach(button => {
-                        button.addEventListener('click', function () {
-                            const articoloId = button.getAttribute('data-id');
-                            const articolo = data.find(a => a.id == articoloId);
-
-                            if (articolo) {
-                                document.getElementById('codiceModal').value = articolo.codice_articolo;
-                                document.getElementById('nomeModal').value = articolo.nome_articolo;
-                                document.getElementById('descrizioneModal').value = articolo.descrizione;
-                                document.getElementById('caratiModal').value = articolo.carati;
-                                document.getElementById('pesoModal').value = articolo.peso;
-                                document.getElementById('prezzoAcquistoModal').value = articolo.prezzo_acquisto;
-                                document.getElementById('prezzoVenditaModal').value = articolo.prezzo_vendita;
-                                document.getElementById('quantitaModal').value = articolo.quantita;
-                                document.getElementById('ubicazioneModal').value = articolo.ubicazione;
-                                document.getElementById('noteModal').value = articolo.note;
-
-                                // Selects (assumendo che abbiano id coerenti con questi)
-                                document.getElementById('categoriaModal').value = articolo.categoria_id;
-                                document.getElementById('marcaModal').value = articolo.marca_id;
-                                document.getElementById('materialeModal').value = articolo.materiale_id;
-                                document.getElementById('statoModal').value = articolo.stato_id;
-
-                                const modal = new bootstrap.Modal(document.getElementById('modalArticolo'));
-                                modal.show();
-
-                                const form = document.getElementById('formArticoloModal');
-                                form.addEventListener('submit', function (event) {
-                                    event.preventDefault();
-                                    updateArticolo(articoloId);
-                                });
-                            }
-                        });
-                    });
-                })
-                .catch(error => {
-                    console.error('Errore caricamento articoli:', error);
-                });
-
-            function updateArticolo(articoloId) {
-                const articolo = {
-                    codice_articolo: document.getElementById('codiceModal').value,
-                    nome: document.getElementById('nomeModal').value,
-                    descrizione: document.getElementById('descrizioneModal').value,
-                    carati: parseFloat(document.getElementById('caratiModal').value),
-                    peso: parseFloat(document.getElementById('pesoModal').value),
-                    prezzo_acquisto: parseFloat(document.getElementById('prezzoAcquistoModal').value),
-                    prezzo_vendita: parseFloat(document.getElementById('prezzoVenditaModal').value),
-                    quantita: parseInt(document.getElementById('quantitaModal').value),
-                    ubicazione: document.getElementById('ubicazioneModal').value,
-                    note: document.getElementById('noteModal').value,
-                    categoria_id: parseInt(document.getElementById('categoriaModal').value),
-                    marca_id: parseInt(document.getElementById('marcaModal').value),
-                    materiale_id: parseInt(document.getElementById('materialeModal').value),
-                    stato_id: parseInt(document.getElementById('statoModal').value)
-                };
-
-                fetch(`/opalix_server/public/api/articoli/${articoloId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(articolo)
-                })
-                    .then(response => response.json())
-                    .then(data => {
-                        alert('Articolo aggiornato con successo!');
-                        const modal = bootstrap.Modal.getInstance(document.getElementById('modalArticolo'));
-                        modal.hide();
-                        location.reload();
-                    })
-                    .catch(error => {
-                        console.error('Errore aggiornamento articolo:', error);
-                        alert('Errore durante l\'aggiornamento');
-                    });
-            }
-        });
-    </script>
-
-
-
 
     <script>
         // Recupero nome e cognome dall'archivio locale

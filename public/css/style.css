@@ -485,3 +485,21 @@ body {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
+
+.etichetta {
+  border: 1px dashed #aaa;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  width: 300px;
+  background-color: white;
+  text-align: center;
+}
+.etichetta svg {
+  margin: 10px 0;
+}
+.etichetta .prezzo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}

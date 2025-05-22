@@ -10,6 +10,7 @@ require_once '../app/Controllers/AziendaController.php';
 require_once '../app/Controllers/MarcheController.php';
 require_once '../app/Controllers/MaterialiController.php';
 require_once '../app/Controllers/ArticoliController.php';
+require_once '../app/Controllers/PietreController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -38,6 +39,10 @@ $router->get('/api/materiali', 'MaterialiController@getMateriali');
 
 // Articoli
 $router->get('/api/articoli', 'ArticoliController@getArticoli');
+$router->post('/api/articoli', 'ArticoliController@creaArticolo');
+
+// Pietre
+$router->get('/api/pietre', 'PietreController@getPietre');
 
 // Dispatch finale
 $router->dispatch();

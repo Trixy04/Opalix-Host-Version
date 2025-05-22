@@ -16,11 +16,10 @@ class ArticoliController {
                 c.nome AS categoria,
                 m.nome AS marca,
                 mat.nome AS materiale,
-                a.peso,
-                a.carati,
+                a.peso_materiale,
+                a.carati_materiale,
                 a.prezzo_acquisto,
                 a.prezzo_vendita,
-                a.data_acquisto,
                 a.quantita,
                 a.ubicazione,
                 s.nome AS stato,
@@ -49,6 +48,66 @@ class ArticoliController {
         sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
     }
 }
+
+public function creaArticolo()
+{
+    global $conn;
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    // Campi obbligatori
+    if (
+        !isset($data->codice_codicearticolo, 
+                $data->nome, 
+                $data->categoria_id)
+    ) {
+        sendJsonResponse(['error' => 'Codice articolo, nome e categoria sono obbligatori'], 400);
+        return;
+    }
+
+    try {
+        $conn->beginTransaction();
+
+        $stmt = $conn->prepare("
+            INSERT INTO articoli (
+                codice_articolo, nome, descrizione, categoria_id, marca_id, materiale_id,
+                peso, carati, prezzo_acquisto, prezzo_vendita, data_acquisto,
+                quantita, ubicazione, stato_id, note, foto
+            ) VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+        ");
+
+        $stmt->execute([
+            $data->codice,
+            $data->nome,
+            $data->descrizione ?? null,
+            $data->categoria_id,
+            $data->marca_id ?? null,
+            $data->materiale_id ?? null,
+            $data->peso ?? null,
+            $data->carati ?? null,
+            $data->prezzo_acquisto ?? null,
+            $data->prezzo_vendita ?? null,
+            $data->data_acquisto ?? null,
+            $data->quantita ?? null,
+            $data->ubicazione ?? null,
+            $data->stato_id ?? null,
+            $data->note ?? null,
+            $data->foto ?? null
+        ]);
+
+        $conn->commit();
+
+        sendJsonResponse(['message' => 'Articolo inserito con successo'], 201);
+
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+    }
+}
+
+
 
 
 

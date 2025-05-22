@@ -501,8 +501,8 @@
                     <td>${articolo.categoria}</td>
                     <td>${articolo.marca}</td>
                     <td>${articolo.materiale}</td>
-                    <td>${articolo.carati || '-'}</td>
-                    <td>${articolo.peso || '-'}</td>
+                    <td>${articolo.carati_materiale || '-'}</td>
+                    <td>${articolo.peso_materiale || '-'}</td>
                     <td>${articolo.pietre || '-'}</td>
                     <td>${articolo.stato}</td>
                     <td><button class="actions-btn" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button></td>
@@ -520,8 +520,8 @@
                                 document.getElementById('codiceModal').value = articolo.codice_articolo;
                                 document.getElementById('nomeModal').value = articolo.nome_articolo;
                                 document.getElementById('descrizioneModal').value = articolo.descrizione;
-                                document.getElementById('caratiModal').value = articolo.carati;
-                                document.getElementById('pesoModal').value = articolo.peso;
+                                document.getElementById('caratiModal').value = articolo.carati_materiale;
+                                document.getElementById('pesoModal').value = articolo.peso_materiale;
                                 document.getElementById('prezzoAcquistoModal').value = articolo.prezzo_acquisto;
                                 document.getElementById('prezzoVenditaModal').value = articolo.prezzo_vendita;
                                 document.getElementById('quantitaModal').value = articolo.quantita;
