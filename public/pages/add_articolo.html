@@ -144,7 +144,7 @@
                 <div class="container bg-white p-4 rounded shadow">
                     <div class="d-flex justify-content-between">
                         <h4>Inserisci articolo</h4>
-                        <form action="" id="formArticolo" name="formArticolo">
+                        <form action="" id="formArticolo">
                             <div class="btn-group">
                                 <a href="articoli" style="margin-right: 5%;"><button
                                         class="btn btn-light">Annulla</button></a>
@@ -424,20 +424,21 @@
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <h6 class="mb-3">Stato disponibilità prodotto:</h6>
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" required>
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="1"
+                                        required>
                                     <label class="form-check-label" for="radioDefault1">
                                         Disponibile
                                     </label>
                                 </div>
                                 <div class="form-check mb-3">
-                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" checked
-                                        required>
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="2"
+                                        checked required>
                                     <label class="form-check-label" for="radioDefault2">
                                         Non disponibile
                                     </label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" checked
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="3"
                                         required>
                                     <label class="form-check-label" for="radioDefault2">
                                         In ordine
@@ -534,99 +535,135 @@
         document.getElementById('formArticolo').addEventListener('submit', function (e) {
             e.preventDefault();
 
-            const articolo = {
-                codice_articolo: document.getElementById('codice').value,
-                nome: document.getElementById('nome').value,
-                categoria_id: document.getElementById('categoria_id').value,
-                descrizione: document.getElementById('descrizione').value || null,
-                marca_id: document.getElementById('marca_id').value || null,
-                materiale_id: document.getElementById('materiale_id').value || null,
-                peso: document.getElementById('peso_materiale').value || null,
-                carati: document.getElementById('carati_materiale').value || null,
-                prezzo_acquisto: document.getElementById('prezzo_acquisto').value || null,
-                prezzo_vendita: document.getElementById('prezzo_vendita').value || null,
-                quantita: document.getElementById('quantita').value || null,
-                ubicazione: document.getElementById('ubicazione').value || null,
-                stato_id: document.getElementById('stato_id').value || null,
-                note: document.getElementById('note').value || null,
-                foto: document.getElementById('foto').value || null
+            const pietre = [];
+
+            for (let i = 1; i <= 4; i++) {
+                const idPietra = document.getElementById(`pietra_${i}`)?.value;
+                const qta = document.getElementById(`pietra_qta_${i}`)?.value;
+                const carati = document.getElementById(`pietra_carati_${i}`)?.value;
+
+                if (idPietra && idPietra !== "Open this select menu" && qta && carati) {
+                    pietre.push({
+                        id: parseInt(idPietra),
+                        qta: parseInt(qta),
+                        carati: parseFloat(carati)
+                    });
+                }
+            }
+
+            const fileInput = document.getElementById('foto');
+            const file = fileInput.files[0];
+
+            const buildAndSend = (fotoBase64 = null) => {
+                const articolo = {
+                    codice_articolo: document.getElementById('codice').value,
+                    nome: document.getElementById('nome').value,
+                    categoria_id: document.getElementById('categoria_id').value,
+                    descrizione: document.getElementById('descrizione').value || null,
+                    marca_id: document.getElementById('marca_id').value === 'Seleziona' ? null : document.getElementById('marca_id').value,
+                    materiale_id: document.getElementById('materiale_id').value === 'Seleziona' ? null : document.getElementById('materiale_id').value,
+                    peso: document.getElementById('peso_materiale').value || null,
+                    carati: document.getElementById('carati_materiale').value || null,
+                    prezzo_acquisto: document.getElementById('prezzo_acquisto').value || null,
+                    prezzo_vendita: document.getElementById('prezzo_vendita').value || null,
+                    quantita: document.getElementById('quantita').value || null,
+                    ubicazione: document.getElementById('ubicazione').value || null,
+                    stato_id: document.querySelector('input[name="stato_id"]:checked')?.value || null,
+                    foto: fotoBase64,
+                    pietre: pietre
+                };
+
+                console.log("JSON da inviare:", JSON.stringify(articolo, null, 2));
+
+                fetch('/opalix_server/public/api/articoli', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(articolo)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert('Inserimento andato a buon fine!');
+                            document.getElementById('formArticolo').reset();
+                        } else if (data.error) {
+                            alert('Errore: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Errore durante l\'inserimento:', error);
+                        alert('Errore durante l\'inserimento.');
+                    });
             };
 
-            fetch('/opalix_server/public/api/articoli', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(articolo)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.message) {
-                        alert('Inserimento andato a buon fine!');
-                        // Puoi anche resettare il form se vuoi:
-                        document.getElementById('formArticolo').reset();
-                    } else if (data.error) {
-                        alert('Errore: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Errore durante l\'inserimento:', error);
-                    alert('Errore durante l\'inserimento.');
-                });
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    buildAndSend(reader.result); // invia con foto in base64
+                };
+                reader.readAsDataURL(file);
+            } else {
+                buildAndSend(null); // invia senza foto
+            }
         });
     </script>
 
+
     <script>
-        const uploadArea = document.getElementById("uploadArea");
-        const fileInput = document.getElementById("fileInput");
-        const preview = document.getElementById("preview");
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadMessage = document.getElementById('uploadMessage');
+        const fileInput = document.getElementById('foto');
+        const preview = document.getElementById('preview');
 
-        uploadArea.addEventListener("dragover", (e) => {
-            e.preventDefault();
-            uploadArea.classList.add("dragover");
-        });
-
-        uploadArea.addEventListener("dragleave", () => {
-            uploadArea.classList.remove("dragover");
-        });
-
-        uploadArea.addEventListener("drop", (e) => {
-            e.preventDefault();
-            uploadArea.classList.remove("dragover");
-            const file = e.dataTransfer.files[0];
-            handleFile(file);
-        });
-
-        uploadArea.addEventListener("click", () => {
+        // Apri selettore file quando clicchi su "Browse"
+        uploadMessage.addEventListener('click', () => {
             fileInput.click();
         });
 
-        fileInput.addEventListener("change", () => {
-            const file = fileInput.files[0];
-            handleFile(file);
+        // Mostra anteprima quando selezioni un file
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                showPreview(file);
+            }
         });
 
-        function handleFile(file) {
-            if (!file || !file.type.startsWith("image/")) {
-                alert("Please upload a valid image file.");
-                return;
-            }
+        // Drag & Drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('drag-over');
+            });
+        });
 
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('drag-over');
+            });
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files; // aggiorna il file input
+                showPreview(file);
+            }
+        });
+
+        function showPreview(file) {
             const reader = new FileReader();
-            reader.onload = () => {
-                uploadArea.classList.add("hidden"); // Nasconde tutta l'area tratteggiata
-                preview.innerHTML = `
-          <img src="${reader.result}" alt="Preview" class="img-fluid shadow-sm" />
-          <button class="btn btn-sm btn-danger remove-btn" onclick="removeImage()">Rimuovi immagine</button>
-        `;
+            reader.onload = function (e) {
+                // Nasconde l'area di upload
+                uploadArea.style.display = 'none';
+
+                // Mostra l'anteprima
+                preview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; max-height: 200px;" class="img-fluid rounded shadow" />`;
             };
             reader.readAsDataURL(file);
-        }
-
-        function removeImage() {
-            preview.innerHTML = '';
-            uploadArea.classList.remove("hidden"); // Mostra di nuovo l'area drag & drop
-            fileInput.value = '';
         }
     </script>
 

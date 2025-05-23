@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return res.json();
       })
       .then(data => {
-        select.innerHTML = '<option selected>Seleziona</option>';
+        select.innerHTML = '<option value="null" selected>Seleziona</option>';
         data.forEach(item => {
           const option = document.createElement("option");
           option.value = item[valueKey];
