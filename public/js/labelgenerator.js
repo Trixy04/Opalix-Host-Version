@@ -3,7 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const prezzoInput = document.getElementById("prezzo_vendita");
     const nomeInput = document.getElementById("nome");
 
-    const costoAcquistoInput = document.getElementById("costo_acquisto");
+    const costoAcquistoInput = document.getElementById("prezzo_acquisto");
     const ricaricoInput = document.getElementById("ricarico_percentuale");
 
     const barcodeSvg = document.getElementById("barcode");
@@ -12,58 +12,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let manualEdit = false;
 
-    function aggiornaPrezzoDaCalcolo() {
-        const costo = parseFloat(costoAcquistoInput?.value);
-        const ricarico = parseFloat(ricaricoInput?.value);
-
-        if (!isNaN(costo) && !isNaN(ricarico) && !manualEdit) {
-            const prezzoCalcolato = costo + (costo * ricarico / 100);
-            prezzoInput.value = prezzoCalcolato.toFixed(2);
-            aggiornaEtichetta(); // <-- AGGIORNAMENTO MANUALE ETICHETTA!
-        }
-    }
-
     function aggiornaEtichetta() {
         const codice = codiceInput?.value || "000000";
         const prezzo = parseFloat(prezzoInput?.value) || 0;
         const nome = nomeInput?.value || "Nome Articolo";
 
-        if (barcodeSvg) {
-            JsBarcode("#barcode", codice, {
-                format: "CODE128",
-                width: 2,
-                height: 50,
-                displayValue: true
-            });
-        }
-
-        if (prezzoDiv) prezzoDiv.textContent = `€ ${prezzo.toFixed(2)}`;
-        if (nomeArticoloDiv) nomeArticoloDiv.textContent = nome;
-    }
-
-    if (codiceInput && prezzoInput && nomeInput) {
-        codiceInput.addEventListener("input", aggiornaEtichetta);
-        nomeInput.addEventListener("input", aggiornaEtichetta);
-
-        prezzoInput.addEventListener("input", () => {
-            manualEdit = true;
-            aggiornaEtichetta();
+        JsBarcode("#barcode", codice, {
+            format: "CODE128",
+            width: 2,
+            height: 50,
+            displayValue: true
         });
 
-        if (costoAcquistoInput && ricaricoInput) {
-            costoAcquistoInput.addEventListener("input", () => {
-                manualEdit = false;
-                aggiornaPrezzoDaCalcolo();
-            });
-
-            ricaricoInput.addEventListener("input", () => {
-                manualEdit = false;
-                aggiornaPrezzoDaCalcolo();
-            });
-        }
-
-        aggiornaEtichetta(); // inizializzazione
-    } else {
-        console.error("Uno o più input non trovati nel DOM.");
+        prezzoDiv.textContent = `€ ${prezzo.toFixed(2)}`;
+        nomeArticoloDiv.textContent = nome;
     }
+
+    function aggiornaPrezzoDaCalcolo() {
+        const costo = parseFloat(costoAcquistoInput?.value);
+        const ricarico = parseFloat(ricaricoInput?.value);
+
+        if (!isNaN(costo) && !isNaN(ricarico)) {
+            const prezzoCalcolato = costo + (costo * ricarico / 100);
+            manualEdit = false;
+            prezzoInput.value = prezzoCalcolato.toFixed(2);
+            aggiornaEtichetta(); // <-- FONDAMENTALE! Forza aggiornamento
+        }
+    }
+
+    codiceInput.addEventListener("input", aggiornaEtichetta);
+    nomeInput.addEventListener("input", aggiornaEtichetta);
+
+    prezzoInput.addEventListener("input", () => {
+        manualEdit = true;
+        aggiornaEtichetta();
+    });
+
+    costoAcquistoInput.addEventListener("input", aggiornaPrezzoDaCalcolo);
+    ricaricoInput.addEventListener("input", aggiornaPrezzoDaCalcolo);
+
+    // aggiornamento iniziale
+    aggiornaPrezzoDaCalcolo();
+    aggiornaEtichetta();
 });

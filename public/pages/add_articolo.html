@@ -146,9 +146,11 @@
                         <h4>Inserisci articolo</h4>
                         <form action="" id="formArticolo">
                             <div class="btn-group">
-                                <a href="articoli" style="margin-right: 5%;"><button
-                                        class="btn btn-light">Annulla</button></a>
-                                <button class="btn" style="background-color: #2C3E50; color: white;">Inserisci</button>
+                                <a href="articoli" style="margin-right: 5%;"><button class="btn btn-light"
+                                        type="button">Annulla</button></a>
+
+                                <button class="btn" style="background-color: #2C3E50; color: white;"
+                                    type="submit">Inserisci</button>
                             </div>
                     </div>
                 </div>
@@ -462,11 +464,11 @@
                             <div class="p-3" style="margin-bottom: -1%;">
                                 <label for="marca" class="form-label">Posizione</label>
                                 <input type="text" class="form-control" id="ubicazione" name="ubicazione"
-                                    placeholder="Vetrica, cassaforte ...">
+                                    placeholder="Vetrina, cassaforte ...">
                             </div>
                         </div>
 
-                        <div class="div-customer mt-4" style="height: 286px;">
+                        <div class="div-customer mt-4" style="height: auto;">
                             <div class="d-flex justify-content-between align-items-start title-card p-3">
                                 <h6 class="mb-0 text-muted"><i class="bi bi-upc-scan"></i>
                                     Anteprima etichetta
@@ -494,15 +496,16 @@
                     <div class="d-flex justify-content-between">
                         <h4>Inserisci articolo</h4>
                         <div class="btn-group">
-                            <a href="articoli" style="margin-right: 5%;"><button
-                                    class="btn btn-light">Annulla</button></a>
-                            <button class="btn" style="background-color: #2C3E50; color: white;">Inserisci</button>
+                            <button type="button" class="btn btn-light" style="margin-right: 5%;"
+                                onclick="window.location.href='articoli'">Annulla</button>
+                            <button class="btn" style="background-color: #2C3E50; color: white;"
+                                type="submit">Inserisci</button>
                         </div>
-
+                        </form>
                     </div>
                 </div>
             </div>
-            </form>
+
         </div>
     </div>
 
@@ -586,15 +589,13 @@
                     .then(data => {
                         if (data.message) {
                             alert('Inserimento andato a buon fine!');
-                            document.getElementById('formArticolo').reset();
+                            stampaEtichettaEPL(document.getElementById('codice').value, document.getElementById('nome').value, document.getElementById('prezzo_vendita').value)
+                            // Reindirizza alla pagina "articoli"
+                            window.location.href = "opalix_server/public/articoli";
                         } else if (data.error) {
                             alert('Errore: ' + data.error);
                         }
                     })
-                    .catch(error => {
-                        console.error('Errore durante l\'inserimento:', error);
-                        alert('Errore durante l\'inserimento.');
-                    });
             };
 
             if (file) {
@@ -661,10 +662,12 @@
                 uploadArea.style.display = 'none';
 
                 // Mostra l'anteprima
-                preview.innerHTML = `<img src="${e.target.result}" style="max-width: 200px; max-height: 200px;" class="img-fluid rounded shadow" />`;
+                preview.innerHTML = `<img src="${e.target.result}" alt="Anteprima immagine" />`;
+                preview.style.display = 'flex';
             };
             reader.readAsDataURL(file);
         }
+
     </script>
 
     <script>

@@ -139,9 +139,9 @@
                         <h5>Articoli</h5>
                         <div>
                             <a href="add_articolo">
-                            <button class="btn btn-sm"
-                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
-                                    Nuovo</b></button></a>
+                                <button class="btn btn-sm"
+                                    style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
+                                        Nuovo</b></button></a>
                             <!--<button class="btn btn-sm"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
                                         class="bi bi-funnel-fill"></i> Filtra</b></button>-->
@@ -163,7 +163,6 @@
                                 <th class="custom-thead">Materiale</th>
                                 <th class="custom-thead">Carati</th>
                                 <th class="custom-thead">Peso</th>
-                                <th class="custom-thead">Pietre</th>
                                 <th class="custom-thead">Stato</th>
                                 <th class="custom-thead">Azioni</th>
                             </tr>
@@ -178,243 +177,8 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modalNuovoCliente" tabindex="-1" aria-labelledby="modalNuovoClienteLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
-
-                <div class="modal-header"
-                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                    <h5 class="modal-title fw-bold" id="modalNuovoClienteLabel">
-                        <i class="fas fa-user-plus me-2"></i>Nuovo Cliente
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Chiudi"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="formCliente" class="p-3">
-
-                        <!-- Dati Cliente -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati
-                                    Cliente</h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="nome" class="form-label">Nome</label>
-                                        <input type="text" class="form-control rounded-3" id="nome" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="cognome" class="form-label">Cognome</label>
-                                        <input type="text" class="form-control rounded-3" id="cognome" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="cf" class="form-label">Codice Fiscale</label>
-                                        <input type="text" class="form-control rounded-3" id="cf" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="dataNascita" class="form-label">Data di Nascita</label>
-                                        <input type="date" class="form-control rounded-3" id="dataNascita" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Indirizzo -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo
-                                </h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="via" class="form-label">Via</label>
-                                        <input type="text" class="form-control rounded-3" id="via" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="cap" class="form-label">CAP</label>
-                                        <input type="text" class="form-control rounded-3" id="cap" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="citta" class="form-label">Città</label>
-                                        <input type="text" class="form-control rounded-3" id="citta" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="provincia" class="form-label">Provincia</label>
-                                        <input type="text" class="form-control rounded-3" id="provincia" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
-                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
-                                    </div>
-                                    <div class=" col-md-6">
-                                        <label for="paese" class="form-label">Nazione</label>
-                                        <input type="text" class="form-control rounded-3" id="paese" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contatti -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
-                                </h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="telefono" class="form-label">Telefono</label>
-                                        <input type="text" class="form-control rounded-3" id="telefono" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control rounded-3" id="email" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer"
-                            style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-                            <button type="button" class="btn btn-secondary rounded-3"
-                                data-bs-dismiss="modal">Annulla</button>
-                            <button type="submit" form="formCliente" class="btn btn-primary rounded-3"
-                                style="background-color: #2C3E50; border-color: #2C3E50;">Salva Cliente</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
     </div>
-
-    <div class="modal fade" id="modalCliente" tabindex="-1" aria-labelledby="modalClienteLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
-
-                <div class="modal-header"
-                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                    <h5 class="modal-title fw-bold" id="modalClienteLabel">
-                        <i class="fas fa-user-edit me-2"></i>Modifica Cliente
-                    </h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                        aria-label="Chiudi"></button>
-                </div>
-
-                <div class="modal-body">
-                    <form id="formClienteModal" class="p-3">
-
-                        <!-- Dati Cliente -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-person-vcard-fill"></i> Dati
-                                    Cliente</h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="nomeModal" class="form-label">Nome</label>
-                                        <input type="text" class="form-control rounded-3" id="nomeModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="cognomeModal" class="form-label">Cognome</label>
-                                        <input type="text" class="form-control rounded-3" id="cognomeModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="cfModal" class="form-label">Codice Fiscale</label>
-                                        <input type="text" class="form-control rounded-3" id="cfModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="dataNascitaModal" class="form-label">Data di Nascita</label>
-                                        <input type="date" class="form-control rounded-3" id="dataNascitaModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Indirizzo -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building-fill"></i> Indirizzo
-                                </h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="viaModal" class="form-label">Via</label>
-                                        <input type="text" class="form-control rounded-3" id="viaModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="capModal" class="form-label">CAP</label>
-                                        <input type="text" class="form-control rounded-3" id="capModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label for="cittaModal" class="form-label">Città</label>
-                                        <input type="text" class="form-control rounded-3" id="cittaModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="provinciaModal" class="form-label">Provincia</label>
-                                        <input type="text" class="form-control rounded-3" id="provinciaModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;" maxlength="2"
-                                            pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="paeseModal" class="form-label">Nazione</label>
-                                        <input type="text" class="form-control rounded-3" id="paeseModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Contatti -->
-                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                            <div class="card-body">
-                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
-                                </h6>
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label for="telefonoModal" class="form-label">Telefono</label>
-                                        <input type="text" class="form-control rounded-3" id="telefonoModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label for="emailModal" class="form-label">Email</label>
-                                        <input type="email" class="form-control rounded-3" id="emailModal" required
-                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </form>
-                </div>
-
-                <div class="modal-footer"
-                    style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-                    <button type="button" class="btn btn-secondary rounded-3" data-bs-dismiss="modal">Annulla</button>
-                    <button type="submit" form="formClienteModal" class="btn btn-primary rounded-3"
-                        style="background-color: #2C3E50; border-color: #2C3E50;">Salva modifiche</button>
-                </div>
-
-            </div>
-        </div>
     </div>
-
-
-
-
-
-
-
 
 
     <script src="js/auth.js"></script>
@@ -503,7 +267,6 @@
                     <td>${articolo.materiale}</td>
                     <td>${articolo.carati_materiale || '-'}</td>
                     <td>${articolo.peso_materiale || '-'}</td>
-                    <td>${articolo.pietre || '-'}</td>
                     <td>${articolo.stato}</td>
                     <td><button class="actions-btn" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button></td>
                 `;

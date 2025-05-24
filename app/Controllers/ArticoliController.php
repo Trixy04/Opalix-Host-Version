@@ -80,6 +80,8 @@ class ArticoliController
                 sendJsonResponse(['error' => 'Formato immagine non valido'], 400);
                 return;
             }
+        }else{
+            
         }
 
         // Campi obbligatori
