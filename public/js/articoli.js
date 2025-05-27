@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     fetch('api/articoli')
         .then(response => response.json())
         .then(data => {
@@ -22,90 +22,115 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${articolo.categoria}</td>
                     <td>${articolo.marca}</td>
                     <td>${articolo.materiale}</td>
-                    <td>${articolo.carati || '-'}</td>
-                    <td>${articolo.peso || '-'}</td>
-                    <td>${articolo.pietre || '-'}</td>
+                    <td>${articolo.carati_materiale || '-'}</td>
+                    <td>${articolo.peso_materiale || '-'}</td>
                     <td>${articolo.stato}</td>
-                    <td><button class="actions-btn" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button></td>
+                    <td>
+                        <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button>
+                        <button style="margin-right: 15%" class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-printer"></i></button>
+                        <button class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-upc"></i></button>
+                    </td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            const buttons = document.querySelectorAll('.actions-btn');
-            buttons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const articoloId = button.getAttribute('data-id');
-                    const articolo = data.find(a => a.id == articoloId);
+            // ✅ AGGIUNGI ORA GLI EVENT LISTENER
 
-                    if (articolo) {
-                        document.getElementById('codiceModal').value = articolo.codice_articolo;
-                        document.getElementById('nomeModal').value = articolo.nome_articolo;
-                        document.getElementById('descrizioneModal').value = articolo.descrizione;
-                        document.getElementById('caratiModal').value = articolo.carati_materiale;
-                        document.getElementById('pesoModal').value = articolo.peso_materiale;
-                        document.getElementById('prezzoAcquistoModal').value = articolo.prezzo_acquisto;
-                        document.getElementById('prezzoVenditaModal').value = articolo.prezzo_vendita;
-                        document.getElementById('quantitaModal').value = articolo.quantita;
-                        document.getElementById('ubicazioneModal').value = articolo.ubicazione;
-                        document.getElementById('noteModal').value = articolo.note;
+            // Stampa PDF
+            document.querySelectorAll('.btn-print').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const articoloId = this.getAttribute('data-id');
+                    if (articoloId) {
+                        btn.disabled = true;
+                        setTimeout(() => { btn.disabled = false }, 1000);
 
-                        // Selects (assumendo che abbiano id coerenti con questi)
-                        document.getElementById('categoriaModal').value = articolo.categoria_id;
-                        document.getElementById('marcaModal').value = articolo.marca_id;
-                        document.getElementById('materialeModal').value = articolo.materiale_id;
-                        document.getElementById('statoModal').value = articolo.stato_id;
-
-                        const modal = new bootstrap.Modal(document.getElementById('modalArticolo'));
-                        modal.show();
-
-                        const form = document.getElementById('formArticoloModal');
-                        form.addEventListener('submit', function (event) {
-                            event.preventDefault();
-                            updateArticolo(articoloId);
-                        });
+                        const popup = window.open(
+                            `report/esporta_articolo_pdf.php?id=${articoloId}`,
+                            'pdfPopup',
+                            'width=900,height=700,scrollbars=yes,resizable=yes'
+                        );
+                        if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+                            alert("Popup bloccato dal browser. Abilita i popup per continuare.");
+                        }
                     }
+                });
+            });
+
+
+            // Modifica Articolo
+            document.querySelectorAll('.btn-edit-articolo').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const articoloId = this.dataset.id;
+                    console.log('ID articolo cliccato:', articoloId);
+
+                    fetch(`api/articoli/${articoloId}`)
+                        .then(response => response.json())
+                        .then(data => {
+
+                            // Popola campi
+                            document.getElementById('articolo_id').value = data.id || '';
+                            document.getElementById('codice').value = data.codice_articolo || '';
+                            document.getElementById('nome').value = data.nome_articolo || '';
+                            document.getElementById('descrizione').value = data.descrizione || '';
+                            document.getElementById('categoria_id').value = data.categoria_id;
+                            document.getElementById('marca_id').value = data.marca_id;
+                            popolaSelect(`materiale_id`, "/opalix_server/public/api/materiali", "nome", "id", data.materiale_id);
+                            document.getElementById('peso_materiale').value = data.peso_materiale || '';
+                            document.getElementById('carati_materiale').value = data.carati_materiale || '';
+                            document.getElementById('prezzo_acquisto').value = data.prezzo_acquisto || '';
+                            document.getElementById('prezzo_vendita').value = data.prezzo_vendita || '';
+
+                            if (data.stato_id == 1) {
+                                document.getElementById('disponibile').checked = true;
+                            } else if (data.stato_id == 2) {
+                                document.getElementById('non_disponibile').checked = true;
+                            }
+
+                            if (Array.isArray(data.pietre)) {
+                                for (let i = 1; i <= 4; i++) {
+                                    const pietra = data.pietre[i - 1]; // può essere undefined
+
+                                    // Popola la select con la pietra specifica (o nulla)
+                                    popolaSelect(
+                                        `pietra_${i}`,
+                                        "/opalix_server/public/api/pietre",
+                                        "nome",
+                                        "id",
+                                        pietra ? pietra.pietra_id : null
+                                    );
+
+                                    // Setta campi qta e carati, vuoti se la pietra non c'è
+                                    const q = document.getElementById(`pietra_qta_${i}`);
+                                    const c = document.getElementById(`pietra_carati_${i}`);
+
+                                    if (q) q.value = pietra ? pietra.quantita : '';
+                                    if (c) c.value = pietra ? pietra.caratura : '';
+                                }
+                            } else {
+                                for (let i = 1; i <= 4; i++) {
+                                    popolaSelect(`pietra_${i}`, "/opalix_server/public/api/pietre", "nome", "id");
+                                    document.getElementById(`pietra_qta_${i}`).value = '';
+                                    document.getElementById(`pietra_carati_${i}`).value = '';
+                                }
+                            }
+
+                            if (data.foto) {
+                                const preview = document.getElementById('preview');
+                                preview.innerHTML = `<img src="/uploads/${data.foto}" class="img-fluid" style="max-height: 200px;">`;
+                            }
+
+                            const modal = new bootstrap.Modal(document.getElementById('modalModificaArticolo'));
+                            modal.show();
+                        })
+                        .catch(error => {
+                            console.error('Errore nel recupero dati articolo:', error);
+                            alert('Errore nel recupero dati articolo');
+                        });
                 });
             });
         })
         .catch(error => {
-            console.error('Errore caricamento articoli:', error);
+            console.error('Errore nel caricamento degli articoli:', error);
         });
 
-    function updateArticolo(articoloId) {
-        const articolo = {
-            codice_articolo: document.getElementById('codiceModal').value,
-            nome: document.getElementById('nomeModal').value,
-            descrizione: document.getElementById('descrizioneModal').value,
-            carati: parseFloat(document.getElementById('caratiModal').value),
-            peso: parseFloat(document.getElementById('pesoModal').value),
-            prezzo_acquisto: parseFloat(document.getElementById('prezzoAcquistoModal').value),
-            prezzo_vendita: parseFloat(document.getElementById('prezzoVenditaModal').value),
-            quantita: parseInt(document.getElementById('quantitaModal').value),
-            ubicazione: document.getElementById('ubicazioneModal').value,
-            note: document.getElementById('noteModal').value,
-            categoria_id: parseInt(document.getElementById('categoriaModal').value),
-            marca_id: parseInt(document.getElementById('marcaModal').value),
-            materiale_id: parseInt(document.getElementById('materialeModal').value),
-            stato_id: parseInt(document.getElementById('statoModal').value)
-        };
-
-        fetch(`/opalix_server/public/api/articoli/${articoloId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(articolo)
-        })
-            .then(response => response.json())
-            .then(data => {
-                alert('Articolo aggiornato con successo!');
-                const modal = bootstrap.Modal.getInstance(document.getElementById('modalArticolo'));
-                modal.hide();
-                location.reload();
-            })
-            .catch(error => {
-                console.error('Errore aggiornamento articolo:', error);
-                alert('Errore durante l\'aggiornamento');
-            });
-    }
 });

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body { font-family: DejaVu Sans, sans-serif; font-size: 12px; color: #333; }
+    .header, .footer { text-align: center; }
+    .company-info { text-align: left; font-size: 13px; width: 290px; border: 1px solid gray; padding: 3%; border-radius: 20px}
+    .barcode-top { float: right; text-align: right; width: 200px; }
+    .section-title { background-color: #f0f0f0; padding: 6px; font-weight: bold; margin-top: 20px; }
+    .table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    .table td, .table th { padding: 8px; border: 1px solid #ccc; vertical-align: top; }
+    .barcode { text-align: center; margin-top: 10px; }
+    .product-photo { max-width: 200px; border: 1px solid #ccc; }
+    .clearfix::after { content: ""; display: table; clear: both; }
+  </style>
+</head>
+<body>
+
+  <div class="clearfix">
+    <div class="company-info">
+      <strong>OPALIX GIOIELLERIA SRL</strong><br>
+      Via dei Preziosi 12, 00100 Roma (RM)<br>
+      P.IVA: 12345678901 - Tel: 06.1234567<br>
+      Email: info@opalix.it
+    </div>
+    <div class="barcode-top">
+      <img src="data:image/png;base64,{{ barcode_base64 }}" alt="Codice a barre"><br>
+      <small>{{ codice_articolo }}</small>
+    </div>
+  </div>
+
+  <div class="section-title">Scheda Articolo - Codice {{ codice_articolo }}</div>
+
+  <table class="table">
+    <tr>
+      <th>Nome Articolo</th>
+      <td>{{ nome_articolo }}</td>
+    </tr>
+    <tr>
+      <th>Categoria</th>
+      <td>{{ categoria }}</td>
+    </tr>
+    <tr>
+      <th>Marca</th>
+      <td>{{ marca }}</td>
+    </tr>
+    <tr>
+      <th>Materiale</th>
+      <td>{{ materiale }} - {{ carati_materiale }} K - {{ peso_materiale }} g</td>
+    </tr>
+<tr>
+  <th>Pietre</th>
+  <td>
+    {% if pietre is not empty %}
+      {% for pietra in pietre %}
+        {{ pietra.nome }} – {{ pietra.caratura }} ct (x{{ pietra.quantita }}){% if not loop.last %}, {% endif %}
+      {% endfor %}
+    {% else %}
+      Nessuna
+    {% endif %}
+  </td>
+</tr>
+
+    <tr>
+      <th>Prezzo Acquisto</th>
+      <td>€ {{ prezzo_acquisto }}</td>
+    </tr>
+    <tr>
+      <th>Prezzo Vendita</th>
+      <td><strong>€ {{ prezzo_vendita }}</strong></td>
+    </tr>
+    <tr>
+      <th>Quantità</th>
+      <td>{{ quantita }}</td>
+    </tr>
+    <tr>
+      <th>Ubicazione</th>
+      <td>{{ ubicazione }}</td>
+    </tr>
+    <tr>
+      <th>Stato</th>
+      <td>{{ stato }}</td>
+    </tr>
+    <tr>
+      <th>Note</th>
+      <td>{{ note }}</td>
+    </tr>
+    <tr>
+      <th>Descrizione</th>
+      <td>{{ descrizione }}</td>
+    </tr>
+  </table>
+
+  <div class="section-title">Foto Articolo</div>
+  <div class="barcode">
+    {% if foto %}
+      <img class="product-photo" src="{{ foto }}" alt="Foto Articolo">
+    {% else %}
+      <p><em>Nessuna foto disponibile</em></p>
+    {% endif %}
+  </div>
+
+  <div class="footer">
+    <hr>
+    <small>Generato da OPALIX Gestionale - {{ "now"|date("d/m/Y H:i") }}</small>
+  </div>
+
+</body>
+</html>

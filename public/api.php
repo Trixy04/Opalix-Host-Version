@@ -38,8 +38,10 @@ $router->get('/api/marche', 'MarcheController@getMarche');
 $router->get('/api/materiali', 'MaterialiController@getMateriali');
 
 // Articoli
-$router->get('/api/articoli', 'ArticoliController@getArticoli');
+$router->get('/api/articoli', 'ArticoliController@getArticoli'); // Tutti gli articoli
+$router->get('/api/articoli/{id}', 'ArticoliController@getArticoloById'); // Articolo singolo
 $router->post('/api/articoli', 'ArticoliController@creaArticolo');
+$router->put('/api/articoli/{id}', 'ArticoliController@updateArticolo');
 
 // Pietre
 $router->get('/api/pietre', 'PietreController@getPietre');

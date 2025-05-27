@@ -28,6 +28,10 @@ class ComposerStaticInit2464cb6205d5a710f1e5e5e9bd4c1c19
             'Svg\\' => 4,
             'Sabberworm\\CSS\\' => 15,
         ),
+        'P' => 
+        array (
+            'Picqer\\Barcode\\' => 15,
+        ),
         'M' => 
         array (
             'MattiaTeriaca\\OpalixServer\\' => 27,
@@ -64,6 +68,10 @@ class ComposerStaticInit2464cb6205d5a710f1e5e5e9bd4c1c19
         'Sabberworm\\CSS\\' => 
         array (
             0 => __DIR__ . '/..' . '/sabberworm/php-css-parser/src',
+        ),
+        'Picqer\\Barcode\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/picqer/php-barcode-generator/src',
         ),
         'MattiaTeriaca\\OpalixServer\\' => 
         array (

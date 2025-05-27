@@ -509,12 +509,10 @@
         </div>
     </div>
 
-
-
-
     </div>
     </div>
     </div>
+
 
 
 
@@ -591,7 +589,7 @@
                             alert('Inserimento andato a buon fine!');
                             stampaEtichettaEPL(document.getElementById('codice').value, document.getElementById('nome').value, document.getElementById('prezzo_vendita').value)
                             // Reindirizza alla pagina "articoli"
-                            window.location.href = "opalix_server/public/articoli";
+                            window.location.href = "/articoli";
                         } else if (data.error) {
                             alert('Errore: ' + data.error);
                         }

@@ -1,80 +1,102 @@
-// public/js/auth.js
+// Utility: Recupera token e info utente
+function getAuthInfo() {
+  return {
+    token: localStorage.getItem('jwt'),
+    nome: localStorage.getItem('nome'),
+    cognome: localStorage.getItem('cognome')
+  };
+}
 
-// Funzione per verificare se l'utente è autenticato
-function checkAuth() {
-  const token = localStorage.getItem('jwt');
+// Utility: Esegue logout
+function logout() {
+  localStorage.removeItem('jwt');
+  localStorage.removeItem('nome');
+  localStorage.removeItem('cognome');
+  window.location.href = 'login';
+}
 
-  // Protezione per la home
-  if (window.location.pathname.includes('index.html')) {
-    if (!token) {
-      window.location.href = 'login'; // se non loggato, redirect al login
-    } else {
-      // Se l'utente è loggato, recupera nome e cognome dal localStorage
-      const nome = localStorage.getItem('nome');
-      const cognome = localStorage.getItem('cognome');
-      if (nome && cognome) {
-        // Mostra il nome e cognome nella sidebar
-        const sidebarUser = document.getElementById('sidebarUser');
-        if (sidebarUser) {
-          sidebarUser.innerHTML = `${nome} ${cognome}`;
-        }
-      }
-    }
-  }
-
-  // Se siamo sulla pagina di login e l'utente è già loggato, redirigiamolo alla home
-  if (window.location.pathname.includes('login.html') && token) {
-    window.location.href = 'index.html'; // se già loggato, redirect alla home
+// Utility: Redirect se loggato o no
+function redirectIf(condition, target) {
+  if (condition) {
+    window.location.href = target;
   }
 }
 
-// Esegui la funzione all'avvio della pagina
-checkAuth();
+// Verifica autenticazione all'avvio
+function checkAuth() {
+  const { token, nome, cognome } = getAuthInfo();
+  const path = window.location.pathname;
 
-// Gestione del login nel form
-const loginForm = document.getElementById('loginForm');
-const loginError = document.getElementById('loginError'); // aggiunto riferimento
+  const isHome = path.includes('index.html');
+  const isLogin = path.endsWith('/login') || path.endsWith('/login.html');
 
-if (loginForm) {
+  // Se sei sulla home ma non loggato → vai al login
+  redirectIf(isHome && !token, 'login');
+
+  // Se sei sulla login ma già loggato → vai alla home
+  redirectIf(isLogin && token, 'index.html');
+
+  // Mostra nome e cognome nella sidebar, se presenti
+  if (isHome && nome && cognome) {
+    const sidebarUser = document.getElementById('sidebarUser');
+    if (sidebarUser) {
+      sidebarUser.textContent = `${nome} ${cognome}`;
+    }
+  }
+}
+
+// Gestione login form
+function setupLoginForm() {
+  const loginForm = document.getElementById('loginForm');
+  const loginError = document.getElementById('loginError');
+
+  if (!loginForm) return;
+
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
-    const res = await fetch('/opalix_server/public/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    try {
+      const res = await fetch('/opalix_server/public/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-    const data = await res.json();
+      const data = await res.json();
 
-    if (res.ok && data.token) {
-      // Salva il token, nome e cognome nel localStorage
-      localStorage.setItem('jwt', data.token);
-      localStorage.setItem('nome', data.nome);  // Salva nome
-      localStorage.setItem('cognome', data.cognome);  // Salva cognome
-      window.location.href = 'index.html';
-    } else {
-      loginError.innerText = data.error || 'Errore imprevisto';
+      if (res.ok && data.token) {
+        localStorage.setItem('jwt', data.token);
+        localStorage.setItem('nome', data.nome);
+        localStorage.setItem('cognome', data.cognome);
+        window.location.href = 'index.html';
+      } else {
+        loginError.innerText = data.error || 'Errore imprevisto';
+        loginError.style.display = 'block';
+      }
+    } catch (err) {
+      loginError.innerText = 'Errore di rete o server non raggiungibile';
       loginError.style.display = 'block';
     }
   });
 }
 
-// Gestione logout da più pulsanti con classe comune
-document.addEventListener('DOMContentLoaded', function () {
-  console.log("DOM fully loaded");
+// Gestione logout
+function setupLogout() {
   const logoutButtons = document.querySelectorAll('.logoutLink');
-  logoutButtons.forEach(button => {
-    button.addEventListener('click', function (e) {
+  logoutButtons.forEach(btn =>
+    btn.addEventListener('click', (e) => {
       e.preventDefault();
-      // Rimuovi token, nome e cognome dal localStorage
-      localStorage.removeItem('jwt');
-      localStorage.removeItem('nome');
-      localStorage.removeItem('cognome');
-      window.location.href = '/opalix_server/public/pages/login.html';
-    });
-  });
+      logout();
+    })
+  );
+}
+
+// Avvio script
+document.addEventListener('DOMContentLoaded', () => {
+  checkAuth();
+  setupLoginForm();
+  setupLogout();
 });

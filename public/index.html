@@ -14,7 +14,7 @@
     const token = localStorage.getItem('jwt');
     if (!token) {
       // Se non esiste, reindirizza al login
-      window.location.href = 'login.html';
+      window.location.href = '/opalix_server/public/login.html';
     }
   </script>
   <title>HOME</title>
@@ -535,6 +535,7 @@
   </div>
 
   <script src="js/auth.js"></script>
+  <script src="js/sidebar_dati.js"></script>
 
   <script>
     // Recupero nome e cognome dall'archivio locale
@@ -561,22 +562,7 @@
     }
   </script>
 
-  <script>
-    function updateDateTime() {
-      const now = new Date();
-      const formatted = now.toLocaleString('it-IT', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-      document.getElementById('datetime').textContent = formatted;
-    }
-
-    updateDateTime();
-    setInterval(updateDateTime, 60000); // aggiorna ogni minuto
-  </script>
+  
 
   <script>
     const ctxi = document.getElementById('marketChart').getContext('2d');
