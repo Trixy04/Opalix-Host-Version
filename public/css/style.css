@@ -507,6 +507,7 @@ body {
 }
 .etichetta svg {
   margin: 10px 0;
+  width: 250px;
 }
 .etichetta .prezzo {
   font-size: 18px;

@@ -79,11 +79,17 @@ document.addEventListener('DOMContentLoaded', function () {
                             document.getElementById('carati_materiale').value = data.carati_materiale || '';
                             document.getElementById('prezzo_acquisto').value = data.prezzo_acquisto || '';
                             document.getElementById('prezzo_vendita').value = data.prezzo_vendita || '';
+                            const quantitaInput = document.getElementById('quantita');
+                            if (quantitaInput) quantitaInput.value = data.quantita || '';
+                            else console.warn("Elemento con ID 'quantita' non trovato nel DOM.");
+                            document.getElementById('ubicazione').value = data.ubicazione || '';
 
                             if (data.stato_id == 1) {
-                                document.getElementById('disponibile').checked = true;
+                                document.getElementsByName('disponibile').checked = true;
                             } else if (data.stato_id == 2) {
-                                document.getElementById('non_disponibile').checked = true;
+                                document.getElementsByName('non_disponibile').checked = true;
+                            }else{
+                                document.getElementsByName('in_ordine').checked = true;
                             }
 
                             if (Array.isArray(data.pietre)) {

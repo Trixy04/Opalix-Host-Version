@@ -562,7 +562,10 @@
                     categoria_id: document.getElementById('categoria_id').value,
                     descrizione: document.getElementById('descrizione').value || null,
                     marca_id: document.getElementById('marca_id').value === 'Seleziona' ? null : document.getElementById('marca_id').value,
-                    materiale_id: document.getElementById('materiale_id').value === 'Seleziona' ? null : document.getElementById('materiale_id').value,
+                    materiale_id: (() => {
+                        const val = document.getElementById('materiale_id').value;
+                        return (!val || val === 'Seleziona') ? 11 : parseInt(val);
+                    })(),
                     peso: document.getElementById('peso_materiale').value || null,
                     carati: document.getElementById('carati_materiale').value || null,
                     prezzo_acquisto: document.getElementById('prezzo_acquisto').value || null,

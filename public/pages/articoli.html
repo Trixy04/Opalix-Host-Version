@@ -411,21 +411,55 @@
                     </div>
                   </div>
 
+                  <!-- Magazzino -->
+                  <div class="div-customer mt-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                      <h6 class="mb-0 text-muted"><i class="bi bi-box-seam"></i>
+                        Informazioni di magazzino
+                      </h6>
+                    </div>
+                    <div class="p-3" style="margin-bottom: -1%;">
+                      <label for="categoria" class="form-label">Quantità in giacenza</label>
+                      <div class="input-group">
+                        <div class="input-group-text">Pezzi</div>
+                        <input type="number" class="form-control" id="quantita" name="quantita" required>
+                      </div>
+                    </div>
+                    <div class="p-3" style="margin-bottom: -1%;">
+                      <label for="marca" class="form-label">Posizione</label>
+                      <input type="text" class="form-control" id="ubicazione" name="ubicazione"
+                        placeholder="Vetrina, cassaforte ...">
+                    </div>
+                  </div>
+
                   <!-- Disponibilità -->
                   <div class="div-customer mt-4">
-                    <div class="title-card p-3">
-                      <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i> Disponibilità</h6>
+                    <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                      <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i>
+                        Disponibilità
+                      </h6>
                     </div>
-                    <div class="p-3">
+                    <div class="p-3" style="margin-bottom: -1%;">
                       <h6 class="mb-3">Stato disponibilità prodotto:</h6>
-                      <div class="form-check mb-2">
+                      <div class="form-check mb-3">
                         <input class="form-check-input" type="radio" name="stato_id" id="disponibile" value="1"
                           required>
-                        <label class="form-check-label" for="disponibile">Disponibile</label>
+                        <label class="form-check-label" for="radioDefault1">
+                          Disponibile
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="stato_id" id="non_disponibile" value="2"
+                          checked required>
+                        <label class="form-check-label" for="radioDefault2">
+                          Non disponibile
+                        </label>
                       </div>
                       <div class="form-check">
-                        <input class="form-check-input" type="radio" name="stato_id" id="non_disponibile" value="2">
-                        <label class="form-check-label" for="non_disponibile">Non disponibile</label>
+                        <input class="form-check-input" type="radio" name="stato_id" id="in_ordine" value="3" required>
+                        <label class="form-check-label" for="radioDefault2">
+                          In ordine
+                        </label>
                       </div>
                     </div>
                   </div>
@@ -436,6 +470,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Rimuovi articolo</button>
           <button type="submit" class="btn btn-primary" form="modificaArticoloForm">Salva modifiche</button>
         </div>
         </form>
@@ -477,36 +512,47 @@
         carati_materiale: document.getElementById('carati_materiale').value,
         prezzo_acquisto: document.getElementById('prezzo_acquisto').value,
         prezzo_vendita: document.getElementById('prezzo_vendita').value,
-        //quantita: document.getElementById('quantita').value,
-        //ubicazione: document.getElementById('ubicazione').value.trim(),
-        //stato_id: document.getElementById('stato_id').value,
-        //note: document.getElementById('note').value.trim(),
+        quantita: document.getElementById('quantita').value,
+        ubicazione: document.getElementById('ubicazione').value.trim(),
+        stato_id: document.querySelector('input[name="stato_id"]:checked')?.value,
+        note: "nessuna nota",
         pietre: []
       };
 
       // Raccolta pietre (se presenti)
-      document.querySelectorAll('.pietra-row').forEach(row => {
-        const pietra_id = row.querySelector('.pietra_id')?.value;
-        const caratura = row.querySelector('.caratura')?.value;
-        const quantita = row.querySelector('.quantita')?.value;
+      const pietre = [];
+      for (let i = 1; i <= 4; i++) {
+        const pietraIdRaw = document.getElementById(`pietra_${i}`)?.value;
 
-        if (pietra_id) {
-          data.pietre.push({
-            pietra_id,
-            caratura,
-            quantita
+        // Verifica che pietraId sia valido (non vuoto, non "null")
+        if (pietraIdRaw !== undefined && pietraIdRaw !== null && pietraIdRaw !== "" && pietraIdRaw !== "null") {
+          const caraturaRaw = document.getElementById(`pietra_carati_${i}`)?.value;
+          const quantitaRaw = document.getElementById(`pietra_qta_${i}`)?.value;
+
+          const caratura = caraturaRaw && !isNaN(caraturaRaw) ? parseFloat(caraturaRaw) : null;
+          const quantita = quantitaRaw && !isNaN(quantitaRaw) ? parseInt(quantitaRaw) : null;
+
+          pietre.push({
+            pietra_id: parseInt(pietraIdRaw),
+            caratura: caratura,
+            quantita: quantita
           });
         }
-      });
+      }
+
+      data.pietre = pietre;
+
+      console.log("JSON inviato:", JSON.stringify(data, null, 2));
 
       // Chiamata API
-      fetch(`/api/articoli/${id}`, {
+      fetch(`api/articoli/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       })
+
         .then(async response => {
           const result = await response.json();
 
