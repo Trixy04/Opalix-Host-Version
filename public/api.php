@@ -40,8 +40,12 @@ $router->get('/api/materiali', 'MaterialiController@getMateriali');
 // Articoli
 $router->get('/api/articoli', 'ArticoliController@getArticoli'); // Tutti gli articoli
 $router->get('/api/articoli/{id}', 'ArticoliController@getArticoloById'); // Articolo singolo
+$router->get('/api/pietre-articoli/{id}', 'ArticoliController@getPietreArticolo'); // Pietre articolo
+$router->post('/api/pietre-articoli', 'ArticoliController@addPietraArticolo'); // Pietre articolo
 $router->post('/api/articoli', 'ArticoliController@creaArticolo');
 $router->put('/api/articoli/{id}', 'ArticoliController@updateArticolo');
+$router->put('/api/pietre-articoli/{id}', 'ArticoliController@updatePietraArticolo'); // Pietre articolo
+$router->delete('/api/pietre-articoli/{id}', 'ArticoliController@deletePietraArticolo');
 
 // Pietre
 $router->get('/api/pietre', 'PietreController@getPietre');

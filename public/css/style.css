@@ -514,3 +514,9 @@ body {
   font-weight: bold;
   margin-top: 3px;
 }
+
+.no-border {
+    border: none !important;
+    box-shadow: none !important;
+    background-color: transparent;
+  }

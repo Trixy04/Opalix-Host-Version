@@ -27,8 +27,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>${articolo.stato}</td>
                     <td>
                         <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button>
-                        <button style="margin-right: 15%" class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-printer"></i></button>
-                        <button class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-upc"></i></button>
+                        <button class="actions-btn btn-pietre" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-gem"></i></button>
+                        <button class="actions-btn btn-pietre" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-file-earmark-text"></i></button>
+                        <button style="margin-right: 0%" class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-printer"></i></button>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -84,46 +85,14 @@ document.addEventListener('DOMContentLoaded', function () {
                             else console.warn("Elemento con ID 'quantita' non trovato nel DOM.");
                             document.getElementById('ubicazione').value = data.ubicazione || '';
 
-                            if (data.stato_id == 1) {
-                                document.getElementsByName('disponibile').checked = true;
-                            } else if (data.stato_id == 2) {
-                                document.getElementsByName('non_disponibile').checked = true;
-                            }else{
-                                document.getElementsByName('in_ordine').checked = true;
-                            }
+                            console.log(data.stato_id);
+                            console.log(document.getElementsByName('disponibile')); // Controlla se c'è almeno un elemento
 
-                            if (Array.isArray(data.pietre)) {
-                                for (let i = 1; i <= 4; i++) {
-                                    const pietra = data.pietre[i - 1]; // può essere undefined
 
-                                    // Popola la select con la pietra specifica (o nulla)
-                                    popolaSelect(
-                                        `pietra_${i}`,
-                                        "/opalix_server/public/api/pietre",
-                                        "nome",
-                                        "id",
-                                        pietra ? pietra.pietra_id : null
-                                    );
+                            if (data.stato_id == 1 ? document.getElementById('disponibile').checked = true :
+                                data.stato_id == 2 ? document.getElementById('non_disponibile').checked = true :
+                                    document.getElementById('in_ordine').checked = true);
 
-                                    // Setta campi qta e carati, vuoti se la pietra non c'è
-                                    const q = document.getElementById(`pietra_qta_${i}`);
-                                    const c = document.getElementById(`pietra_carati_${i}`);
-
-                                    if (q) q.value = pietra ? pietra.quantita : '';
-                                    if (c) c.value = pietra ? pietra.caratura : '';
-                                }
-                            } else {
-                                for (let i = 1; i <= 4; i++) {
-                                    popolaSelect(`pietra_${i}`, "/opalix_server/public/api/pietre", "nome", "id");
-                                    document.getElementById(`pietra_qta_${i}`).value = '';
-                                    document.getElementById(`pietra_carati_${i}`).value = '';
-                                }
-                            }
-
-                            if (data.foto) {
-                                const preview = document.getElementById('preview');
-                                preview.innerHTML = `<img src="/uploads/${data.foto}" class="img-fluid" style="max-height: 200px;">`;
-                            }
 
                             const modal = new bootstrap.Modal(document.getElementById('modalModificaArticolo'));
                             modal.show();

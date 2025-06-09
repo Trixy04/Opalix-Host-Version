@@ -83,6 +83,162 @@ class ArticoliController
         }
     }
 
+    public function getPietreArticolo($id = null)
+    {
+        global $conn;
+
+        try {
+            if ($id === null) {
+                sendJsonResponse(['error' => 'ID articolo mancante'], 400);
+                return;
+            }
+
+            // Query per ottenere le pietre associate a un articolo specifico
+            $sql = "
+            SELECT 
+                ap.id,
+                ap.id_pietra AS pietra_id,
+                p.nome,
+                ap.caratura_pietra AS caratura,
+                ap.qta_pietra AS quantita
+            FROM articoli_pietre ap
+            JOIN pietre p ON ap.id_pietra = p.id
+            WHERE ap.id_articolo = :articolo_id
+        ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':articolo_id', $id, PDO::PARAM_INT);
+            $stmt->execute();
+            $pietre = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            if (empty($pietre)) {
+                sendJsonResponse(['message' => 'Nessuna pietra trovata per questo articolo']);
+                return;
+            }
+
+            sendJsonResponse($pietre);
+
+        } catch (PDOException $e) {
+            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function addPietraArticolo()
+    {
+        global $conn;
+
+        // Legge i dati dalla richiesta POST (JSON)
+        $data = json_decode(file_get_contents("php://input"), true);
+
+        // Verifica che tutti i dati obbligatori siano presenti
+        if (
+            empty($data['id_articolo']) ||
+            empty($data['id_pietra']) ||
+            !isset($data['caratura']) ||
+            !isset($data['quantita'])
+        ) {
+            sendJsonResponse(['error' => 'Dati mancanti per aggiungere la pietra'], 400);
+            return;
+        }
+
+        try {
+            $sql = "INSERT INTO articoli_pietre (id_articolo, id_pietra, caratura_pietra, qta_pietra)
+                VALUES (:id_articolo, :id_pietra, :caratura, :quantita)";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id_articolo', $data['id_articolo'], PDO::PARAM_INT);
+            $stmt->bindParam(':id_pietra', $data['id_pietra'], PDO::PARAM_INT);
+            $stmt->bindParam(':caratura', $data['caratura']);
+            $stmt->bindParam(':quantita', $data['quantita'], PDO::PARAM_INT);
+            $stmt->execute();
+
+            $idInserito = $conn->lastInsertId();
+            sendJsonResponse([
+                'success' => true,
+                'message' => 'Pietra aggiunta con successo',
+                'id' => $idInserito
+            ], 201);
+
+            sendJsonResponse(['message' => 'Pietra aggiunta con successo'], 201);
+        } catch (PDOException $e) {
+            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        }
+    }
+
+    public function updatePietraArticolo($id)
+    {
+        global $conn;
+
+        // Legge il JSON in ingresso
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (!$input) {
+            sendJsonResponse(['error' => 'Dati non validi'], 400);
+            return;
+        }
+
+        // Estrae i campi richiesti
+        $id_pietra = $input['id_pietra'] ?? null;
+        $caratura = $input['caratura'] ?? null;
+        $quantita = $input['quantita'] ?? null;
+
+        // Verifica che tutti i campi siano presenti
+        if (!$id_pietra || $caratura === null || $quantita === null) {
+            sendJsonResponse(['error' => 'Campi obbligatori mancanti'], 400);
+            return;
+        }
+
+        try {
+            // Prepara la query di aggiornamento
+            $sql = "UPDATE articoli_pietre 
+                SET id_pietra = :id_pietra, 
+                    caratura_pietra = :caratura, 
+                    qta_pietra = :quantita 
+                WHERE id = :id";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+            $stmt->bindParam(':id_pietra', $id_pietra, PDO::PARAM_INT);
+            $stmt->bindParam(':caratura', $caratura);
+            $stmt->bindParam(':quantita', $quantita, PDO::PARAM_INT);
+            $stmt->execute();
+
+            sendJsonResponse(['success' => true, 'message' => 'Pietra modificata con successo']);
+
+        } catch (PDOException $e) {
+            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function deletePietraArticolo($id = null)
+    {
+        global $conn;
+
+        try {
+            if ($id === null) {
+                sendJsonResponse(['error' => 'ID mancante'], 400);
+                return;
+            }
+
+            $sql = "DELETE FROM articoli_pietre WHERE id = :id";
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+            if ($stmt->execute()) {
+                if ($stmt->rowCount() > 0) {
+                    sendJsonResponse(['message' => 'Pietra rimossa con successo']);
+                } else {
+                    sendJsonResponse(['message' => 'Nessuna riga trovata da eliminare'], 404);
+                }
+            } else {
+                sendJsonResponse(['error' => 'Errore nell\'eliminazione'], 500);
+            }
+
+        } catch (PDOException $e) {
+            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        }
+    }
+
 
 
     public function getArticoloById($id)
@@ -288,33 +444,6 @@ class ArticoliController
                 $conn->rollBack();
                 sendJsonResponse(['error' => 'Articolo non trovato o nessuna modifica effettuata'], 404);
                 return;
-            }
-
-            // Elimina pietre esistenti
-            $conn->prepare("DELETE FROM articoli_pietre WHERE id_articolo = :id")->execute([':id' => $id]);
-
-            // Inserisci nuove pietre (massimo 4)
-            if (!empty($input['pietre']) && is_array($input['pietre'])) {
-                $stmtPietra = $conn->prepare("
-                INSERT INTO articoli_pietre (id_articolo, id_pietra, caratura_pietra, qta_pietra)
-                VALUES (:id_articolo, :id_pietra, :caratura_pietra, :qta_pietra)
-            ");
-
-                $pietre = array_slice($input['pietre'], 0, 4); // massimo 4 pietre
-
-                foreach ($pietre as $pietra) {
-                    if (!empty($pietra['pietra_id'])) {
-                        $caratura = is_numeric($pietra['caratura']) ? $pietra['caratura'] : null;
-                        $quantita = is_numeric($pietra['quantita']) ? $pietra['quantita'] : null;
-
-                        $stmtPietra->execute([
-                            ':id_articolo' => $id,
-                            ':id_pietra' => $pietra['pietra_id'],
-                            ':caratura_pietra' => $caratura,
-                            ':qta_pietra' => $quantita
-                        ]);
-                    }
-                }
             }
 
             $conn->commit();

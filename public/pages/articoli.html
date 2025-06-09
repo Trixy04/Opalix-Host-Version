@@ -144,9 +144,11 @@
               <!--<button class="btn btn-sm"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
                                         class="bi bi-funnel-fill"></i> Filtra</b></button>-->
-              <a href="report/esporta_clienti_pdf.php" class="btn btn-sm"
-                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"
-                target="_blank"><b><i class="bi bi-folder-symlink"></i> Esporta</b></a>
+              <button class="btn btn-sm btn-print-all"
+                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;">
+                <b><i class="bi bi-folder-symlink"></i> Esporta</b>
+              </button>
+
             </div>
           </div>
 
@@ -211,7 +213,7 @@
                     </div>
                   </div>
 
-                  <!-- Immagine -->
+                  <!-- Immagine 
                   <div class="div-customer mt-4">
                     <div class="d-flex justify-content-between align-items-start mb-2 title-card">
                       <h6 class="mb-0 text-muted"><i class="bi bi-images"></i> Immagine</h6>
@@ -227,7 +229,7 @@
                       </div>
                       <div class="preview mt-3 text-center" id="preview"></div>
                     </div>
-                  </div>
+                  </div>-->
 
                   <!-- Dettagli prodotto -->
                   <div class="div-customer mt-4">
@@ -253,102 +255,8 @@
                           <label for="carati_materiale" class="form-label">Carati</label>
                           <div class="input-group">
                             <div class="input-group-text">Ct</div>
-                            <input type="number" class="form-control" id="carati_materiale" name="carati_materiale">
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="p-3">
-                      <hr>
-                      <h5><i>Pietre</i> <span data-bs-toggle="tooltip"
-                          title="Inserire massimo 4 pietre. Aggiunte extra dopo il salvataggio."><i
-                            class="bi bi-question-circle text-secondary"></i></span></h5>
-                      <hr>
-                      <!-- Pietre 1-4 -->
-                      <div class="row g-3" id="pietre">
-                        <!-- Template ripetibile per ciascuna pietra -->
-                        <!-- Pietra 1 -->
-                        <!-- Ripeti il blocco sottostante con id/nome diversi per pietre 2-4 -->
-                        <div class="col-4">
-                          <label class="form-label">Pietra</label>
-                          <select class="form-select" id="pietra_1" name="pietra_1">
-                            <option selected>Seleziona</option>
-                          </select>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Quantità</label>
-                          <div class="input-group">
-                            <div class="input-group-text">u</div>
-                            <input type="number" class="form-control" id="pietra_qta_1" name="pietra_qta_1">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Carati</label>
-                          <div class="input-group">
-                            <div class="input-group-text">Ct</div>
-                            <input type="number" class="form-control" id="pietra_carati_1" name="pietra_carati_1">
-                          </div>
-                        </div>
-                        <!-- Ripeti per 2, 3, 4... -->
-                        <div class="col-4">
-                          <label class="form-label">Pietra</label>
-                          <select class="form-select" id="pietra_2" name="pietra_2">
-                            <option selected>Seleziona</option>
-                          </select>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Quantità</label>
-                          <div class="input-group">
-                            <div class="input-group-text">u</div>
-                            <input type="number" class="form-control" id="pietra_qta_2" name="pietra_qta_2">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Carati</label>
-                          <div class="input-group">
-                            <div class="input-group-text">Ct</div>
-                            <input type="number" class="form-control" id="pietra_carati_2" name="pietra_carati_2">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Pietra</label>
-                          <select class="form-select" id="pietra_3" name="pietra_3">
-                            <option selected>Seleziona</option>
-                          </select>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Quantità</label>
-                          <div class="input-group">
-                            <div class="input-group-text">u</div>
-                            <input type="number" class="form-control" id="pietra_qta_3" name="pietra_qta_3">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Carati</label>
-                          <div class="input-group">
-                            <div class="input-group-text">Ct</div>
-                            <input type="number" class="form-control" id="pietra_carati_3" name="pietra_carati_3">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Pietra</label>
-                          <select class="form-select" id="pietra_4" name="pietra_4">
-                            <option selected>Seleziona</option>
-                          </select>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Quantità</label>
-                          <div class="input-group">
-                            <div class="input-group-text">u</div>
-                            <input type="number" class="form-control" id="pietra_qta_4" name="pietra_qta_4">
-                          </div>
-                        </div>
-                        <div class="col-4">
-                          <label class="form-label">Carati</label>
-                          <div class="input-group">
-                            <div class="input-group-text">Ct</div>
-                            <input type="number" class="form-control" id="pietra_carati_4" name="pietra_carati_4">
+                            <input type="number" class="form-control" id="carati_materiale" name="carati_materiale"
+                              step="0.01">
                           </div>
                         </div>
                       </div>
@@ -410,9 +318,44 @@
                       </div>
                     </div>
                   </div>
+                </div>
 
+                <div class="col-6">
+                  <!-- Disponibilità -->
+                  <div class="div-customer mt-4" style="height: 260px;">
+                    <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                      <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i>
+                        Disponibilità
+                      </h6>
+                    </div>
+                    <div class="p-3" style="margin-bottom: -1%;">
+                      <h6 class="mb-3">Stato disponibilità prodotto:</h6>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="stato_id" id="disponibile" value="1"
+                          required>
+                        <label class="form-check-label" for="radioDefault1">
+                          Disponibile
+                        </label>
+                      </div>
+                      <div class="form-check mb-3">
+                        <input class="form-check-input" type="radio" name="stato_id" id="non_disponibile" value="2"
+                          required>
+                        <label class="form-check-label" for="radioDefault2">
+                          Non disponibile
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="stato_id" id="in_ordine" value="3" required>
+                        <label class="form-check-label" for="radioDefault2">
+                          In ordine
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-6">
                   <!-- Magazzino -->
-                  <div class="div-customer mt-4">
+                  <div class="div-customer mt-4" style="height: 260px;">
                     <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
                       <h6 class="mb-0 text-muted"><i class="bi bi-box-seam"></i>
                         Informazioni di magazzino
@@ -432,37 +375,6 @@
                     </div>
                   </div>
 
-                  <!-- Disponibilità -->
-                  <div class="div-customer mt-4">
-                    <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
-                      <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i>
-                        Disponibilità
-                      </h6>
-                    </div>
-                    <div class="p-3" style="margin-bottom: -1%;">
-                      <h6 class="mb-3">Stato disponibilità prodotto:</h6>
-                      <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="stato_id" id="disponibile" value="1"
-                          required>
-                        <label class="form-check-label" for="radioDefault1">
-                          Disponibile
-                        </label>
-                      </div>
-                      <div class="form-check mb-3">
-                        <input class="form-check-input" type="radio" name="stato_id" id="non_disponibile" value="2"
-                          checked required>
-                        <label class="form-check-label" for="radioDefault2">
-                          Non disponibile
-                        </label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input" type="radio" name="stato_id" id="in_ordine" value="3" required>
-                        <label class="form-check-label" for="radioDefault2">
-                          In ordine
-                        </label>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>
@@ -470,13 +382,49 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annulla</button>
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Rimuovi articolo</button>
           <button type="submit" class="btn btn-primary" form="modificaArticoloForm">Salva modifiche</button>
         </div>
         </form>
       </div>
     </div>
   </div>
+
+  <!--Modal pietre-->
+  <div class="modal fade" id="modalPietre" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content shadow-lg rounded-4 border-0">
+        <div class="modal-header text-white rounded-top-4" style="background-color: #2C3E50;">
+          <h6 class="modal-title fw-bold"><i class="bi bi-gem me-2"></i>Pietre associate all'articolo</h6>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Chiudi"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="table-responsive">
+
+            <table class="table" id="tabella-pietre">
+              <thead class="table-light">
+                <tr>
+                  <th class="text-nowrap">Nome Pietra</th>
+                  <th class="text-nowrap">Caratura</th>
+                  <th class="text-nowrap">Quantità</th>
+                  <th class="text-center">Azioni</th>
+                </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+            </table>
+
+          </div>
+          <div class="d-flex justify-content-end">
+            <button class="btn btn-success" id="btnAggiungiPietra">Inserisci pietra</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
 
   </div>
 
@@ -560,7 +508,7 @@
             throw new Error(result.error || 'Errore generico dal server.');
           }
 
-          alert('Articolo aggiornato con successo!');
+          alert('✅ Articolo aggiornato con successo!');
 
           // Chiudi il modal (se usi Bootstrap o simili)
           const modal = document.getElementById('modalModificaArticolo');
@@ -570,7 +518,7 @@
           }
 
           // Ricarica la tabella (implementa la tua funzione)
-          aggiornaTabellaArticoli(); // Placeholder
+          location.reload(); // Placeholder
 
         })
         .catch(error => {
@@ -581,7 +529,178 @@
   </script>
 
 
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const tbody = document.querySelector("#tabella-pietre tbody");
+      let currentArticoloId = null;
 
+      // Mostra modal e carica pietre
+      document.addEventListener("click", function (event) {
+        const button = event.target.closest(".btn-pietre");
+        if (!button) return;
+
+        currentArticoloId = button.dataset.id;
+        tbody.innerHTML = '<tr><td colspan="4">Caricamento...</td></tr>';
+
+        fetch(`api/pietre-articoli/${currentArticoloId}`)
+          .then(response => response.json())
+          .then(pietre => {
+            tbody.innerHTML = '';
+
+            if (pietre.length === 0) {
+              tbody.innerHTML = '<tr><td colspan="4">Nessuna pietra associata</td></tr>';
+              return;
+            }
+
+            pietre.forEach((pietra, index) => {
+              const selectId = `select_pietra_${index}`;
+              const tr = document.createElement('tr');
+              tr.dataset.id = pietra.id;
+
+              tr.innerHTML = `
+              <td><select id="${selectId}" class="form-select no-border"></select></td>
+              <td><input type="number" class="form-control no-border" value="${pietra.caratura}" step="0.01"></td>
+              <td><input type="number" class="form-control no-border" value="${pietra.quantita}" min="1"></td>
+              <td class="align-middle text-center">
+                <button class="actions-btn btn-modifica me-2"><i class="bi bi-check2-square" style="color: green"></i></button>
+                <button class="actions-btn btn-elimina"><i class="bi bi-trash" style="color: red"></i></button>
+              </td>
+            `;
+              tbody.appendChild(tr);
+              window.popolaSelect(selectId, "/opalix_server/public/api/pietre", "nome", "id", pietra.pietra_id);
+            });
+          })
+          .catch(() => {
+            tbody.innerHTML = '<tr><td colspan="4">Nessuna pietra trovata</td></tr>';
+          });
+
+        const modal = new bootstrap.Modal(document.getElementById("modalPietre"));
+        modal.show();
+
+        // Aggiungi nuova pietra (nuova riga)
+        const btnAggiungi = document.getElementById("btnAggiungiPietra");
+        btnAggiungi.onclick = function () {
+          const rigaVuota = tbody.querySelector("tr td[colspan='4']");
+          if (rigaVuota) rigaVuota.parentElement.remove();
+
+          const index = document.querySelectorAll("#tabella-pietre tbody tr").length;
+          const selectId = `select_pietra_${index}`;
+          const tr = document.createElement("tr");
+
+          tr.innerHTML = `
+          <td><select id="${selectId}" class="form-select no-border"></select></td>
+          <td><input type="number" class="form-control no-border" step="0.01"></td>
+          <td><input type="number" class="form-control no-border" min="1"></td>
+          <td class="align-middle text-center">
+            <button class="actions-btn btn-modifica me-2"><i class="bi bi-check2-square" style="color: green"></i></button>
+            <button class="actions-btn btn-elimina"><i class="bi bi-trash" style="color: red"></i></button>
+          </td>
+        `;
+          tbody.appendChild(tr);
+          window.popolaSelect(selectId, "/opalix_server/public/api/pietre", "nome", "id");
+        };
+      });
+
+      // Modifica o aggiunta pietra
+      tbody.addEventListener("click", function (event) {
+        const btnModifica = event.target.closest(".btn-modifica");
+        if (!btnModifica) return;
+
+        const tr = btnModifica.closest("tr");
+        const id = tr.dataset.id;
+        const select = tr.querySelector("select");
+        const inputs = tr.querySelectorAll("input[type='number']");
+        const caratura = parseFloat(inputs[0].value) || 0;
+        const quantita = parseInt(inputs[1].value) || 1;
+
+        const dati = {
+          id_articolo: currentArticoloId,
+          id_pietra: select.value,
+          caratura: caratura,
+          quantita: quantita
+        };
+
+        if (!id) {
+          // Nuova riga → POST
+          fetch("api/pietre-articoli", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dati)
+          })
+            .then(res => res.json())
+            .then(response => {
+              if (response.success && response.id) {
+                tr.dataset.id = response.id;
+                alert("Pietra aggiunta con successo");
+              } else {
+                alert("Errore durante l'aggiunta");
+              }
+            })
+            .catch(() => alert("Errore durante la richiesta al server."));
+        } else {
+          // Riga esistente → PUT
+          fetch(`api/pietre-articoli/${id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(dati)
+          })
+            .then(res => {
+              if (!res.ok) throw new Error();
+              alert("Modifica salvata");
+            })
+            .catch(() => alert("Errore durante la modifica"));
+        }
+      });
+
+      // Rimozione pietra
+      tbody.addEventListener("click", function (event) {
+        const btnElimina = event.target.closest(".btn-elimina");
+        if (!btnElimina) return;
+
+        const tr = btnElimina.closest("tr");
+        const id = tr.dataset.id;
+
+        if (!id) {
+          tr.remove();
+          if (tbody.querySelectorAll("tr").length === 0) {
+            tbody.innerHTML = '<tr><td colspan="4">Nessuna pietra associata</td></tr>';
+          }
+          return;
+        }
+
+        if (!confirm("Sei sicuro di voler rimuovere questa pietra?")) return;
+
+        fetch(`api/pietre-articoli/${id}`, { method: "DELETE" })
+          .then(res => {
+            if (!res.ok) throw new Error();
+            tr.remove();
+            if (tbody.querySelectorAll("tr").length === 0) {
+              tbody.innerHTML = '<tr><td colspan="4">Nessuna pietra associata</td></tr>';
+            }
+          })
+          .catch(() => alert("Errore nella rimozione della pietra."));
+      });
+    });
+  </script>
+
+  <script>
+    document.querySelectorAll('.btn-print-all').forEach(btn => {
+      btn.addEventListener('click', function () {
+        btn.disabled = true;
+        setTimeout(() => { btn.disabled = false }, 1000);
+
+        const popup = window.open(
+          'report/esporta_articoli_all_pdf.php',
+          'pdfPopup',
+          'width=900,height=700,scrollbars=yes,resizable=yes'
+        );
+
+        if (!popup || popup.closed || typeof popup.closed == 'undefined') {
+          alert("Popup bloccato dal browser. Abilita i popup per continuare.");
+        }
+      });
+    });
+  </script>
 
 
 
@@ -596,10 +715,6 @@
         sidebarUser.innerHTML = `${nome} ${cognome}`; // Visualizza il nome e cognome
       }
     }
-  </script>
-
-  <script>
-
   </script>
 
   <script>
