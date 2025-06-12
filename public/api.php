@@ -11,6 +11,7 @@ require_once '../app/Controllers/MarcheController.php';
 require_once '../app/Controllers/MaterialiController.php';
 require_once '../app/Controllers/ArticoliController.php';
 require_once '../app/Controllers/PietreController.php';
+require_once '../app/Controllers/FornitoriController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -49,6 +50,10 @@ $router->delete('/api/pietre-articoli/{id}', 'ArticoliController@deletePietraArt
 
 // Pietre
 $router->get('/api/pietre', 'PietreController@getPietre');
+
+//
+$router->get('/api/fornitori', 'FornitoriController@getFornitori');
+$router->post('/api/fornitori', 'FornitoriController@creaFornitore');
 
 // Dispatch finale
 $router->dispatch();

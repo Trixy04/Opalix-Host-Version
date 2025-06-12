@@ -448,6 +448,7 @@
                                 </div>
                             </div>
                         </div>
+                        <img id="defaultImg" src="assets/articoli/OIP.png" style="display:none;" />
                         <div class="div-customer mt-4">
                             <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
                                 <h6 class="mb-0 text-muted"><i class="bi bi-box-seam"></i>
@@ -473,8 +474,8 @@
                                 <h6 class="mb-0 text-muted"><i class="bi bi-upc-scan"></i>
                                     Anteprima etichetta
                                 </h6>
-                                <button class="btn p-0" onclick="stampaEtichetta()"><i
-                                        class="bi bi-printer"></i></button>
+                                <!--<button class="btn p-0" onclick="stampaEtichetta()" type="button"><i
+                                        class="bi bi-printer"></i></button>-->
                             </div>
                             <div id="anteprima" class="eti mt-2 mb-4 d-flex justify-content-center align-items-center"
                                 style="min-height: 200px;">
@@ -606,8 +607,26 @@
                 };
                 reader.readAsDataURL(file);
             } else {
-                buildAndSend(null); // invia senza foto
+                // Carica l'immagine di default come base64
+                const img = document.getElementById('defaultImg');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                img.onload = function () {
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    ctx.drawImage(img, 0, 0);
+                    const defaultBase64 = canvas.toDataURL('image/jpeg'); // o 'image/png' in base al formato
+                    buildAndSend(defaultBase64);
+                };
+
+                // Se è già stata caricata dal browser, forza il trigger manualmente
+                if (img.complete) {
+                    img.onload();
+                }
             }
+
+
         });
     </script>
 

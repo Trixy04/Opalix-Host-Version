@@ -15,10 +15,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 const tr = document.createElement('tr');
 
                 tr.innerHTML = `
+                    
                     <td><input type="checkbox"></td>
                     <td><img src="${'./' + articolo.foto}" alt="foto articolo" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"></td>
                     <td>${articolo.codice_articolo}</td>
-                    <td>${articolo.nome_articolo}</td>
+                    <td><a href="scheda_articolo?id=${articolo.id}">${articolo.nome_articolo}</a></td>
                     <td>${articolo.categoria}</td>
                     <td>${articolo.marca}</td>
                     <td>${articolo.materiale}</td>
@@ -28,9 +29,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>
                         <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-pencil"></i></button>
                         <button class="actions-btn btn-pietre" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-gem"></i></button>
-                        <button class="actions-btn btn-pietre" style="margin-right: 15%" data-id="${articolo.id}"><i class="bi bi-file-earmark-text"></i></button>
                         <button style="margin-right: 0%" class="actions-btn btn-print" data-id="${articolo.id}"><i class="bi bi-printer"></i></button>
+                        
                     </td>
+                    
                 `;
                 tbody.appendChild(tr);
             });

@@ -1,18 +1,30 @@
-function stampaEtichettaEPL(codice, nome, prezzo) {
-    const epl = `
-N
-q400
-Q280,24
+function stampaEtichettaZPL(codice, nome, prezzo) {
+    const zpl = `
+^XA
+^PW400
+^LL300
+^LH0,0
 
-A100,20,0,4,1,1,N,"${nome}"
-B100,60,0,1,2,4,60,N,"${codice}"
-A140,130,0,3,1,1,N,"${codice}"
-A120,180,0,4,1,1,N,"EUR ${prezzo}"
+^CF0,30
+^FO20,20^FB360,2,0,C^FD${nome}^FS
 
-P1
+^FO60,80
+^BY2,2,60
+^BCN,60,Y,N,N
+^FD${codice}^FS
+
+^CF0,25
+^FO20,160^FB360,1,0,C^FD${codice}^FS
+
+^FO20,200^GB360,1,1^FS  // linea sottile divisoria
+
+^CF0,35
+^FO20,220^FB360,1,0,C^FD€ ${prezzo}^FS
+
+^XZ
 `;
 
-    console.log("EPL generato:\n" + epl);
+    console.log("ZPL generato:\n" + zpl);
 
     BrowserPrint.getDefaultDevice("printer", function(printer) {
         if (!printer) {
@@ -20,20 +32,26 @@ P1
             return;
         }
 
-        printer.send(epl, function() {
+        printer.send(zpl, function() {
             console.log("Etichetta inviata.");
         }, function(error) {
-            console.error("Errore invio EPL:", error);
+            console.error("Errore invio ZPL:", error);
         });
     });
 }
 
-
-
 function stampaEtichetta() {
-    const codice = document.getElementById("codice").value || "000000";
-    const nome = document.getElementById("nome").value || "Articolo";
-    const prezzo = parseFloat(document.getElementById("prezzo_vendita").value) || 0;
+    const codiceElem = document.getElementById("codice");
+    const nomeElem = document.getElementById("nome");
+    const prezzoElem = document.getElementById("prezzo_vendita");
 
-    stampaEtichettaEPL(codice, nome, prezzo.toFixed(2));
+    const codice = codiceElem ? codiceElem.value : "000000";
+    const nome = nomeElem ? nomeElem.value : "Articolo";
+    const prezzo = prezzoElem ? parseFloat(prezzoElem.value) : 0;
+
+    stampaEtichettaZPL(codice, nome, prezzo.toFixed(2));
+}
+
+function stampaEtichettaConDati(nome, prezzo, codice) {
+    stampaEtichettaZPL(codice, nome, prezzo.toFixed(2));
 }
