@@ -59,6 +59,11 @@ document.addEventListener("DOMContentLoaded", function () {
   popolaSelect("pietra_4", "/opalix_server/public/api/pietre", "nome", "id");
   popolaSelect("categoria_id", "/opalix_server/public/api/categorie", "nome", "id");
   popolaSelect("marca_id", "/opalix_server/public/api/marche", "nome", "id");
+  popolaSelect("fornitoreId", "/opalix_server/public/api/fornitori", "ragione_sociale", "id");
+  popolaSelect("causaleId", "/opalix_server/public/api/causali", "descrizione", "id");
+  popolaSelect("pagamentoId", "/opalix_server/public/api/pagamenti", "descrizione", "id");
+  popolaSelect("ivaId", "/opalix_server/public/api/iva", "codice", "id");
+  popolaSelect("numeroDdt", "/opalix_server/public/api/doc", "codice", "id");
 });
 
 

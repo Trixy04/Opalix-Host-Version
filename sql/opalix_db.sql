@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Giu 13, 2025 alle 16:57
+-- Creato il: Giu 17, 2025 alle 17:21
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -20,6 +20,33 @@ SET time_zone = "+00:00";
 --
 -- Database: `opalix_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `aliquote_iva`
+--
+
+CREATE TABLE `aliquote_iva` (
+  `id` int(11) NOT NULL,
+  `codice` varchar(10) NOT NULL,
+  `aliquota` decimal(5,2) NOT NULL,
+  `descrizione` varchar(100) NOT NULL,
+  `attiva` tinyint(1) NOT NULL DEFAULT 1,
+  `data_inizio` date DEFAULT NULL,
+  `data_fine` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `aliquote_iva`
+--
+
+INSERT INTO `aliquote_iva` (`id`, `codice`, `aliquota`, `descrizione`, `attiva`, `data_inizio`, `data_fine`) VALUES
+(1, 'IVA22', 22.00, 'Aliquota ordinaria 22%', 1, '2013-01-01', NULL),
+(2, 'IVA10', 10.00, 'Aliquota ridotta 10% - Gioielli in oro bianco', 1, '2013-01-01', NULL),
+(3, 'IVA04', 4.00, 'Aliquota ridotta 4% - Prodotti specifici', 1, '2013-01-01', NULL),
+(4, 'IVA0', 0.00, 'Aliquota 0% - Esenti o esportazioni', 1, '2013-01-01', NULL),
+(5, 'IVA_ES', 0.00, 'Esente IVA - Esportazioni', 1, '2013-01-01', NULL);
 
 -- --------------------------------------------------------
 
@@ -51,7 +78,8 @@ CREATE TABLE `articoli` (
 --
 
 INSERT INTO `articoli` (`id`, `codice_articolo`, `nome`, `descrizione`, `categoria_id`, `marca_id`, `materiale_id`, `peso_materiale`, `carati_materiale`, `prezzo_acquisto`, `prezzo_vendita`, `quantita`, `ubicazione`, `stato_id`, `note`, `foto`) VALUES
-(1, '34242', 'vdsfds', NULL, 1, 3, 2, 1.00, 1.00, 1111.00, 12090.00, 1, NULL, 2, NULL, 'assets/articoli/foto_684c240545a0f4.63991028.jpeg');
+(1, '34242', 'vdsfds', NULL, 1, 3, 2, 1.00, 1.00, 1111.00, 12090.00, 1, NULL, 2, NULL, 'assets/articoli/foto_684c240545a0f4.63991028.jpeg'),
+(2, 'GAN0880J', 'Ring Calla', 'Calla Series Ring, 18Kt Orange Apricot Gold with Diamonds', 1, 21, 1, 8.00, 18.00, 700.00, 1610.00, 1, 'Vetrina', 1, NULL, 'assets/articoli/foto_68511f885bee24.70714338.jpeg');
 
 -- --------------------------------------------------------
 
@@ -73,7 +101,53 @@ CREATE TABLE `articoli_pietre` (
 
 INSERT INTO `articoli_pietre` (`id`, `id_pietra`, `id_articolo`, `qta_pietra`, `caratura_pietra`) VALUES
 (1, 16, 1, 1, 1),
-(2, 5, 1, 1, 1);
+(2, 5, 1, 1, 1),
+(3, 1, 2, 1, 0.01);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `carichi`
+--
+
+CREATE TABLE `carichi` (
+  `id` int(11) NOT NULL,
+  `numero_documento` varchar(50) NOT NULL,
+  `tipo_documento` enum('DDT','Fattura','Scontrino','Altro') NOT NULL DEFAULT 'DDT',
+  `data_documento` date NOT NULL,
+  `data_inserimento` timestamp NOT NULL DEFAULT current_timestamp(),
+  `id_fornitore` int(11) NOT NULL,
+  `id_utente` int(11) NOT NULL,
+  `id_sede` int(11) DEFAULT NULL,
+  `totale_carico` decimal(15,2) DEFAULT 0.00,
+  `id_pagamento` int(11) DEFAULT NULL,
+  `allegato_documento` varchar(255) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `id_causale` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `carichi_dettagli`
+--
+
+CREATE TABLE `carichi_dettagli` (
+  `id` int(11) NOT NULL,
+  `id_carico` int(11) NOT NULL,
+  `id_articolo` int(11) NOT NULL,
+  `codice_fornitore` varchar(100) DEFAULT NULL,
+  `quantita` int(11) NOT NULL DEFAULT 1,
+  `prezzo_unitario` decimal(15,4) NOT NULL DEFAULT 0.0000,
+  `iva` decimal(5,2) NOT NULL DEFAULT 22.00,
+  `sconto` decimal(5,2) DEFAULT 0.00,
+  `scadenza_garanzia` date DEFAULT NULL,
+  `data_scadenza` date DEFAULT NULL,
+  `codice_lotto` varchar(50) DEFAULT NULL,
+  `serial_number` varchar(100) DEFAULT NULL,
+  `ubicazione` varchar(100) DEFAULT NULL,
+  `note` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -107,6 +181,37 @@ INSERT INTO `categorie` (`id`, `nome`) VALUES
 (14, 'Medaglia'),
 (15, 'Tiarra'),
 (16, 'Ferma cravatta');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `causali_carico`
+--
+
+CREATE TABLE `causali_carico` (
+  `id` int(11) NOT NULL,
+  `codice` varchar(10) NOT NULL,
+  `descrizione` varchar(255) NOT NULL,
+  `attivo` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `causali_carico`
+--
+
+INSERT INTO `causali_carico` (`id`, `codice`, `descrizione`, `attivo`) VALUES
+(1, 'ACQ', 'Acquisto da fornitore', 1),
+(2, 'RESO', 'Reso da cliente', 1),
+(3, 'RIP', 'Riparazione completata (ritorno)', 1),
+(4, 'PROD', 'Produzione interna / Assemblaggio', 1),
+(5, 'OMAG', 'Omaggio ricevuto', 1),
+(6, 'INV', 'Carico inventariale', 1),
+(7, 'EXPO', 'Rientro da esposizione / fiera', 1),
+(8, 'VIS', 'Rientro da conto visione', 1),
+(9, 'TRASF', 'Trasferimento da altra sede / magazzino', 1),
+(10, 'LAB', 'Reso da laboratorio esterno', 1),
+(11, 'ADM', 'Movimentazione amministrativa', 1),
+(12, 'TERZ', 'Restituzione da terzista', 1);
 
 -- --------------------------------------------------------
 
@@ -439,8 +544,6 @@ CREATE TABLE `contatti_fornitori` (
 --
 
 INSERT INTO `contatti_fornitori` (`id`, `fornitore_id`, `tipo`, `valore`, `descrizione`) VALUES
-(1, 1, 'telefono', '+390612345001', 'Ufficio principale'),
-(2, 1, 'email', 'info@alfa.it', 'Email generale'),
 (3, 2, 'telefono', '+390262345002', 'Ufficio principale'),
 (4, 2, 'email', 'info@beta.it', 'Email generale'),
 (5, 3, 'telefono', '+390812345003', 'Ufficio principale'),
@@ -496,7 +599,11 @@ INSERT INTO `contatti_fornitori` (`id`, `fornitore_id`, `tipo`, `valore`, `descr
 (55, 28, 'telefono', '+390581234528', 'Ufficio principale'),
 (56, 28, 'email', 'info@etatheta.it', 'Email generale'),
 (57, 29, 'telefono', '+390479000529', 'Ufficio principale'),
-(58, 29, 'email', 'info@iotakappa.it', 'Email generale');
+(58, 29, 'email', 'info@iotakappa.it', 'Email generale'),
+(59, 32, 'Email', 'teriaca.mattia@gmail.com', 'resposabile'),
+(60, 33, 'Email', '43636', NULL),
+(61, 33, 'Email', '6346363', NULL),
+(64, 1, 'telefono', '+390612345001', 'Ufficio principale');
 
 -- --------------------------------------------------------
 
@@ -548,7 +655,9 @@ INSERT INTO `fornitori` (`id`, `codice_fornitore`, `ragione_sociale`, `partita_i
 (27, 'F027', 'Epsilon Zeta Spa', '80234567890', 'ABCDEZ67G89H012I', 'attivo', '2025-06-13 16:32:46'),
 (28, 'F028', 'Eta Theta Srl', '90234567890', 'BCDEFG78H90I123J', 'attivo', '2025-06-13 16:32:46'),
 (29, 'F029', 'Iota Kappa Spa', '01234567891', 'CDEFGH89I01J234K', 'attivo', '2025-06-13 16:32:46'),
-(30, 'F030', 'Lambda Mu Srl', '11234567891', 'DEFGHI90J12K345L', 'attivo', '2025-06-13 16:32:46');
+(30, 'F030', 'Lambda Mu Srl', '11234567891', 'DEFGHI90J12K345L', 'attivo', '2025-06-13 16:32:46'),
+(32, 'F031', 'Mattia Gioielli srl', 'TRCMTT04P13D612R', 'TRCMTT04P13D612R', 'attivo', '2025-06-16 11:15:35'),
+(33, 'F032', 'Studente', '63643', '64363466', 'attivo', '2025-06-16 11:32:07');
 
 -- --------------------------------------------------------
 
@@ -644,7 +753,7 @@ CREATE TABLE `indirizzi_fornitori` (
 --
 
 INSERT INTO `indirizzi_fornitori` (`id`, `fornitore_id`, `tipo`, `indirizzo`, `cap`, `citta`, `provincia`, `nazione`) VALUES
-(1, 1, 'sede legale', 'Via Roma 1', '00100', 'Roma', 'RM', 'Italia'),
+(1, 1, 'sede legale', 'Via Roma 1', '00100', 'Roma', 'MI', 'Italia'),
 (2, 2, 'sede legale', 'Corso Milano 2', '20100', 'Milano', 'MI', 'Italia'),
 (3, 3, 'sede legale', 'Piazza Napoli 3', '80100', 'Napoli', 'NA', 'Italia'),
 (4, 4, 'sede legale', 'Via Torino 4', '10100', 'Torino', 'TO', 'Italia'),
@@ -672,7 +781,28 @@ INSERT INTO `indirizzi_fornitori` (`id`, `fornitore_id`, `tipo`, `indirizzo`, `c
 (26, 26, 'sede legale', 'Via Matera 26', '75100', 'Matera', 'MT', 'Italia'),
 (27, 27, 'sede legale', 'Via Brindisi 27', '72100', 'Brindisi', 'BR', 'Italia'),
 (28, 28, 'sede legale', 'Via Grosseto 28', '58100', 'Grosseto', 'GR', 'Italia'),
-(29, 29, 'sede legale', 'Via Rimini 29', '47900', 'Rimini', 'RN', 'Italia');
+(29, 29, 'sede legale', 'Via Rimini 29', '47900', 'Rimini', 'RN', 'Italia'),
+(30, 32, 'Sede legale', 'Via Mario Rossi 45', '50019', 'Sesto Fiorentino', 'FI', 'ITALIA'),
+(31, 33, 'Via Alfredo Contini, 7, Sesto Fiorentino, FI', '63463634', '50019', 'Sesto Fiorentino (FI)', 'FI', 'Italia');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `magazzino_movimenti`
+--
+
+CREATE TABLE `magazzino_movimenti` (
+  `id` int(11) NOT NULL,
+  `id_articolo` int(11) NOT NULL,
+  `id_carico` int(11) DEFAULT NULL,
+  `id_operatore` int(11) NOT NULL,
+  `data_movimento` timestamp NOT NULL DEFAULT current_timestamp(),
+  `quantita` int(11) NOT NULL,
+  `stock_precedente` int(11) NOT NULL,
+  `stock_finale` int(11) NOT NULL,
+  `causale` varchar(255) NOT NULL,
+  `confermata` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -709,7 +839,8 @@ INSERT INTO `marche` (`id`, `nome`) VALUES
 (17, 'Pomellato'),
 (18, 'Salvini'),
 (19, 'Liu Jo Luxury'),
-(20, 'Michael Kors Jewelry');
+(20, 'Michael Kors Jewelry'),
+(21, 'Anna Maria Cammilli');
 
 -- --------------------------------------------------------
 
@@ -744,6 +875,38 @@ INSERT INTO `materiali` (`id`, `nome`) VALUES
 (15, 'Legno'),
 (16, 'Silicone'),
 (17, 'Vetro Murano');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `pagamenti`
+--
+
+CREATE TABLE `pagamenti` (
+  `id` int(11) NOT NULL,
+  `descrizione` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `pagamenti`
+--
+
+INSERT INTO `pagamenti` (`id`, `descrizione`) VALUES
+(1, 'Contanti'),
+(2, 'Bonifico Bancario Anticipato'),
+(3, 'Bonifico a 30 Giorni'),
+(4, 'Carta di Credito (POS in negozio)'),
+(5, 'Carta di Debito'),
+(6, 'POS Aziendale'),
+(7, 'PayPal'),
+(8, 'Satispay'),
+(9, 'Finanziamento a Rate'),
+(10, 'Assegno Circolare'),
+(11, 'Assegno Bancario'),
+(12, 'Permuta con altro gioiello'),
+(13, 'Compensazione con Fornitore'),
+(14, 'Pagamento con Oro Usato'),
+(15, 'Pagamento alla Consegna (solo fidati)');
 
 -- --------------------------------------------------------
 
@@ -785,6 +948,18 @@ INSERT INTO `pietre` (`id`, `nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `sedi`
+--
+
+CREATE TABLE `sedi` (
+  `id` int(11) NOT NULL,
+  `nome_sede` varchar(100) NOT NULL,
+  `indirizzo` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `stati_articolo`
 --
 
@@ -801,6 +976,34 @@ INSERT INTO `stati_articolo` (`id`, `nome`) VALUES
 (1, 'Disponibile'),
 (2, 'Non disponibile'),
 (3, 'In ordine');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `tipologie_documenti`
+--
+
+CREATE TABLE `tipologie_documenti` (
+  `id` int(11) NOT NULL,
+  `codice` varchar(20) NOT NULL,
+  `descrizione` varchar(100) NOT NULL,
+  `attivo` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `tipologie_documenti`
+--
+
+INSERT INTO `tipologie_documenti` (`id`, `codice`, `descrizione`, `attivo`, `created_at`, `updated_at`) VALUES
+(1, 'DDT', 'Documento di Trasporto', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(2, 'FATT_ACCOMP', 'Fattura Accompagnatoria', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(3, 'FATT_ACQUISTO', 'Fattura di Acquisto', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(4, 'BOLLA_INT', 'Bolla di Carico Interno', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(5, 'RESO_CLIENTE', 'Reso da Cliente', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(6, 'MOV_MANUALE', 'Movimentazione Manuale', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55'),
+(7, 'TRASF_MAG', 'Trasferimento Intermagazzino', 1, '2025-06-17 13:53:55', '2025-06-17 13:53:55');
 
 -- --------------------------------------------------------
 
@@ -828,6 +1031,13 @@ INSERT INTO `users` (`id`, `nome`, `cognome`, `email`, `password`) VALUES
 --
 
 --
+-- Indici per le tabelle `aliquote_iva`
+--
+ALTER TABLE `aliquote_iva`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codice` (`codice`);
+
+--
 -- Indici per le tabelle `articoli`
 --
 ALTER TABLE `articoli`
@@ -840,10 +1050,36 @@ ALTER TABLE `articoli_pietre`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indici per le tabelle `carichi`
+--
+ALTER TABLE `carichi`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_fornitore` (`id_fornitore`),
+  ADD KEY `id_utente` (`id_utente`),
+  ADD KEY `id_sede` (`id_sede`),
+  ADD KEY `id_pagamento` (`id_pagamento`),
+  ADD KEY `id_causale` (`id_causale`);
+
+--
+-- Indici per le tabelle `carichi_dettagli`
+--
+ALTER TABLE `carichi_dettagli`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_carico` (`id_carico`),
+  ADD KEY `id_articolo` (`id_articolo`);
+
+--
 -- Indici per le tabelle `categorie`
 --
 ALTER TABLE `categorie`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `causali_carico`
+--
+ALTER TABLE `causali_carico`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codice` (`codice`);
 
 --
 -- Indici per le tabelle `clienti`
@@ -907,6 +1143,15 @@ ALTER TABLE `indirizzi_fornitori`
   ADD KEY `fornitore_id` (`fornitore_id`);
 
 --
+-- Indici per le tabelle `magazzino_movimenti`
+--
+ALTER TABLE `magazzino_movimenti`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_articolo` (`id_articolo`),
+  ADD KEY `id_carico` (`id_carico`),
+  ADD KEY `id_operatore` (`id_operatore`);
+
+--
 -- Indici per le tabelle `marche`
 --
 ALTER TABLE `marche`
@@ -919,9 +1164,21 @@ ALTER TABLE `materiali`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indici per le tabelle `pagamenti`
+--
+ALTER TABLE `pagamenti`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indici per le tabelle `pietre`
 --
 ALTER TABLE `pietre`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `sedi`
+--
+ALTER TABLE `sedi`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -929,6 +1186,13 @@ ALTER TABLE `pietre`
 --
 ALTER TABLE `stati_articolo`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `tipologie_documenti`
+--
+ALTER TABLE `tipologie_documenti`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codice` (`codice`);
 
 --
 -- Indici per le tabelle `users`
@@ -942,22 +1206,46 @@ ALTER TABLE `users`
 --
 
 --
+-- AUTO_INCREMENT per la tabella `aliquote_iva`
+--
+ALTER TABLE `aliquote_iva`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
 -- AUTO_INCREMENT per la tabella `articoli`
 --
 ALTER TABLE `articoli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `articoli_pietre`
 --
 ALTER TABLE `articoli_pietre`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT per la tabella `carichi`
+--
+ALTER TABLE `carichi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la tabella `carichi_dettagli`
+--
+ALTER TABLE `carichi_dettagli`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `categorie`
 --
 ALTER TABLE `categorie`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- AUTO_INCREMENT per la tabella `causali_carico`
+--
+ALTER TABLE `causali_carico`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT per la tabella `clienti`
@@ -981,13 +1269,13 @@ ALTER TABLE `contatti`
 -- AUTO_INCREMENT per la tabella `contatti_fornitori`
 --
 ALTER TABLE `contatti_fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
 
 --
 -- AUTO_INCREMENT per la tabella `fornitori`
 --
 ALTER TABLE `fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT per la tabella `indirizzi`
@@ -999,13 +1287,19 @@ ALTER TABLE `indirizzi`
 -- AUTO_INCREMENT per la tabella `indirizzi_fornitori`
 --
 ALTER TABLE `indirizzi_fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT per la tabella `magazzino_movimenti`
+--
+ALTER TABLE `magazzino_movimenti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `marche`
 --
 ALTER TABLE `marche`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT per la tabella `materiali`
@@ -1014,16 +1308,34 @@ ALTER TABLE `materiali`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
+-- AUTO_INCREMENT per la tabella `pagamenti`
+--
+ALTER TABLE `pagamenti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
 -- AUTO_INCREMENT per la tabella `pietre`
 --
 ALTER TABLE `pietre`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT per la tabella `sedi`
+--
+ALTER TABLE `sedi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT per la tabella `stati_articolo`
 --
 ALTER TABLE `stati_articolo`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT per la tabella `tipologie_documenti`
+--
+ALTER TABLE `tipologie_documenti`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT per la tabella `users`
@@ -1034,6 +1346,23 @@ ALTER TABLE `users`
 --
 -- Limiti per le tabelle scaricate
 --
+
+--
+-- Limiti per la tabella `carichi`
+--
+ALTER TABLE `carichi`
+  ADD CONSTRAINT `carichi_ibfk_1` FOREIGN KEY (`id_fornitore`) REFERENCES `fornitori` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_2` FOREIGN KEY (`id_utente`) REFERENCES `users` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_3` FOREIGN KEY (`id_sede`) REFERENCES `sedi` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_4` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamenti` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_5` FOREIGN KEY (`id_causale`) REFERENCES `causali_carico` (`id`);
+
+--
+-- Limiti per la tabella `carichi_dettagli`
+--
+ALTER TABLE `carichi_dettagli`
+  ADD CONSTRAINT `carichi_dettagli_ibfk_1` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`),
+  ADD CONSTRAINT `carichi_dettagli_ibfk_2` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`);
 
 --
 -- Limiti per la tabella `clienti_contatti`
@@ -1060,6 +1389,14 @@ ALTER TABLE `contatti_fornitori`
 --
 ALTER TABLE `indirizzi_fornitori`
   ADD CONSTRAINT `indirizzi_fornitori_ibfk_1` FOREIGN KEY (`fornitore_id`) REFERENCES `fornitori` (`id`) ON DELETE CASCADE;
+
+--
+-- Limiti per la tabella `magazzino_movimenti`
+--
+ALTER TABLE `magazzino_movimenti`
+  ADD CONSTRAINT `magazzino_movimenti_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`),
+  ADD CONSTRAINT `magazzino_movimenti_ibfk_2` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`),
+  ADD CONSTRAINT `magazzino_movimenti_ibfk_3` FOREIGN KEY (`id_operatore`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

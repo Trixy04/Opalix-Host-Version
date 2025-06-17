@@ -187,6 +187,112 @@ public function creaFornitore()
     }
 }
 
+public function modificaFornitore()
+{
+    global $conn;
+
+    $data = json_decode(file_get_contents("php://input"));
+
+    if (
+        !isset(
+            $data->id,
+            $data->ragione_sociale,
+            $data->partita_iva,
+            $data->codice_fiscale,
+            $data->indirizzo->tipo,
+            $data->indirizzo->indirizzo,
+            $data->indirizzo->cap,
+            $data->indirizzo->citta,
+            $data->indirizzo->provincia,
+            $data->indirizzo->nazione,
+            $data->contatti
+        ) || !is_array($data->contatti)
+    ) {
+        sendJsonResponse(['error' => 'Dati incompleti o contatti non validi'], 400);
+        return;
+    }
+
+    try {
+        $conn->beginTransaction();
+
+        // Verifica se esiste un altro fornitore con la stessa partita IVA
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM fornitori WHERE partita_iva = ? AND id != ?");
+        $stmt->execute([$data->partita_iva, $data->id]);
+        $count = $stmt->fetchColumn();
+
+        if ($count > 0) {
+            sendJsonResponse(['error' => 'Partita IVA già presente per un altro fornitore'], 400);
+            return;
+        }
+
+        // Aggiorna fornitore
+        $stmt = $conn->prepare("UPDATE fornitori SET ragione_sociale = ?, partita_iva = ?, codice_fiscale = ? WHERE id = ?");
+        $stmt->execute([
+            $data->ragione_sociale,
+            $data->partita_iva,
+            $data->codice_fiscale,
+            $data->id
+        ]);
+
+        // Aggiorna indirizzo (se già esiste lo aggiorna, altrimenti lo crea)
+        $stmt = $conn->prepare("SELECT id FROM indirizzi_fornitori WHERE fornitore_id = ?");
+        $stmt->execute([$data->id]);
+        $indirizzo_id = $stmt->fetchColumn();
+
+        if ($indirizzo_id) {
+            $stmt = $conn->prepare("UPDATE indirizzi_fornitori SET tipo = ?, indirizzo = ?, cap = ?, citta = ?, provincia = ?, nazione = ? WHERE fornitore_id = ?");
+            $stmt->execute([
+                $data->indirizzo->tipo,
+                $data->indirizzo->indirizzo,
+                $data->indirizzo->cap,
+                $data->indirizzo->citta,
+                $data->indirizzo->provincia,
+                $data->indirizzo->nazione,
+                $data->id
+            ]);
+        } else {
+            $stmt = $conn->prepare("INSERT INTO indirizzi_fornitori (fornitore_id, tipo, indirizzo, cap, citta, provincia, nazione) VALUES (?, ?, ?, ?, ?, ?, ?)");
+            $stmt->execute([
+                $data->id,
+                $data->indirizzo->tipo,
+                $data->indirizzo->indirizzo,
+                $data->indirizzo->cap,
+                $data->indirizzo->citta,
+                $data->indirizzo->provincia,
+                $data->indirizzo->nazione
+            ]);
+        }
+
+        // Elimina contatti precedenti
+        $stmt = $conn->prepare("DELETE FROM contatti_fornitori WHERE fornitore_id = ?");
+        $stmt->execute([$data->id]);
+
+        // Inserisce i nuovi contatti
+        $stmt = $conn->prepare("INSERT INTO contatti_fornitori (fornitore_id, tipo, valore, descrizione) VALUES (?, ?, ?, ?)");
+        foreach ($data->contatti as $contatto) {
+            if (!isset($contatto->tipo, $contatto->valore)) {
+                continue;
+            }
+
+            $stmt->execute([
+                $data->id,
+                $contatto->tipo,
+                $contatto->valore,
+                $contatto->descrizione ?? null
+            ]);
+        }
+
+        $conn->commit();
+
+        sendJsonResponse(['message' => 'Fornitore aggiornato con successo'], 200);
+
+    } catch (PDOException $e) {
+        $conn->rollBack();
+        sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+    }
+}
+
+
 
 
 }

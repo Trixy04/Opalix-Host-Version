@@ -3,85 +3,167 @@
 
 class ArticoliController
 {
-    public function getArticoli($id = null)
-    {
-        global $conn;
+public function getArticoli($id = null, $codice = null)
+{
+    global $conn;
 
-        try {
-            // Query principale per gli articoli (senza GROUP_CONCAT)
-            $sql = "
-            SELECT 
-                a.id,
-                a.codice_articolo,
-                a.nome AS nome_articolo,
-                a.descrizione,
-                a.materiale_id,
-                a.categoria_id,
-                a.marca_id,
-                a.stato_id AS stato_id,
-                c.nome AS categoria,
-                m.nome AS marca,
-                mat.nome AS materiale,
-                a.peso_materiale,
-                a.carati_materiale,
-                a.prezzo_acquisto,
-                a.prezzo_vendita,
-                a.quantita,
-                a.ubicazione,
-                s.nome AS stato,
-                a.note,
-                a.foto
-            FROM articoli a
-            LEFT JOIN categorie c ON a.categoria_id = c.id
-            LEFT JOIN marche m ON a.marca_id = m.id
-            LEFT JOIN materiali mat ON a.materiale_id = mat.id
-            LEFT JOIN stati_articolo s ON a.stato_id = s.id
+    try {
+        $sql = "
+        SELECT 
+            a.id,
+            a.codice_articolo,
+            a.nome AS nome_articolo,
+            a.descrizione,
+            a.materiale_id,
+            a.categoria_id,
+            a.marca_id,
+            a.stato_id AS stato_id,
+            c.nome AS categoria,
+            m.nome AS marca,
+            mat.nome AS materiale,
+            a.peso_materiale,
+            a.carati_materiale,
+            a.prezzo_acquisto,
+            a.prezzo_vendita,
+            a.quantita,
+            a.ubicazione,
+            s.nome AS stato,
+            a.note,
+            a.foto
+        FROM articoli a
+        LEFT JOIN categorie c ON a.categoria_id = c.id
+        LEFT JOIN marche m ON a.marca_id = m.id
+        LEFT JOIN materiali mat ON a.materiale_id = mat.id
+        LEFT JOIN stati_articolo s ON a.stato_id = s.id
         ";
 
-            if ($id !== null) {
-                $sql .= " WHERE a.id = :id";
-            }
+        if ($id !== null) {
+            $sql .= " WHERE a.id = :id";
+        } elseif ($codice !== null) {
+            $sql .= " WHERE a.codice_articolo = :codice";
+        }
 
-            $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare($sql);
 
-            if ($id !== null) {
-                $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-            }
+        if ($id !== null) {
+            $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        } elseif ($codice !== null) {
+            $stmt->bindParam(':codice', $codice, PDO::PARAM_STR);
+        }
 
-            $stmt->execute();
-            $articoli = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $stmt->execute();
+        $articoli = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-            if (empty($articoli)) {
-                sendJsonResponse(['message' => 'Nessun articolo trovato']);
-                return;
-            }
+        if (empty($articoli)) {
+            sendJsonResponse(['message' => 'Nessun articolo trovato']);
+            exit;  // Interrompe l’esecuzione dopo la risposta
+        }
 
-            // Per ogni articolo, recupera le pietre associate
-            foreach ($articoli as &$articolo) {
-                $sqlPietre = "
-                SELECT 
-                    ap.id_pietra AS pietra_id,
-                    p.nome,
-                    ap.caratura_pietra AS caratura,
-                    ap.qta_pietra AS quantita
-                FROM articoli_pietre ap
-                JOIN pietre p ON ap.id_pietra = p.id
-                WHERE ap.id_articolo = :articolo_id
+        // Pietre associate per ogni articolo
+        foreach ($articoli as &$articolo) {
+            $sqlPietre = "
+            SELECT 
+                ap.id_pietra AS pietra_id,
+                p.nome,
+                ap.caratura_pietra AS caratura,
+                ap.qta_pietra AS quantita
+            FROM articoli_pietre ap
+            JOIN pietre p ON ap.id_pietra = p.id
+            WHERE ap.id_articolo = :articolo_id
             ";
 
-                $stmtPietre = $conn->prepare($sqlPietre);
-                $stmtPietre->bindParam(':articolo_id', $articolo['id'], PDO::PARAM_INT);
-                $stmtPietre->execute();
-                $articolo['pietre'] = $stmtPietre->fetchAll(PDO::FETCH_ASSOC);
-            }
-
-            // Se è una singola richiesta, restituisci il primo oggetto
-            sendJsonResponse($id !== null ? $articoli[0] : $articoli);
-
-        } catch (PDOException $e) {
-            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+            $stmtPietre = $conn->prepare($sqlPietre);
+            $stmtPietre->bindParam(':articolo_id', $articolo['id'], PDO::PARAM_INT);
+            $stmtPietre->execute();
+            $articolo['pietre'] = $stmtPietre->fetchAll(PDO::FETCH_ASSOC);
         }
+
+        // Se cercavi per id o codice restituisci solo il primo articolo (oggetto singolo)
+        if ($id !== null || $codice !== null) {
+            sendJsonResponse($articoli[0]);
+        } else {
+            // Altrimenti tutta la lista
+            sendJsonResponse($articoli);
+        }
+
+    } catch (PDOException $e) {
+        sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        exit;
     }
+}
+
+public function getArticoliByCodice(string $codice)
+{
+    global $conn;
+
+    try {
+        $sql = "
+        SELECT 
+            a.id,
+            a.codice_articolo,
+            a.nome AS nome_articolo,
+            a.descrizione,
+            a.materiale_id,
+            a.categoria_id,
+            a.marca_id,
+            a.stato_id AS stato_id,
+            c.nome AS categoria,
+            m.nome AS marca,
+            mat.nome AS materiale,
+            a.peso_materiale,
+            a.carati_materiale,
+            a.prezzo_acquisto,
+            a.prezzo_vendita,
+            a.quantita,
+            a.ubicazione,
+            s.nome AS stato,
+            a.note,
+            a.foto
+        FROM articoli a
+        LEFT JOIN categorie c ON a.categoria_id = c.id
+        LEFT JOIN marche m ON a.marca_id = m.id
+        LEFT JOIN materiali mat ON a.materiale_id = mat.id
+        LEFT JOIN stati_articolo s ON a.stato_id = s.id
+        WHERE a.codice_articolo = :codice
+        LIMIT 1
+        ";
+
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':codice', $codice, PDO::PARAM_STR);
+        $stmt->execute();
+
+        $articolo = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$articolo) {
+            sendJsonResponse(['message' => 'Nessun articolo trovato'], 404);
+            exit;
+        }
+
+        // Carica pietre associate
+        $sqlPietre = "
+            SELECT 
+                ap.id_pietra AS pietra_id,
+                p.nome,
+                ap.caratura_pietra AS caratura,
+                ap.qta_pietra AS quantita
+            FROM articoli_pietre ap
+            JOIN pietre p ON ap.id_pietra = p.id
+            WHERE ap.id_articolo = :articolo_id
+        ";
+
+        $stmtPietre = $conn->prepare($sqlPietre);
+        $stmtPietre->bindParam(':articolo_id', $articolo['id'], PDO::PARAM_INT);
+        $stmtPietre->execute();
+
+        $articolo['pietre'] = $stmtPietre->fetchAll(PDO::FETCH_ASSOC);
+
+        sendJsonResponse($articolo);
+
+    } catch (PDOException $e) {
+        sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        exit;
+    }
+}
 
     public function getPietreArticolo($id = null)
     {

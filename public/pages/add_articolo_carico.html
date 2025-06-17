@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <script src="js/BrowserPrint-3.1.250.min.js"></script>
+
+
+    <script>
+        // Verifica se esiste un JWT
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            // Se non esiste, reindirizza al login
+            window.location.href = '../login';
+        }
+    </script>
+    <title>INSERISCI ARTICOLO DA CARICO - Opalix</title>
+
+    <style>
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #e0f7fa !important;
+            /* colore azzurro chiaro */
+        }
+
+        /* Cambia colore righe pari (opzionale) */
+        .table-striped tbody tr:nth-child(even) {
+            background-color: white !important;
+        }
+    </style>
+
+</head>
+
+<body class="back-color">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top"
+        style="box-shadow: 2px 0 5px rgba(0,0,0,0.1); background-color: #2C3E50;">
+        <div class="container-fluid">
+            <!-- LOGO + NOME -->
+            <a class="navbar-brand" href="#"><span class="font-cinzel"><i class="bi bi-gem me-2"></i>OPALIX</span></a>
+
+            <!-- TOGGLER MOBILE -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- CONTENUTO NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+
+                <!-- SINISTRA: eventualmente shortcut -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Esempi di shortcut -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-plus-circle me-1"></i>Nuova
+                            Riparazione</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-box-seam me-1"></i>Articoli</a>
+                    </li>
+                </ul>
+
+                <!-- DESTRA: barra ricerca, notifiche, utente -->
+                <form class="d-flex me-3" role="search">
+                    <input class="form-control form-control-sm me-2" type="search" placeholder="Cerca..."
+                        aria-label="Search">
+                    <button class="btn btn-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+
+                <button class="btn btn-outline-light btn-sm me-3 position-relative">
+                    <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class=" sidebar">
+        <div class="sidebar-header">
+            <h4>Roddi Gioielli</h4>
+            <h5 class="datetime mt-3" id="datetime"></h5>
+        </div>
+
+        <div class="user-info">
+            <img src="assets/images/user.jfif" alt="Profilo" class="user-avatar">
+            <span id="sidebarUser"></span>
+        </div>
+
+        <ul class="menu-section">
+            <li class="menu-title">Gestione</li>
+            <a href="../public">
+                <li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li>
+            </a>
+            <li class="has-submenu open" onclick="toggleSubmenu(this)">
+                <div class="menu-item-left">
+                    <i class="bi bi-boxes"></i>
+                    <span>Magazzino</span>
+                </div>
+                <i class="bi bi-chevron-down submenu-arrow"></i>
+            </li>
+            <ul class="submenu" style="display: block;">
+                <li><i class="bi bi-collection"></i><a href="articoli">Articoli</a></li>
+                <ul>
+                    <li class="active"><i class="bi bi-plus-circle me-1"></i> Articolo</li>
+                </ul>
+                <li><i class="bi bi-box-arrow-in-down"></i> Carico merce</li>
+                <li><i class="bi bi-box-arrow-up"></i> Scarico merce</li>
+                <li><i class="bi bi-search"></i> Giacenze</li>
+            </ul>
+            <li><i class="bi bi-tools"></i> Laboratorio</li>
+            <a href="customers">
+                <li class=""><i class="bi bi-people-fill"></i>Clienti</li>
+            </a>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Reportistica</li>
+            <li><i class="bi bi-printer"></i> Report</li>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Impostazioni</li>
+            <li><i class="bi bi-gear-wide-connected"></i><a href="controlpanel">Control Panel</a></li>
+            <li class="text-danger"><i class="bi bi-box-arrow-left"></i> <a href="#" class="logoutLink text-danger"
+                    style="text-decoration: none;">Logout</a></li>
+        </ul>
+    </div>
+
+
+
+    <div class="content">
+
+        <div class="container text-center">
+            <div class="div-customer mb-3">
+                <div class="container bg-white p-4 rounded shadow">
+                    <div class="d-flex justify-content-between">
+                        <h4>Inserisci articolo da carico</h4>
+                        <form action="" id="formArticolo">
+                            <div class="btn-group">
+                                <button class="btn btn-light" style="margin-right: 5%;" type="button"
+                                    id="annulla">Annulla</button>
+
+                                <button class="btn" style="background-color: #2C3E50; color: white;"
+                                    type="submit">Inserisci</button>
+                            </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container text-start">
+                <div class="row ">
+                    <div class="col-8">
+                        <div class="div-customer">
+
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-info-square"></i>
+                                    Informazioni di base
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;" style="margin-bottom: -1%;">
+                                <label for="exampleInputEmail1" class="form-label">Codice articolo</label>
+                                <input type="text" class="form-control" id="codice" name="codice" required>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="exampleInputPassword1" class="form-label">Nome articolo</label>
+                                <input type="text" class="form-control" id="nome" name="nome" required>
+                            </div>
+                            <div class="mb-3 p-3">
+                                <label for="exampleFormControlTextarea1" class="form-label">Descrizione</label>
+                                <textarea class="form-control" id="descrizione" name="descrizione" rows="5"></textarea>
+                            </div>
+                        </div>
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-images"></i>
+                                    Immagine
+                                </h6>
+                            </div>
+                            <div class="p-3">
+                                <div class="upload-area mt-3" id="uploadArea">
+                                    <div class="upload-message" id="uploadMessage">
+                                        <h1 class="bi bi-cloud-arrow-up text-primary"></h1>
+                                        <p><strong>Trascina l'immagine qui</strong></p>
+                                        <p>or, <span class="text-primary"
+                                                style="text-decoration: underline;">Browse</span>
+                                        </p>
+                                    </div>
+                                    <input type="file" id="foto" name="foto" accept="image/*" hidden />
+                                </div>
+
+                                <div class="preview mt-3 text-center" id="preview"></div>
+                            </div>
+                        </div>
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-gem"></i>
+                                    Dettagli prodotto
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <div class="row" style="margin-bottom: 0%;">
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Materiale</label>
+                                        <select class="form-select" id="materiale_id" name="materiale_id">
+                                            <option selected>Scegli il materiale</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Peso</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">gr</div>
+                                            <input type="number" class="form-control" id="peso_materiale"
+                                                name="peso_materiale">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Carati</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">Ct</div>
+                                            <input type="number" class="form-control" id="carati_materiale"
+                                                name="carati_materiali">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <hr>
+                                <h5><i>Pietre</i><span data-bs-toggle="tooltip"
+                                        title="Di default il sistema permette l'inserimento di 4 tipologie di pietre per gioiello, nel caso ne fossero presenti dipù censire le prime tre e aggiungerle dopo il salvataggio dell'articolo nella maschera di modifica">
+                                        <span style="font-size: medium;"
+                                            class="bi bi-question-circle text-secondary"></span
+                                            style="font-size: small;">
+                                    </span></h5>
+                                <hr>
+                                <div class="row" style="margin-bottom: 0%;">
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Pietra</label>
+                                        <select class="form-select" id="pietra_1" name="pietra_1">
+                                            <option selected>Open this select menu</option>
+                                        </select>
+
+
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Quantità</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">u</div>
+                                            <input type="number" class="form-control" id="pietra_qta_1"
+                                                name="pietra_qta_1">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Carati</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">Ct</div>
+                                            <input type="number" class="form-control" id="pietra_carati_1"
+                                                name="pietra_carati_1" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <div class="row" style="margin-bottom: 0%;">
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Pietra</label>
+                                        <select class="form-select" id="pietra_2" name="pietra_2">
+                                            <option selected>Open this select menu</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Quantità</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">u</div>
+                                            <input type="number" class="form-control" id="pietra_qta_2"
+                                                name="pietra_qta_2">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Carati</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">Ct</div>
+                                            <input type="number" class="form-control" id="pietra_carati_2"
+                                                name="pietra_carati_2" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <div class="row" style="margin-bottom: 0%;">
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Pietra</label>
+                                        <select class="form-select" id="pietra_3" name="pietra_3">
+                                            <option selected>Open this select menu</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Quantità</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">u</div>
+                                            <input type="number" class="form-control" id="pietra_qta_3"
+                                                name="pietra_qta_3">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Carati</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">Ct</div>
+                                            <input type="number" class="form-control" id="pietra_carati_3"
+                                                name="pietra_carati_3" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: 2%;">
+                                <div class="row" style="margin-bottom: 0%;">
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Pietra</label>
+                                        <select class="form-select" id="pietra_4" name="pietra_4">
+                                            <option selected>Open this select menu</option>
+                                        </select>
+
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Quantità</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">u</div>
+                                            <input type="number" class="form-control" id="pietra_qta_4"
+                                                name="pietra_qta_4">
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="categoria" class="form-label">Carati</label>
+                                        <div class="input-group">
+                                            <div class="input-group-text">Ct</div>
+                                            <input type="number" class="form-control" id="pietra_carati_4"
+                                                name="pietra_carati_4" step="0.01">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="div-customer">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-tags"></i>
+                                    Categoria & Marca
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="categoria" class="form-label">Categoria</label>
+                                <select class="form-select" aria-label="Default select example" id="categoria_id"
+                                    name="categoria_id" required>
+
+                                </select>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="marca" class="form-label">Marchio</label>
+                                <select class="form-select" aria-label="Default select example" id="marca_id"
+                                    name="marca_id">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-currency-euro"></i>
+                                    Costo articolo
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <div class="row" style="margin-bottom: -1%;">
+                                    <div class="col-8">
+                                        <label for="exampleInputPassword1" class="form-label">Costo di acquisto</label>
+                                        <input type="number" class="form-control" id="prezzo_acquisto"
+                                            name="prezzo_acquisto">
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="exampleInputPassword1" class="form-label">Valuta</label>
+                                        <input type="password" class="form-control" id="exampleInputPassword11"
+                                            placeholder="EUR" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="marca" class="form-label">Ricarico in percentuale</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">%</div>
+                                    <input type="number" class="form-control" id="ricarico_percentuale">
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <div class="row" style="margin-bottom: -1%;">
+                                    <div class="col-8">
+                                        <label for="exampleInputPassword1" class="form-label">Costo di vendita</label>
+                                        <input type="number" class="form-control" id="prezzo_vendita"
+                                            name="prezzo_vendita">
+                                    </div>
+                                    <div class="col-4">
+                                        <label for="exampleInputPassword1" class="form-label">Valuta</label>
+                                        <input type="password" class="form-control" id="exampleInputPassword1"
+                                            placeholder="EUR" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-bag"></i>
+                                    Disponibilità
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <h6 class="mb-3">Stato disponibilità prodotto:</h6>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="1"
+                                        required>
+                                    <label class="form-check-label" for="radioDefault1">
+                                        Disponibile
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="2"
+                                        checked required>
+                                    <label class="form-check-label" for="radioDefault2">
+                                        Non disponibile
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="stato_id" id="stato_id" value="3"
+                                        required>
+                                    <label class="form-check-label" for="radioDefault2">
+                                        In ordine
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <img id="defaultImg" src="assets/articoli/OIP.png" style="display:none;" />
+                        <div class="div-customer mt-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2 title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-box-seam"></i>
+                                    Informazioni di magazzino
+                                </h6>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="categoria" class="form-label">Quantità in giacenza</label>
+                                <div class="input-group">
+                                    <div class="input-group-text">Pezzi</div>
+                                    <input type="number" class="form-control" id="quantita" name="quantita" required>
+                                </div>
+                            </div>
+                            <div class="p-3" style="margin-bottom: -1%;">
+                                <label for="marca" class="form-label">Posizione</label>
+                                <input type="text" class="form-control" id="ubicazione" name="ubicazione"
+                                    placeholder="Vetrina, cassaforte ...">
+                            </div>
+                        </div>
+
+                        <div class="div-customer mt-4" style="height: auto;">
+                            <div class="d-flex justify-content-between align-items-start title-card p-3">
+                                <h6 class="mb-0 text-muted"><i class="bi bi-upc-scan"></i>
+                                    Anteprima etichetta
+                                </h6>
+                                <!--<button class="btn p-0" onclick="stampaEtichetta()" type="button"><i
+                                        class="bi bi-printer"></i></button>-->
+                            </div>
+                            <div id="anteprima" class="eti mt-2 mb-4 d-flex justify-content-center align-items-center"
+                                style="min-height: 200px;">
+                                <div class="etichetta" id="etichetta">
+                                    <svg id="barcode"></svg>
+                                    <div id="nome-articolo">...</div>
+                                    <div class="prezzo">€ 0.00</div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="div-customer mb-3">
+                <div class="container bg-white p-4 rounded shadow">
+                    <div class="d-flex justify-content-between">
+                        <h4>Inserisci articolo</h4>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-light" style="margin-right: 5%;"
+                                onclick="window.location.href='articoli'">Annulla</button>
+                            <button class="btn" style="background-color: #2C3E50; color: white;"
+                                type="submit">Inserisci</button>
+                        </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    </div>
+    </div>
+    </div>
+
+
+
+
+
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // All'avvio della pagina
+        const codiceArticolo = getQueryParam('codice');
+        if (codiceArticolo) {
+            document.getElementById('codice').value = codiceArticolo;
+            // eventualmente disabilita il campo
+            document.getElementById('codice').setAttribute('readonly', true);
+        }
+    </script>
+
+
+
+
+    <script src="js/auth.js"></script>
+
+    <script src="js/labelgenerator.js"></script>
+
+    <script src="js/selectgenerator_articolo.js"></script>
+
+    <script src="js/pricecalculator.js"></script>
+
+    <script src="js/labelprinter.js"></script>
+
+    <script>
+        document.getElementById('formArticolo').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const pietre = [];
+
+            for (let i = 1; i <= 4; i++) {
+                const idPietra = document.getElementById(`pietra_${i}`)?.value;
+                const qta = document.getElementById(`pietra_qta_${i}`)?.value;
+                const carati = document.getElementById(`pietra_carati_${i}`)?.value;
+
+                if (idPietra && idPietra !== "Open this select menu" && qta && carati) {
+                    pietre.push({
+                        id: parseInt(idPietra),
+                        qta: parseInt(qta),
+                        carati: parseFloat(carati)
+                    });
+                }
+            }
+
+            const fileInput = document.getElementById('foto');
+            const file = fileInput.files[0];
+
+            const buildAndSend = (fotoBase64 = null) => {
+                const articolo = {
+                    codice_articolo: document.getElementById('codice').value,
+                    nome: document.getElementById('nome').value,
+                    categoria_id: document.getElementById('categoria_id').value,
+                    descrizione: document.getElementById('descrizione').value || null,
+                    marca_id: document.getElementById('marca_id').value === 'Seleziona' ? null : document.getElementById('marca_id').value,
+                    materiale_id: (() => {
+                        const val = document.getElementById('materiale_id').value;
+                        return (!val || val === 'Seleziona') ? 11 : parseInt(val);
+                    })(),
+                    peso: document.getElementById('peso_materiale').value || null,
+                    carati: document.getElementById('carati_materiale').value || null,
+                    prezzo_acquisto: document.getElementById('prezzo_acquisto').value || null,
+                    prezzo_vendita: document.getElementById('prezzo_vendita').value || null,
+                    quantita: document.getElementById('quantita').value || null,
+                    ubicazione: document.getElementById('ubicazione').value || null,
+                    stato_id: document.querySelector('input[name="stato_id"]:checked')?.value || null,
+                    foto: fotoBase64,
+                    pietre: pietre
+                };
+
+                console.log("JSON da inviare:", JSON.stringify(articolo, null, 2));
+
+                fetch('/opalix_server/public/api/articoli', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(articolo)
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            alert('Inserimento andato a buon fine!');
+                            stampaEtichettaEPL(document.getElementById('codice').value, document.getElementById('nome').value, document.getElementById('prezzo_vendita').value)
+                            // Reindirizza alla pagina "articoli"
+                            window.location.href = "/articoli";
+                        } else if (data.error) {
+                            alert('Errore: ' + data.error);
+                        }
+                    })
+            };
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    buildAndSend(reader.result); // invia con foto in base64
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // Carica l'immagine di default come base64
+                const img = document.getElementById('defaultImg');
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+
+                img.onload = function () {
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    ctx.drawImage(img, 0, 0);
+                    const defaultBase64 = canvas.toDataURL('image/jpeg'); // o 'image/png' in base al formato
+                    buildAndSend(defaultBase64);
+                };
+
+                // Se è già stata caricata dal browser, forza il trigger manualmente
+                if (img.complete) {
+                    img.onload();
+                }
+            }
+
+
+        });
+    </script>
+
+
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const uploadMessage = document.getElementById('uploadMessage');
+        const fileInput = document.getElementById('foto');
+        const preview = document.getElementById('preview');
+
+        // Apri selettore file quando clicchi su "Browse"
+        uploadMessage.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Mostra anteprima quando selezioni un file
+        fileInput.addEventListener('change', function () {
+            const file = this.files[0];
+            if (file) {
+                showPreview(file);
+            }
+        });
+
+        // Drag & Drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.add('drag-over');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            uploadArea.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                uploadArea.classList.remove('drag-over');
+            });
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                fileInput.files = e.dataTransfer.files; // aggiorna il file input
+                showPreview(file);
+            }
+        });
+
+        function showPreview(file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                // Nasconde l'area di upload
+                uploadArea.style.display = 'none';
+
+                // Mostra l'anteprima
+                preview.innerHTML = `<img src="${e.target.result}" alt="Anteprima immagine" />`;
+                preview.style.display = 'flex';
+            };
+            reader.readAsDataURL(file);
+        }
+
+    </script>
+
+    <script>
+        // Recupero nome e cognome dall'archivio locale
+        const nome = localStorage.getItem('nome');
+        const cognome = localStorage.getItem('cognome');
+
+        if (nome && cognome) {
+            const sidebarUser = document.getElementById('sidebarUser');
+            if (sidebarUser) {
+                sidebarUser.innerHTML = `${nome} ${cognome}`; // Visualizza il nome e cognome
+            }
+        }
+    </script>
+
+    <script>
+        document.getElementById('annulla').addEventListener('click', () => {
+            window.history.back();
+        });
+
+    </script>
+
+    <script>
+        function logout() {
+            localStorage.removeItem('jwt');
+            window.location.href = '../login.html';
+        }
+    </script>
+
+    <script>
+        function toggleSubmenu(el) {
+            el.classList.toggle('submenu-open');
+            const submenu = el.nextElementSibling;
+            if (submenu.style.display === "block") {
+                submenu.style.display = "none";
+            } else {
+                submenu.style.display = "block";
+            }
+        }
+    </script>
+
+
+    <script>
+        function updateDateTime() {
+            const now = new Date();
+            const formatted = now.toLocaleString('it-IT', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            document.getElementById('datetime').textContent = formatted;
+        }
+
+        updateDateTime();
+        setInterval(updateDateTime, 60000); // aggiorna ogni minuto
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
