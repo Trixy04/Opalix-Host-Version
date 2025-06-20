@@ -44,7 +44,8 @@ class AuthController
             sendJsonResponse([
                 'token' => $token,
                 'nome' => $user['nome'],
-                'cognome' => $user['cognome']
+                'cognome' => $user['cognome'],
+                'id' => $user['id']
             ]);
         } catch (PDOException $e) {
             sendJsonResponse(['error' => 'Errore nel database: ' . $e->getMessage()], 500);

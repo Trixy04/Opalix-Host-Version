@@ -1,6 +1,9 @@
 # Abilita il modulo di riscrittura
 RewriteEngine On
 
+RewriteCond %{HTTP:Authorization} ^(.*)
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%1]
+
 # Imposta la base per le riscritture
 RewriteBase /opalix_server/public/
 

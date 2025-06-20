@@ -16,6 +16,8 @@ require_once '../app/Controllers/CausaliController.php';
 require_once '../app/Controllers/PagamentiController.php';
 require_once '../app/Controllers/IvaController.php';
 require_once '../app/Controllers/DocumentiController.php';
+require_once '../app/Controllers/CarichiController.php';
+require_once '../app/Controllers/MagazziniController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -72,6 +74,13 @@ $router->get('/api/iva', 'IvaController@getIva');
 
 // Documenti
 $router->get('/api/doc', 'DocumentiController@getDoc');
+
+// Carichi
+$router->get('/api/carichi', 'CarichiController@getCarichi');
+$router->post('/api/carichi', 'CarichiController@creaCarico');
+
+// Magazzini
+$router->get('/api/magazzini', 'MagazziniController@getMagazzini');
 
 // Dispatch finale
 $router->dispatch();

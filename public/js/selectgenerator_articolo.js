@@ -12,10 +12,10 @@ document.addEventListener("DOMContentLoaded", function () {
     const select = document.getElementById(selectId);
     if (!select) {
       console.warn(`Elemento select con id '${selectId}' non trovato.`);
-      return;
+      return Promise.reject(`Elemento select con id '${selectId}' non trovato.`);
     }
 
-    fetch(apiUrl)
+    return fetch(apiUrl)  // **ritorna la Promise**
       .then(res => {
         if (!res.ok) throw new Error("Errore risposta API");
         return res.json();
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
         select.innerHTML = ''; // pulisci
 
         const defaultOption = document.createElement("option");
-        defaultOption.value = "null";
+        defaultOption.value = "";
         defaultOption.textContent = "Seleziona";
-        defaultOption.disabled = false; // permetti selezione
+        defaultOption.disabled = false;
         if (!selectedValue || selectedValue === "null") {
           defaultOption.selected = true;
         }
@@ -44,8 +44,10 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch(err => {
         console.error(`Errore nel caricamento di ${selectId}:`, err);
+        throw err;  // rilancia l'errore per far fallire la Promise
       });
   }
+
 
 
 
@@ -63,7 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
   popolaSelect("causaleId", "/opalix_server/public/api/causali", "descrizione", "id");
   popolaSelect("pagamentoId", "/opalix_server/public/api/pagamenti", "descrizione", "id");
   popolaSelect("ivaId", "/opalix_server/public/api/iva", "codice", "id");
-  popolaSelect("numeroDdt", "/opalix_server/public/api/doc", "codice", "id");
+  popolaSelect("tipoDtt", "/opalix_server/public/api/doc", "codice", "id");
+  popolaSelect("magazzinoId", "/opalix_server/public/api/magazzini", "nome", "id");
 });
 
 

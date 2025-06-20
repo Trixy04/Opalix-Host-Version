@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/style.css" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Verifica se esiste un JWT
+        const token = localStorage.getItem('jwt');
+        if (!token) {
+            // Se non esiste, reindirizza al login
+            window.location.href = '../login';
+        }
+    </script>
+    <title>CARICO ARTICOLI - Opalix</title>
+
+    <style>
+        .table-striped tbody tr:nth-child(odd) {
+            background-color: #e0f7fa !important;
+            /* colore azzurro chiaro */
+        }
+
+        /* Cambia colore righe pari (opzionale) */
+        .table-striped tbody tr:nth-child(even) {
+            background-color: white !important;
+        }
+    </style>
+
+</head>
+
+<body class="back-color">
+
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top"
+        style="box-shadow: 2px 0 5px rgba(0,0,0,0.1); background-color: #2C3E50;">
+        <div class="container-fluid">
+            <!-- LOGO + NOME -->
+            <a class="navbar-brand" href="#"><span class="font-cinzel"><i class="bi bi-gem me-2"></i>OPALIX</span></a>
+
+            <!-- TOGGLER MOBILE -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
+                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- CONTENUTO NAVBAR -->
+            <div class="collapse navbar-collapse" id="navbarContent">
+
+                <!-- SINISTRA: eventualmente shortcut -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <!-- Esempi di shortcut -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-plus-circle me-1"></i>Nuova
+                            Riparazione</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#"><i class="bi bi-box-seam me-1"></i>Articoli</a>
+                    </li>
+                </ul>
+
+                <!-- DESTRA: barra ricerca, notifiche, utente -->
+                <form class="d-flex me-3" role="search">
+                    <input class="form-control form-control-sm me-2" type="search" placeholder="Cerca..."
+                        aria-label="Search">
+                    <button class="btn btn-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
+                </form>
+
+                <button class="btn btn-outline-light btn-sm me-3 position-relative">
+                    <i class="bi bi-bell"></i>
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                        3
+                    </span>
+                </button>
+
+            </div>
+        </div>
+    </nav>
+
+    <div class=" sidebar">
+        <div class="sidebar-header">
+            <h4>Roddi Gioielli</h4>
+            <h5 class="datetime mt-3" id="datetime"></h5>
+        </div>
+
+        <div class="user-info">
+            <img src="assets/images/user.jfif" alt="Profilo" class="user-avatar">
+            <span id="sidebarUser"></span>
+        </div>
+
+        <ul class="menu-section">
+            <li class="menu-title">Gestione</li>
+            <a href="../public">
+                <li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li>
+            </a>
+            <li class="has-submenu open" onclick="toggleSubmenu(this)">
+                <div class="menu-item-left">
+                    <i class="bi bi-boxes"></i>
+                    <span>Magazzino</span>
+                </div>
+                <i class="bi bi-chevron-down submenu-arrow"></i>
+            </li>
+            <ul class="submenu" style="display: block;">
+                <li><i class="bi bi-collection"></i><a href="articoli">Articoli</a></li>
+                <li class="active"><i class="bi bi-box-arrow-in-down"></i> Carico merce</li>
+                <li><i class="bi bi-box-arrow-up"></i> Scarico merce</li>
+                <li><i class="bi bi-search"></i> Giacenze</li>
+            </ul>
+            <li><i class="bi bi-tools"></i> Laboratorio</li>
+            <a href="customers">
+                <li class=""><i class="bi bi-people-fill"></i>Clienti</li>
+            </a>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Reportistica</li>
+            <li><i class="bi bi-printer"></i> Report</li>
+        </ul>
+
+        <ul class="menu-section">
+            <li class="menu-title">Impostazioni</li>
+            <li><i class="bi bi-gear-wide-connected"></i><a href="controlpanel">Control Panel</a></li>
+            <li class="text-danger"><i class="bi bi-box-arrow-left"></i> <a href="#" class="logoutLink text-danger"
+                    style="text-decoration: none;">Logout</a></li>
+        </ul>
+    </div>
+
+
+
+    <div class="content">
+        <div class="container">
+
+            <form id="formCarico" class="p-4" enctype="multipart/form-data">
+
+                <!-- SEZIONE 1: Dati DDT, Fornitore, Magazzino, Date -->
+                <div class="card mb-4 border-0 shadow-sm rounded-3" style="background-color: white;">
+                    <div class="card-body">
+                        <h5 class="fw-semibold mb-3"><i class="bi bi-truck"></i> Dati Carico & Fornitore</h5>
+
+                        <div class="row g-3">
+
+                            <div class="col-md-3">
+                                <label for="fornitoreId" class="form-label">Fornitore</label>
+                                <div style="display: flex; align-items: center;">
+                                    <select id="fornitoreId" name="fornitoreId" class="form-select rounded-3" required
+                                        style="flex-grow: 1;">
+                                        <!-- Opzioni caricate da DB -->
+                                    </select>
+                                    <button type="button" class="btn btn-sm"
+                                        style="margin-left: 8px; background-color: #2C3E50; color: white;"
+                                        data-bs-toggle="modal" data-bs-target="#modalNuovoFornitore">+</button>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-3">
+                                <label for="magazzinoId" class="form-label">Magazzino</label>
+                                <select id="magazzinoId" name="magazzinoId" class="form-select rounded-3" required>
+                                    <!-- Opzioni magazzini -->
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="numeroDdt" class="form-label">Tipologia doc.</label>
+                                <select id="tipoDtt" name="tipoDtt" class="form-select rounded-3" required></select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="numeroDdt" class="form-label">Numero doc.</label>
+                                <input type="text" id="numeroDdt" name="numeroDdt" class="form-control rounded-3"
+                                    required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="dataDdt" class="form-label">Data doc.</label>
+                                <input type="date" id="dataDdt" name="dataDdt" class="form-control rounded-3" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="dataCarico" class="form-label">Data Carico</label>
+                                <input type="date" id="dataCarico" name="dataCarico" class="form-control rounded-3"
+                                    required value="">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="causaleId" class="form-label">Causale</label>
+                                <select id="causaleId" name="causaleId" class="form-select rounded-3" required>
+                                    <!-- Opzioni causali -->
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="pagamentoId" class="form-label">Pagamento</label>
+                                <select id="pagamentoId" name="pagamentoId" class="form-select rounded-3" required>
+                                    <!-- Opzioni causali -->
+
+                                </select>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="noteDdt" class="form-label">Note</label>
+                                <input type="text" id="noteDdt" name="noteDdt" class="form-control rounded-3"
+                                    placeholder="Eventuali note o riferimenti">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="documentoDdt" class="form-label">Allega Documento (PDF, JPG, PNG)</label>
+                                <input type="file" id="documentoDdt" name="documentoDdt" name="documentoDdt"
+                                    class="form-control rounded-3" accept=".pdf,.jpg,.jpeg,.png" disabled>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SEZIONE 2: Tabella articoli da caricare -->
+                <div class="card border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                    <div class="card-body">
+                        <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli da Caricare</h5>
+
+                        <table class="table table-bordered table-hover align-middle" id="tabellaArticoli">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 15%;">Cod. Articolo</th>
+                                    <th style="width: 25%;">Articolo</th>
+                                    <th style="width: 10%;">Quantità</th>
+                                    <th style="width: 15%;">Costo Unitario</th>
+                                    <th style="width: 10%;">Iva</th>
+                                    <th style="width: 15%;">Note</th>
+                                    <th style="width: 5%;">Azioni</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Righe aggiunte dinamicamente -->
+                            </tbody>
+                        </table>
+
+                        <button type="button" class="btn btn-sm btn-success rounded-3" id="btnAggiungiArticolo">
+                            <i class="bi bi-plus-circle me-1"></i> Aggiungi Articolo
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Pulsanti di invio -->
+                <div class="mt-4 text-end">
+                    <button type="submit" class="btn btn-primary rounded-3"
+                        style="background-color: #2C3E50; border-color: #2C3E50;">
+                        Salva Carico
+                    </button>
+                    <a href="carichi"><button type="button"
+                            class="btn btn-secondary rounded-3 ms-2">Annulla</button></a>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Modal Nuovo Fornitore -->
+        <div class="modal fade" id="modalNuovoFornitore" tabindex="-1" aria-labelledby="modalNuovoFornitoreLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+
+                    <!-- Header -->
+                    <div class="modal-header"
+                        style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                        <h5 class="modal-title fw-bold" id="modalNuovoFornitoreLabel">
+                            <i class="fas fa-truck me-2"></i>Nuovo Fornitore
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Chiudi"></button>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="modal-body">
+                        <form id="formFornitore" class="p-3">
+
+                            <!-- Dati Fornitore -->
+                            <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building"></i> Dati Fornitore
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="ragioneSociale" class="form-label">Ragione Sociale</label>
+                                            <input type="text" class="form-control rounded-3" id="ragioneSociale"
+                                                required style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="partitaIva" class="form-label">Partita IVA</label>
+                                            <input type="text" class="form-control rounded-3" id="partitaIva" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="codiceFiscale" class="form-label">Codice Fiscale</label>
+                                            <input type="text" class="form-control rounded-3" id="codiceFiscale"
+                                                required style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Indirizzo -->
+                            <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-geo-alt-fill"></i> Indirizzo
+                                    </h6>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <label for="tipoIndirizzo" class="form-label">Tipo Indirizzo</label>
+                                            <input type="text" class="form-control rounded-3" id="tipoIndirizzo"
+                                                placeholder="es. Sede legale, Sede operativa" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="indirizzo" class="form-label">Indirizzo</label>
+                                            <input type="text" class="form-control rounded-3" id="indirizzo" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="cap" class="form-label">CAP</label>
+                                            <input type="text" class="form-control rounded-3" id="cap" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="citta" class="form-label">Città</label>
+                                            <input type="text" class="form-control rounded-3" id="citta" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="provincia" class="form-label">Provincia</label>
+                                            <input type="text" class="form-control rounded-3" id="provincia"
+                                                maxlength="2" pattern="[A-Za-z]{2}"
+                                                oninput="this.value = this.value.toUpperCase()" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label for="nazione" class="form-label">Nazione</label>
+                                            <input type="text" class="form-control rounded-3" id="nazione" required
+                                                style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contatti - Inserimento Nuovo Fornitore -->
+                            <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                                <div class="card-body">
+                                    <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
+                                    </h6>
+
+                                    <div id="contenitoreContatti" class="d-flex flex-column gap-3">
+                                        <div class="row g-3 align-items-end contatto-item">
+                                            <div class="col-md-3">
+                                                <label class="form-label">Tipo Contatto</label>
+                                                <select class="form-select tipoContatto rounded-3 form-select-sm"
+                                                    name="tipoContatto" required
+                                                    style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                                    <option value="Email">Email</option>
+                                                    <option value="Pec">Pec</option>
+                                                    <option value="Cellulare">Cellulare</option>
+                                                    <option value="Telefono">Telefono</option>
+                                                    <option value="Fax">Fax</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label class="form-label">Valore Contatto</label>
+                                                <input type="text"
+                                                    class="form-control valoreContatto rounded-3 form-control-sm"
+                                                    required
+                                                    style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                            </div>
+                                            <div class="col-md-5">
+                                                <label class="form-label">Descrizione</label>
+                                                <input type="text"
+                                                    class="form-control descrizioneContatto rounded-3 form-control-sm"
+                                                    placeholder="es. Ufficio vendite"
+                                                    style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end">
+                                                <button type="button" class="btn btn-danger btn-sm rounded-3 w-100"
+                                                    title="Rimuovi contatto">
+                                                    &times;
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="mt-3">
+                                        <button type="button" class="btn btn-sm btn-success rounded-3"
+                                            id="aggiungiContatto">
+                                            <i class="bi bi-plus-circle me-1"></i> Aggiungi Contatto
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!-- Footer -->
+                            <div class="modal-footer"
+                                style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                                <button type="button" class="btn btn-secondary rounded-3"
+                                    data-bs-dismiss="modal">Annulla</button>
+                                <button type="submit" class="btn btn-primary rounded-3"
+                                    style="background-color: #2C3E50; border-color: #2C3E50;">Salva Fornitore</button>
+                            </div>
+
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        console.log(localStorage.getItem("id_utente"));
+    </script>
+
+
+    <script src="js/auth.js"></script>
+
+    <script src="js/selectgenerator_articolo.js"></script>
+
+    <script src="js/sidebar_dati.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const form = document.getElementById("formFornitore");
+
+            // Aggiunta dinamica dei contatti
+            document.getElementById("aggiungiContatto").addEventListener("click", () => {
+                const container = document.getElementById("contenitoreContatti");
+
+                const nuovoContatto = document.createElement("div");
+                nuovoContatto.classList.add("row", "g-3", "align-items-end", "contatto-item");
+
+                nuovoContatto.innerHTML = `
+            <div class="col-md-3">
+                <select class="form-select tipoContatto rounded-3 form-select-sm"
+                    name="tipoContatto" required
+                    style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                    <option value="Email">Email</option>
+                    <option value="Pec">Pec</option>
+                    <option value="Cellulare">Cellulare</option>
+                    <option value="Telefono">Telefono</option>
+                    <option value="Fax">Fax</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control valoreContatto rounded-3 form-control-sm"
+                    required style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+            </div>
+            <div class="col-md-5">
+                <input type="text" class="form-control descrizioneContatto rounded-3 form-control-sm"
+                    placeholder="es. Ufficio vendite"
+                    style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+            </div>
+            <div class="col-md-1 d-flex align-items-end">
+                <button type="button" class="btn btn-danger btn-sm rounded-3 w-100" title="Rimuovi contatto">
+                    &times;
+                </button>
+            </div>
+        `;
+
+                container.appendChild(nuovoContatto);
+            });
+
+            // Rimozione dei contatti
+            document.getElementById("contenitoreContatti").addEventListener("click", (e) => {
+                if (e.target.matches("button.btn-danger")) {
+                    const contatto = e.target.closest(".contatto-item");
+                    if (contatto) contatto.remove();
+                }
+            });
+
+            // Gestione invio form
+            form.addEventListener("submit", async (event) => {
+                event.preventDefault();
+                console.log("📤 Invio form fornitore...");
+
+                // Costruzione array contatti
+                const contattiNodes = document.querySelectorAll(".contatto-item");
+                const contatti = [];
+
+                contattiNodes.forEach((node) => {
+                    const tipo = node.querySelector(".tipoContatto")?.value.trim();
+                    const valore = node.querySelector(".valoreContatto")?.value.trim();
+                    const descrizione = node.querySelector(".descrizioneContatto")?.value.trim();
+
+                    if (tipo && valore) {
+                        contatti.push({
+                            tipo,
+                            valore,
+                            descrizione: descrizione || null
+                        });
+                    }
+                });
+
+                // Costruzione oggetto fornitore
+                const fornitore = {
+                    ragione_sociale: form.ragioneSociale.value.trim(),
+                    partita_iva: form.partitaIva.value.trim(),
+                    codice_fiscale: form.codiceFiscale.value.trim(),
+                    indirizzo: {
+                        tipo: form.tipoIndirizzo.value.trim(),
+                        indirizzo: form.indirizzo.value.trim(),
+                        cap: form.cap.value.trim(),
+                        citta: form.citta.value.trim(),
+                        provincia: form.provincia.value.trim(),
+                        nazione: form.nazione.value.trim(),
+                    },
+                    contatti: contatti
+                };
+
+                try {
+                    const response = await fetch("/opalix_server/public/api/fornitori", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(fornitore)
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        alert("✅ Fornitore salvato con successo!");
+                        form.reset();
+
+                        // Chiudo il modal Bootstrap
+                        const modalEl = document.getElementById("modalNuovoFornitore");
+                        const modalInstance = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                        modalInstance.hide();
+                    } else {
+                        alert(`❌ Errore: ${data.error || 'Errore sconosciuto'}`);
+                    }
+                } catch (error) {
+                    console.error("Errore nella richiesta:", error);
+                    alert("❌ Errore di rete o server.");
+                }
+            });
+        });
+    </script>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/opalix_server/public/api/fornitori')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.querySelector('#tabella-fornitori tbody');
+
+                    if (!Array.isArray(data) || data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="6">Nessun fornitore trovato</td></tr>';
+                        return;
+                    }
+
+                    tbody.innerHTML = '';
+
+                    data.forEach(fornitore => {
+                        const indirizzo = fornitore.indirizzi?.[0];
+                        const contatto = fornitore.contatti?.[0];
+
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                        <td><input type="checkbox"></td>
+                        <td class="d-flex align-items-center">
+                            <div class="avatar-initials me-2" style="background-color: ${getRandomColor()}">
+                                ${getInitials(fornitore.ragione_sociale)}
+                            </div>
+                            <span class="supplier-name">${fornitore.ragione_sociale}</span>
+                        </td>
+                        <td>${contatto?.valore || '-'}</td>
+                        <td>${indirizzo ? `${indirizzo.indirizzo}, ${indirizzo.citta}, ${indirizzo.cap}, ${indirizzo.provincia}, ${indirizzo.nazione}` : '-'}</td>
+                        <td>${fornitore.partita_iva || '-'}</td>
+                        <td><button class="actions-btn btn btn-sm" data-id="${fornitore.id}"><i class="bi bi-pencil"></i></button></td>
+                    `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Listener per ogni bottone modifica
+                    document.querySelectorAll('.actions-btn').forEach(button => {
+                        button.addEventListener('click', function () {
+                            const fornitoreId = this.getAttribute('data-id');
+                            const fornitore = data.find(f => f.id == fornitoreId);
+                            if (!fornitore) return;
+
+                            document.getElementById("idFornitoreModal").value = fornitore.id;
+
+                            // Compila campi form
+                            document.getElementById('ragioneSocialeModal').value = fornitore.ragione_sociale || '';
+                            document.getElementById('partitaIvaModal').value = fornitore.partita_iva || '';
+                            document.getElementById('codiceFiscaleModal').value = fornitore.codice_fiscale || '';
+                            document.getElementById('statoModal').value = fornitore.stato || '';
+                            //document.getElementById('tipoIndirizzoModal').value = indirizzo.tipo || '';
+
+                            const indirizzo = fornitore.indirizzi?.[0] || {};
+                            document.getElementById('viaModal').value = indirizzo.indirizzo || '';
+                            document.getElementById('capModal').value = indirizzo.cap || '';
+                            document.getElementById('cittaModal').value = indirizzo.citta || '';
+                            document.getElementById('provinciaModal').value = indirizzo.provincia || '';
+                            document.getElementById('nazioneModal').value = indirizzo.nazione || '';
+                            document.getElementById('tipoIndirizzoModal').value = indirizzo.tipo || '';
+
+                            const contattiContainer = document.getElementById('contattiContainer');
+                            contattiContainer.innerHTML = '';
+                            (fornitore.contatti || []).forEach(contatto => {
+                                aggiungiContatto(contattiContainer, contatto);
+                            });
+
+                            // Mostra il modal
+                            const modal = new bootstrap.Modal(document.getElementById('modalFornitore'));
+                            modal.show();
+
+                            // Assegna funzione al submit
+                            const form = document.getElementById('modalFornitore');
+                            form.onsubmit = function (event) {
+                                event.preventDefault();
+                                updateFornitore(fornitoreId);
+                            };
+                        });
+                    });
+                })
+                .catch(error => {
+                    console.error('Errore caricamento fornitori:', error);
+                });
+
+            function getInitials(nome) {
+                const parole = nome.trim().split(' ');
+                return parole.map(p => p[0]).slice(0, 2).join('').toUpperCase();
+            }
+
+            function getRandomColor() {
+                const colors = ['#FF6B6B', '#6BCB77', '#4D96FF', '#FFC300', '#FF5733', '#6A67CE', '#00C49A'];
+                return colors[Math.floor(Math.random() * colors.length)];
+            }
+        });
+
+        // Aggiunta blocco contatto
+        function aggiungiContatto(container, dati = {}) {
+            if (!container) container = document.getElementById('contattiContainer');
+
+            const div = document.createElement('div');
+            div.classList.add('d-flex', 'gap-2', 'align-items-center');
+
+            div.innerHTML = `
+            <select class="form-select form-select-sm rounded-3" name="contattoTipo[]" style="max-width: 120px;" required>
+                <option value="">Tipo</option>
+                <option value="telefono" ${dati.tipo === 'telefono' ? 'selected' : ''}>Telefono</option>
+                <option value="email" ${dati.tipo === 'email' ? 'selected' : ''}>Email</option>
+                <option value="fax" ${dati.tipo === 'fax' ? 'selected' : ''}>Fax</option>
+                <option value="altro" ${dati.tipo === 'altro' ? 'selected' : ''}>Altro</option>
+            </select>
+            <input type="text" name="contattoValore[]" class="form-control form-control-sm rounded-3" placeholder="Valore" value="${dati.valore || ''}" required style="max-width: 250px;">
+            <input type="text" name="contattoDescrizione[]" class="form-control form-control-sm rounded-3" placeholder="Descrizione" value="${dati.descrizione || ''}" style="max-width: 250px;">
+            <button type="button" class="btn btn-danger btn-sm rounded-3" title="Rimuovi contatto">&times;</button>
+        `;
+
+            div.querySelector('button').addEventListener('click', () => div.remove());
+
+            container.appendChild(div);
+        }
+
+        // Funzione update
+        function updateFornitore(id) {
+            const form = document.getElementById('modalFornitore');  // prendi il form o il div modale contenitore
+
+            if (!form) {
+                console.error("Form modalFornitore non trovato");
+                return;
+            }
+
+            const idInput = document.getElementById('idFornitoreModal');
+            if (!idInput) {
+                console.error("Input nascosto idFornitoreModal non trovato");
+                return;
+            }
+
+            const data = {
+                id: idInput.value,
+                ragione_sociale: document.getElementById('ragioneSocialeModal').value.trim(),
+                partita_iva: document.getElementById('partitaIvaModal').value.trim(),
+                codice_fiscale: document.getElementById('codiceFiscaleModal').value.trim(),
+                stato: document.getElementById('statoModal').value.trim(),
+                indirizzo: {
+                    tipo: document.getElementById('tipoIndirizzoModal').value.trim(),
+                    indirizzo: document.getElementById('viaModal').value.trim(),
+                    cap: document.getElementById('capModal').value.trim(),
+                    citta: document.getElementById('cittaModal').value.trim(),
+                    provincia: document.getElementById('provinciaModal').value.trim(),
+                    nazione: document.getElementById('nazioneModal').value.trim()
+                },
+                contatti: []
+            };
+
+            const tipi = form.querySelectorAll('select[name="contattoTipo[]"]');
+            const valori = form.querySelectorAll('input[name="contattoValore[]"]');
+            const descrizioni = form.querySelectorAll('input[name="contattoDescrizione[]"]');
+
+            for (let i = 0; i < tipi.length; i++) {
+                const tipo = tipi[i]?.value.trim();
+                const valore = valori[i]?.value.trim();
+                const descrizione = descrizioni[i]?.value.trim();
+                if (tipo && valore) {
+                    data.contatti.push({ tipo, valore, descrizione });
+                }
+            }
+
+            console.log('📦 Dati aggiornati da inviare:', data);
+
+            fetch(`/opalix_server/public/api/fornitori`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) return response.json().then(err => { throw err; });
+                    return response.json();
+                })
+                .then(async () => {
+                    alert('✅ Fornitore aggiornato con successo!');
+                    await popolaSelect("fornitoreId", "/opalix_server/public/api/fornitori", "ragione_sociale", "id");
+                    const modalEl = document.getElementById("modalFornitore");
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("❌ Errore aggiornamento:", error);
+                    alert('❌ Errore durante aggiornamento del fornitore.');
+                });
+        }
+
+    </script>
+
+
+
+    <script>
+        // Funzione per caricare aliquote IVA in un select passato come parametro
+        async function caricaIva(select) {
+            if (!select) return;
+
+            try {
+                const response = await fetch('api/iva');  // modifica con l'URL corretto della tua API
+                if (!response.ok) throw new Error('Errore nella risposta API');
+
+                const aliquote = await response.json();
+
+                // Pulisce le opzioni
+                select.innerHTML = '';
+
+                // Opzione vuota di default
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = '';
+                select.appendChild(defaultOption);
+
+                // Popola le opzioni
+                aliquote.forEach(iva => {
+                    const option = document.createElement('option');
+                    option.value = iva.id; // o iva.codice, a seconda di cosa usi come valore
+                    option.textContent = `${iva.codice}`;
+                    select.appendChild(option);
+                });
+
+            } catch (error) {
+                console.error('Errore caricamento aliquote IVA:', error);
+            }
+        }
+
+        // Funzione per aggiungere una nuova riga articoli
+        document.getElementById('btnAggiungiArticolo').addEventListener('click', async function () {
+            const tbody = document.querySelector('#tabellaArticoli tbody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+            <td>
+                <input type="text" class="form-control form-control-sm rounded-3 codice-articolo" required placeholder="Codice">
+                 <input type="hidden" class="id-articolo"> <!-- ID numerico reale -->
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm rounded-3 nome-articolo" readonly>
+            </td>
+            <td>
+                <input type="number" min="1" class="form-control form-control-sm rounded-3 qty-input" required>
+            </td>
+            <td>
+                <input type="number" min="0" step="0.01" class="form-control form-control-sm rounded-3 costo-input" required>
+            </td>
+            <td>
+                <select class="iva-select form-select rounded-3" required></select>
+            </td>
+            <td>
+                <input type="text" class="form-control form-control-sm rounded-3 note-input" placeholder="Note (opzionale)">
+            </td>
+            <td class="text-center">
+                <button type="button" class="btn btn-danger btn-sm rounded-3 btn-rimuovi-articolo" title="Rimuovi riga">&times;</button>
+            </td>
+        `;
+
+            tbody.appendChild(row);
+
+            // Popola il select IVA appena creato
+            const ivaSelect = row.querySelector('.iva-select');
+            await caricaIva(ivaSelect);
+
+            // Rimuovi riga
+            row.querySelector('.btn-rimuovi-articolo').addEventListener('click', () => {
+                row.remove();
+            });
+
+            // Event listener su codice-articolo per fetch su TAB con controllo duplicati
+            const codiceInput = row.querySelector('.codice-articolo');
+            codiceInput.addEventListener('keydown', async function (e) {
+                if (e.key === 'Tab') {
+                    const codice = this.value.trim();
+
+                    // Controllo duplicati in tutta la tabella
+                    const righe = document.querySelectorAll('#tabellaArticoli tbody tr');
+                    for (const r of righe) {
+                        const codiceEsistente = r.querySelector('.codice-articolo').value.trim();
+                        // Ignora la riga corrente (this.closest('tr'))
+                        if (codiceEsistente === codice && r !== this.closest('tr')) {
+                            alert('❌ Errore: codice articolo già inserito nella tabella.');
+                            this.value = '';
+                            this.focus();
+                            e.preventDefault();
+                            return;
+                        }
+                    }
+
+                    if (codice !== '') {
+                        e.preventDefault();
+
+                        try {
+                            const response = await fetch(`api/articoli-codice/${encodeURIComponent(codice)}`);
+
+                            if (!response.ok) {
+                                const conferma = confirm('❌ Articolo non trovato. Vuoi andare alla pagina di inserimento articolo?');
+                                if (conferma) {
+                                    window.location.href = `add_articolo_carico?codice=${codice}`;
+                                }
+                                return;
+                            }
+
+                            const data = await response.json();
+
+                            if (data && data.nome_articolo) {
+                                const riga = this.closest('tr');
+
+                                riga.querySelector('.id-articolo').value = data.id;
+
+                                riga.querySelector('.nome-articolo').value = data.nome_articolo || '';
+                                riga.querySelector('.nome-articolo').setAttribute('readonly', true);
+
+                                riga.querySelector('.codice-articolo').value = data.codice_articolo || '';
+                                riga.querySelector('.codice-articolo').setAttribute('readonly', true);
+
+                                // Se vuoi puoi anche impostare il prezzo acquisto nel costo-input
+                                // riga.querySelector('.costo-input').value = data.prezzo_acquisto || '';
+                            } else {
+                                const conferma = confirm('❌ Articolo non trovato. Vuoi andare alla pagina di inserimento articolo?');
+                                if (conferma) {
+                                    window.location.href = `add_articolo_carico?codice=${codice}`;
+                                }
+                            }
+                        } catch (error) {
+                            console.error('Errore nella fetch:', error);
+                            alert('Errore durante il recupero dati articolo.');
+                        }
+                    }
+
+                }
+            });
+        });
+    </script>
+
+<script>
+    document.getElementById('formCarico').addEventListener('submit', async function (e) {
+        e.preventDefault();
+
+        const form = e.target;
+        const token = localStorage.getItem("jwt"); // ✅ Recupero token per autenticazione
+
+        if (!token) {
+            alert("Utente non autenticato. Effettua nuovamente il login.");
+            return;
+        }
+
+        const id_utente = localStorage.getItem("id_utente"); // ✅ Recupero id utente
+        if (!id_utente) {
+            alert("Impossibile identificare l'utente. Effettua nuovamente il login.");
+            return;
+        }
+
+        // Costruzione oggetto principale
+        const datiCarico = {
+            numero_documento: form.numeroDdt.value.trim(),
+            id_tipo_documento: form.tipoDtt.value,
+            data_documento: form.dataDdt.value,
+            data_carico: form.dataCarico.value,
+            id_fornitore: form.fornitoreId.value,
+            id_magazzino: form.magazzinoId.value,
+            id_causale: form.causaleId.value,
+            id_pagamento: form.pagamentoId.value,
+            note: form.noteDdt.value.trim() || null,
+            allegato_documento: null,
+            id_utente: id_utente,
+            totale_carico: 0,
+            articoli: []
+        };
+
+        // Raccolta articoli dalla tabella
+        const righe = document.querySelectorAll("#tabellaArticoli tbody tr");
+        let totale = 0;
+
+        righe.forEach(riga => {
+            const id_articolo = riga.querySelector('input.id-articolo')?.value;
+            const codice_articolo = riga.querySelector('input.codice-articolo')?.value.trim();
+            const quantita = parseInt(riga.querySelector('input.qty-input')?.value) || 0;
+            const prezzo_unitario = parseFloat(riga.querySelector('input.costo-input')?.value) || 0;
+            const id_iva = riga.querySelector('select.iva-select')?.value;
+            const note = riga.querySelector('input.note-input')?.value.trim() || null;
+
+            if (!id_articolo || quantita <= 0) {
+                console.warn('Riga ignorata: dati incompleti o errati', { id_articolo, codice_articolo });
+                return;
+            }
+
+            totale += quantita * prezzo_unitario;
+
+            datiCarico.articoli.push({
+                id_articolo,
+                quantita,
+                prezzo_unitario,
+                id_iva,
+                note
+            });
+        });
+
+        datiCarico.totale_carico = totale;
+
+        try {
+            // Invio dati carico al server
+            const response = await fetch('api/carichi', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify(datiCarico)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                alert('Errore: ' + (err.error || 'Errore nel salvataggio'));
+                return;
+            }
+
+            const result = await response.json();
+
+            // Upload allegato, se presente
+            const fileInput = form.documentoDdt;
+            if (fileInput.files.length > 0) {
+                const formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('id_carico', result.id_carico);
+
+                const uploadResp = await fetch('/api/carichi/upload-allegato', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: formData
+                });
+
+                if (!uploadResp.ok) {
+                    alert('Carico salvato, ma errore nel caricamento allegato');
+                    return;
+                }
+            }
+
+            alert('Carico inserito con successo! ID: ' + result.id_carico);
+            form.reset();
+            document.querySelector("#tabellaArticoli tbody").innerHTML = ''; // ✅ svuoto tabella articoli
+
+        } catch (error) {
+            alert('Errore di rete o server: ' + error.message);
+        }
+    });
+</script>
+
+
+
+    <script>
+        // Recupero nome e cognome dall'archivio locale
+        const nome = localStorage.getItem('nome');
+        const cognome = localStorage.getItem('cognome');
+
+        if (nome && cognome) {
+            const sidebarUser = document.getElementById('sidebarUser');
+            if (sidebarUser) {
+                sidebarUser.innerHTML = `${nome} ${cognome}`; // Visualizza il nome e cognome
+            }
+        }
+    </script>
+
+    <script>
+        function toggleSubmenu(el) {
+            el.classList.toggle('submenu-open');
+            const submenu = el.nextElementSibling;
+            if (submenu.style.display === "block") {
+                submenu.style.display = "none";
+            } else {
+                submenu.style.display = "block";
+            }
+        }
+    </script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>

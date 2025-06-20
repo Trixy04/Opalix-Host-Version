@@ -71,6 +71,9 @@ function setupLoginForm() {
         localStorage.setItem('jwt', data.token);
         localStorage.setItem('nome', data.nome);
         localStorage.setItem('cognome', data.cognome);
+        localStorage.setItem('id_utente', String(data.id));  // <-- salva come stringa
+        console.log('id_utente salvato:', localStorage.getItem('id_utente'));
+         console.log('Salvato id_utente:', localStorage.getItem('id_utente')); // controlla subito dopo il set
         window.location.href = 'index.html';
       } else {
         loginError.innerText = data.error || 'Errore imprevisto';
