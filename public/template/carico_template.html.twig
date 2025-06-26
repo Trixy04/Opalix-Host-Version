@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Report Carico</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: {{ azienda.colore_tema }};
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+        }
+        header img {
+            height: 60px;
+            margin-right: 20px;
+        }
+        header .dati-azienda {
+            line-height: 1.4;
+        }
+        .container {
+            padding: 30px;
+        }
+        h2 {
+            color: {{ azienda.colore_tema }};
+            border-bottom: 2px solid {{ azienda.colore_tema }};
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        .dati-carico, .dati-fornitore {
+            margin-bottom: 20px;
+        }
+        .dati-carico p, .dati-fornitore p {
+            margin: 4px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .footer {
+            margin-top: 30px;
+            font-size: 10px;
+            color: #999;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+        <div class="dati-azienda">
+            <strong>{{ azienda.ragione_sociale }}</strong><br>
+            {{ azienda.indirizzo }}, {{ azienda.cap }} {{ azienda.citta }} ({{ azienda.provincia }})<br>
+            P.IVA: {{ azienda.partita_iva }} - CF: {{ azienda.codice_fiscale }}<br>
+            Tel: {{ azienda.telefono }} - Email: {{ azienda.email }}<br>
+            PEC: {{ azienda.pec }} - Web: {{ azienda.sito_web }}
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Report Carico n° {{ carico.numero_documento }}</h2>
+
+        <div class="dati-carico">
+            <p><strong>Data Documento:</strong> {{ carico.data_documento }}</p>
+            <p><strong>Tipo Documento:</strong> {{ carico.tipo_documento }}</p>
+            <p><strong>Metodo di Pagamento:</strong> {{ carico.pagamento }}</p>
+            <p><strong>Magazzino:</strong> {{ carico.magazzino }}</p>
+            <p><strong>Note:</strong> {{ carico.note }}</p>
+        </div>
+
+        <div class="dati-fornitore">
+            <p><strong>Fornitore:</strong> {{ carico.fornitore }}</p>
+            <p><strong>Partita IVA:</strong> {{ carico.partitaIva }}</p>
+        </div>
+
+        <h2>Dettaglio Articoli</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Codice</th>
+                    <th>Nome</th>
+                    <th>Quantità</th>
+                    <th>Prezzo Unitario</th>
+                    <th>IVA</th>
+                    <th>Totale</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for riga in carico.articoli %}
+                    <tr>
+                        <td>{{ riga.codice_articolo }}</td>
+                        <td>{{ riga.nome_articolo }}</td>
+                        <td>{{ riga.quantita }}</td>
+                        <td>{{ riga.prezzo_unitario | number_format(2, ',', '.') }} €</td>
+                        <td>{{ riga.aliquota }}%</td>
+                        <td>
+                            {{
+                                (riga.quantita * riga.prezzo_unitario) 
+                                | number_format(2, ',', '.')
+                            }} €
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">
+        Documento generato automaticamente dal gestionale Opalix ERP.
+    </div>
+</body>
+</html>

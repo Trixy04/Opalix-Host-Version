@@ -134,8 +134,13 @@
     <div class="container text-center">
       <div class="div-customer">
         <div class="container bg-white p-4 rounded shadow">
-          <div class="d-flex justify-content-between mb-3">
-            <h5>Articoli</h5>
+          <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+            <h5 class="mb-0">Articoli</h5>
+
+            <div class="flex-grow-1 d-flex justify-content-center">
+              <input type="text" id="search-input" class="form-control form-control-sm w-75" placeholder="Cerca...">
+            </div>
+
             <div>
               <a href="add_articolo">
                 <button class="btn btn-sm"
@@ -152,7 +157,7 @@
             </div>
           </div>
 
-          <table class="table table-striped align-middle" id="tabella-articoli">
+          <table class="table table-striped align-middle tabella-articoli" id="tabella-articoli">
             <thead class="custom-thead">
               <tr class="text-start">
                 <th class="custom-thead"><input type="checkbox"></th>
@@ -702,7 +707,21 @@
     });
   </script>
 
+  <script>
+    document.getElementById("search-input").addEventListener("keyup", function () {
+      const searchTerm = this.value.toLowerCase();
+      const rows = document.querySelectorAll("#tabella-articoli tbody tr");
 
+      rows.forEach(row => {
+        const rowText = row.textContent.toLowerCase();
+        if (rowText.includes(searchTerm)) {
+          row.style.display = "";
+        } else {
+          row.style.display = "none";
+        }
+      });
+    });
+  </script>
 
   <script>
     // Recupero nome e cognome dall'archivio locale

@@ -143,8 +143,13 @@
         <div class="container text-center">
             <div class="div-customer">
                 <div class="container bg-white p-4 rounded shadow">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5>Clienti</h5>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                        <h5 class="mb-0">Fornitori</h5>
+
+                        <div class="flex-grow-1 d-flex justify-content-center">
+                            <input type="text" id="search-input" class="form-control form-control-sm w-75"
+                                placeholder="Cerca...">
+                        </div>
                         <div>
                             <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuovoFornitore"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
@@ -158,7 +163,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-striped align-middle" id="tabella-fornitori">
+                    <table class="table table-striped align-middle tabella-fornitori" id="tabella-fornitori">
                         <thead class="custom-thead">
                             <tr class="text-start">
                                 <th class="custom-thead"><input type="checkbox"></th>
@@ -338,130 +343,133 @@
 
 
     <!-- Modal Fornitore -->
-   <div class="modal fade" id="modalFornitore" tabindex="-1" aria-labelledby="modalFornitoreLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
+    <div class="modal fade" id="modalFornitore" tabindex="-1" aria-labelledby="modalFornitoreLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow rounded-4" style="background-color: #EDF2F9;">
 
-            <!-- Header -->
-            <div class="modal-header"
-                style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
-                <h5 class="modal-title fw-bold" id="modalFornitoreLabel">
-                    <i class="fas fa-pencil-alt me-2"></i>Modifica Fornitore
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
-                    aria-label="Chiudi"></button>
-            </div>
+                <!-- Header -->
+                <div class="modal-header"
+                    style="background-color: #2C3E50; color: white; border-top-left-radius: 8px; border-top-right-radius: 8px;">
+                    <h5 class="modal-title fw-bold" id="modalFornitoreLabel">
+                        <i class="fas fa-pencil-alt me-2"></i>Modifica Fornitore
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Chiudi"></button>
+                </div>
 
-            <!-- Body -->
-            <div class="modal-body">
-                <form id="idFornitoreModal" class="p-3">
+                <!-- Body -->
+                <div class="modal-body">
+                    <form id="idFornitoreModal" class="p-3">
 
-                    <!-- ID nascosto -->
-                    <input type="hidden" id="fornitoreIdModal">
+                        <!-- ID nascosto -->
+                        <input type="hidden" id="fornitoreIdModal">
 
-                    <!-- Dati Fornitore -->
-                    <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                        <div class="card-body">
-                            <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building"></i> Dati Fornitore</h6>
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="ragioneSocialeModal" class="form-label">Ragione Sociale</label>
-                                    <input type="text" class="form-control rounded-3" id="ragioneSocialeModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="partitaIvaModal" class="form-label">Partita IVA</label>
-                                    <input type="text" class="form-control rounded-3" id="partitaIvaModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="codiceFiscaleModal" class="form-label">Codice Fiscale</label>
-                                    <input type="text" class="form-control rounded-3" id="codiceFiscaleModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="statoModal" class="form-label">Stato</label>
-                                    <input type="text" class="form-control rounded-3" id="statoModal"
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                        <!-- Dati Fornitore -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-building"></i> Dati Fornitore
+                                </h6>
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label for="ragioneSocialeModal" class="form-label">Ragione Sociale</label>
+                                        <input type="text" class="form-control rounded-3" id="ragioneSocialeModal"
+                                            required style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="partitaIvaModal" class="form-label">Partita IVA</label>
+                                        <input type="text" class="form-control rounded-3" id="partitaIvaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="codiceFiscaleModal" class="form-label">Codice Fiscale</label>
+                                        <input type="text" class="form-control rounded-3" id="codiceFiscaleModal"
+                                            required style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="statoModal" class="form-label">Stato</label>
+                                        <input type="text" class="form-control rounded-3" id="statoModal"
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Indirizzo -->
-                    <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                        <div class="card-body">
-                            <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-geo-alt-fill"></i> Indirizzo</h6>
-                            <div class="row g-3">
-                                <div class="col-md-3">
-                                    <label for="tipoIndirizzoModal" class="form-label">Tipo Indirizzo</label>
-                                    <input type="text" class="form-control rounded-3" id="tipoIndirizzoModal"
+                        <!-- Indirizzo -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-geo-alt-fill"></i> Indirizzo</h6>
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label for="tipoIndirizzoModal" class="form-label">Tipo Indirizzo</label>
+                                        <input type="text" class="form-control rounded-3" id="tipoIndirizzoModal"
                                             placeholder="es. Sede legale, Sede operativa" required
                                             style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="viaModal" class="form-label">Indirizzo</label>
-                                    <input type="text" class="form-control rounded-3" id="viaModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="capModal" class="form-label">CAP</label>
-                                    <input type="text" class="form-control rounded-3" id="capModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="cittaModal" class="form-label">Città</label>
-                                    <input type="text" class="form-control rounded-3" id="cittaModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="provinciaModal" class="form-label">Provincia</label>
-                                    <input type="text" class="form-control rounded-3" id="provinciaModal" maxlength="2"
-                                        pattern="[A-Za-z]{2}" oninput="this.value = this.value.toUpperCase()" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="nazioneModal" class="form-label">Nazione</label>
-                                    <input type="text" class="form-control rounded-3" id="nazioneModal" required
-                                        style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="viaModal" class="form-label">Indirizzo</label>
+                                        <input type="text" class="form-control rounded-3" id="viaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="capModal" class="form-label">CAP</label>
+                                        <input type="text" class="form-control rounded-3" id="capModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="cittaModal" class="form-label">Città</label>
+                                        <input type="text" class="form-control rounded-3" id="cittaModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="provinciaModal" class="form-label">Provincia</label>
+                                        <input type="text" class="form-control rounded-3" id="provinciaModal"
+                                            maxlength="2" pattern="[A-Za-z]{2}"
+                                            oninput="this.value = this.value.toUpperCase()" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label for="nazioneModal" class="form-label">Nazione</label>
+                                        <input type="text" class="form-control rounded-3" id="nazioneModal" required
+                                            style="background-color: #FFFFFF; border: 1px solid #BDC3C7;">
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Contatti -->
-                    <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
-                        <div class="card-body">
-                            <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti</h6>
+                        <!-- Contatti -->
+                        <div class="card mb-3 border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h6 class="fw-semibold text-dark mb-3"><i class="bi bi-telephone-fill"></i> Contatti
+                                </h6>
 
-                            <div id="contattiContainer" class="d-flex flex-column gap-3">
-                                <!-- Contatti verranno aggiunti qui dinamicamente -->
-                            </div>
+                                <div id="contattiContainer" class="d-flex flex-column gap-3">
+                                    <!-- Contatti verranno aggiunti qui dinamicamente -->
+                                </div>
 
-                            <div class="mt-3">
-                                <button type="button" class="btn btn-sm btn-success rounded-3"
-                                    onclick="aggiungiContatto()">
-                                    <i class="bi bi-plus-circle me-1"></i> Aggiungi Contatto
-                                </button>
+                                <div class="mt-3">
+                                    <button type="button" class="btn btn-sm btn-success rounded-3"
+                                        onclick="aggiungiContatto()">
+                                        <i class="bi bi-plus-circle me-1"></i> Aggiungi Contatto
+                                    </button>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="modal-footer"
-                        style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
-                        <button type="button" class="btn btn-secondary rounded-3"
-                            data-bs-dismiss="modal">Annulla</button>
-                        <button type="submit" class="btn btn-primary rounded-3"
-                            style="background-color: #2C3E50; border-color: #2C3E50;">Salva Modifiche</button>
-                    </div>
+                        <!-- Footer -->
+                        <div class="modal-footer"
+                            style="background-color: #EDF2F9; border-bottom-left-radius: 8px; border-bottom-right-radius: 8px;">
+                            <button type="button" class="btn btn-secondary rounded-3"
+                                data-bs-dismiss="modal">Annulla</button>
+                            <button type="submit" class="btn btn-primary rounded-3"
+                                style="background-color: #2C3E50; border-color: #2C3E50;">Salva Modifiche</button>
+                        </div>
 
-                </form>
+                    </form>
+                </div>
+
             </div>
-
         </div>
     </div>
-</div>
 
 
 
@@ -648,7 +656,7 @@
                             document.getElementById('cittaModal').value = indirizzo.citta || '';
                             document.getElementById('provinciaModal').value = indirizzo.provincia || '';
                             document.getElementById('nazioneModal').value = indirizzo.nazione || '';
-                             document.getElementById('tipoIndirizzoModal').value = indirizzo.tipo || '';
+                            document.getElementById('tipoIndirizzoModal').value = indirizzo.tipo || '';
 
                             const contattiContainer = document.getElementById('contattiContainer');
                             contattiContainer.innerHTML = '';
@@ -711,77 +719,91 @@
 
         // Funzione update
         function updateFornitore(id) {
-    const form = document.getElementById('modalFornitore');  // prendi il form o il div modale contenitore
+            const form = document.getElementById('modalFornitore');  // prendi il form o il div modale contenitore
 
-    if (!form) {
-        console.error("Form modalFornitore non trovato");
-        return;
-    }
+            if (!form) {
+                console.error("Form modalFornitore non trovato");
+                return;
+            }
 
-    const idInput = document.getElementById('idFornitoreModal');
-    if (!idInput) {
-        console.error("Input nascosto idFornitoreModal non trovato");
-        return;
-    }
+            const idInput = document.getElementById('idFornitoreModal');
+            if (!idInput) {
+                console.error("Input nascosto idFornitoreModal non trovato");
+                return;
+            }
 
-    const data = {
-        id: idInput.value,
-        ragione_sociale: document.getElementById('ragioneSocialeModal').value.trim(),
-        partita_iva: document.getElementById('partitaIvaModal').value.trim(),
-        codice_fiscale: document.getElementById('codiceFiscaleModal').value.trim(),
-        stato: document.getElementById('statoModal').value.trim(),
-        indirizzo: {
-            tipo: document.getElementById('tipoIndirizzoModal').value.trim(),
-            indirizzo: document.getElementById('viaModal').value.trim(),
-            cap: document.getElementById('capModal').value.trim(),
-            citta: document.getElementById('cittaModal').value.trim(),
-            provincia: document.getElementById('provinciaModal').value.trim(),
-            nazione: document.getElementById('nazioneModal').value.trim()
-        },
-        contatti: []
-    };
+            const data = {
+                id: idInput.value,
+                ragione_sociale: document.getElementById('ragioneSocialeModal').value.trim(),
+                partita_iva: document.getElementById('partitaIvaModal').value.trim(),
+                codice_fiscale: document.getElementById('codiceFiscaleModal').value.trim(),
+                stato: document.getElementById('statoModal').value.trim(),
+                indirizzo: {
+                    tipo: document.getElementById('tipoIndirizzoModal').value.trim(),
+                    indirizzo: document.getElementById('viaModal').value.trim(),
+                    cap: document.getElementById('capModal').value.trim(),
+                    citta: document.getElementById('cittaModal').value.trim(),
+                    provincia: document.getElementById('provinciaModal').value.trim(),
+                    nazione: document.getElementById('nazioneModal').value.trim()
+                },
+                contatti: []
+            };
 
-    const tipi = form.querySelectorAll('select[name="contattoTipo[]"]');
-    const valori = form.querySelectorAll('input[name="contattoValore[]"]');
-    const descrizioni = form.querySelectorAll('input[name="contattoDescrizione[]"]');
+            const tipi = form.querySelectorAll('select[name="contattoTipo[]"]');
+            const valori = form.querySelectorAll('input[name="contattoValore[]"]');
+            const descrizioni = form.querySelectorAll('input[name="contattoDescrizione[]"]');
 
-    for (let i = 0; i < tipi.length; i++) {
-        const tipo = tipi[i]?.value.trim();
-        const valore = valori[i]?.value.trim();
-        const descrizione = descrizioni[i]?.value.trim();
-        if (tipo && valore) {
-            data.contatti.push({ tipo, valore, descrizione });
+            for (let i = 0; i < tipi.length; i++) {
+                const tipo = tipi[i]?.value.trim();
+                const valore = valori[i]?.value.trim();
+                const descrizione = descrizioni[i]?.value.trim();
+                if (tipo && valore) {
+                    data.contatti.push({ tipo, valore, descrizione });
+                }
+            }
+
+            console.log('📦 Dati aggiornati da inviare:', data);
+
+            fetch(`/opalix_server/public/api/fornitori`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) return response.json().then(err => { throw err; });
+                    return response.json();
+                })
+                .then(() => {
+                    alert('✅ Fornitore aggiornato con successo!');
+                    const modalEl = document.getElementById("modalFornitore");
+                    const modalInstance = bootstrap.Modal.getInstance(modalEl);
+                    if (modalInstance) modalInstance.hide();
+                    location.reload();
+                })
+                .catch(error => {
+                    console.error("❌ Errore aggiornamento:", error);
+                    alert('❌ Errore durante aggiornamento del fornitore.');
+                });
         }
-    }
-
-    console.log('📦 Dati aggiornati da inviare:', data);
-
-    fetch(`/opalix_server/public/api/fornitori`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-    })
-    .then(response => {
-        if (!response.ok) return response.json().then(err => { throw err; });
-        return response.json();
-    })
-    .then(() => {
-        alert('✅ Fornitore aggiornato con successo!');
-        const modalEl = document.getElementById("modalFornitore");
-        const modalInstance = bootstrap.Modal.getInstance(modalEl);
-        if (modalInstance) modalInstance.hide();
-        location.reload();
-    })
-    .catch(error => {
-        console.error("❌ Errore aggiornamento:", error);
-        alert('❌ Errore durante aggiornamento del fornitore.');
-    });
-}
 
     </script>
 
 
+    <script>
+        document.getElementById("search-input").addEventListener("keyup", function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#tabella-fornitori tbody tr");
 
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
 
 
     <script>

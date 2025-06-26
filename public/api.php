@@ -77,7 +77,12 @@ $router->get('/api/doc', 'DocumentiController@getDoc');
 
 // Carichi
 $router->get('/api/carichi', 'CarichiController@getCarichi');
+$router->get('/api/carichi/{id}', 'CarichiController@getCarichi');
 $router->post('/api/carichi', 'CarichiController@creaCarico');
+
+// Documenti carico
+$router->get('/api/carichi/allegati/{id}', 'CarichiController@getAllegatiCarico');
+$router->post('/api/carichi/upload-allegato', 'CarichiController@uploadAllegatoCarico');
 
 // Magazzini
 $router->get('/api/magazzini', 'MagazziniController@getMagazzini');

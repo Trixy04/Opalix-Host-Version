@@ -208,9 +208,9 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="documentoDdt" class="form-label">Allega Documento (PDF, JPG, PNG)</label>
+                                <label for="documentoDdt" class="form-label">Allega Documento (PDF)</label>
                                 <input type="file" id="documentoDdt" name="documentoDdt" name="documentoDdt"
-                                    class="form-control rounded-3" accept=".pdf,.jpg,.jpeg,.png" disabled>
+                                    class="form-control rounded-3" accept=".pdf">
                             </div>
 
 
@@ -972,7 +972,7 @@
                 formData.append('file', fileInput.files[0]);
                 formData.append('id_carico', result.id_carico);
 
-                const uploadResp = await fetch('/api/carichi/upload-allegato', {
+                const uploadResp = await fetch('api/carichi/upload-allegato', {
                     method: 'POST',
                     headers: {
                         'Authorization': 'Bearer ' + token
@@ -982,12 +982,13 @@
 
                 if (!uploadResp.ok) {
                     alert('Carico salvato, ma errore nel caricamento allegato');
+                    window.location.href = 'carichi';
                     return;
                 }
             }
 
-            alert('Carico inserito con successo! ID: ' + result.id_carico);
-            form.reset();
+            alert('✅ Carico inserito con successo!');
+            window.location.href = 'carichi';
             document.querySelector("#tabellaArticoli tbody").innerHTML = ''; // ✅ svuoto tabella articoli
 
         } catch (error) {

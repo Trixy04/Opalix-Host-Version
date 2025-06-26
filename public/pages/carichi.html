@@ -135,21 +135,26 @@
         <div class="container text-center">
             <div class="div-customer">
                 <div class="container bg-white p-4 rounded shadow">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5>Carichi effettuati</h5>
-                        <div>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                        <h5 class="mb-0">Carichi effettuati</h5>
+
+                        <div class="flex-grow-1 d-flex justify-content-center">
+                            <input type="text" id="search-input" class="form-control form-control-sm w-75"
+                                placeholder="Cerca...">
+                        </div>
+
+                        <div class="d-flex align-items-center gap-2">
                             <a href="add_carico">
                                 <button class="btn btn-sm"
-                                    style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
-                                        Nuovo</b></button></a>
-                            <!--<button class="btn btn-sm"
-                                style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b><i
-                                        class="bi bi-funnel-fill"></i> Filtra</b></button>-->
+                                    style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;">
+                                    <b>+ Nuovo</b>
+                                </button>
+                            </a>
+
                             <button class="btn btn-sm btn-print-all"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;">
                                 <b><i class="bi bi-folder-symlink"></i> Esporta</b>
                             </button>
-
                         </div>
                     </div>
 
@@ -178,6 +183,142 @@
                 </div>
             </div>
         </div>
+
+        <!--Modal allegati-->
+        <div class="modal fade" id="modalAllegati" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content shadow-lg rounded-4 border-0">
+                    <div class="modal-header text-white rounded-top-4" style="background-color: #2C3E50;">
+                        <h6 class="modal-title fw-bold"><i class="bi bi-paperclip me-2"></i>Allegati associati al carico
+                        </h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Chiudi"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <div class="table-responsive">
+                            <table class="table" id="tabella-allegati">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="text-nowrap">Nome File</th>
+                                        <th class="text-nowrap">Data caricamento</th>
+                                        <th class="text-center">Azioni</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Allegati caricati qui dinamicamente -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Visualizzazione Carico -->
+        <div class="modal fade" id="modalVisualizzaCarico" tabindex="-1" aria-labelledby="modalVisualizzaCaricoLabel"
+            aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header" style="background-color: #2C3E50;">
+                        <h5 class="modal-title text-white" id="modalVisualizzaCaricoLabel">
+                            <i class="bi bi-eye"></i> Dettagli Carico
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                            aria-label="Chiudi"></button>
+                    </div>
+                    <div class="modal-body">
+
+                        <!-- SEZIONE 1: Dati DDT, Fornitore, Magazzino, Date -->
+                        <div class="card mb-4 border-0 shadow-sm rounded-3">
+                            <div class="card-body">
+
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="fw-semibold m-0">
+                                        <i class="bi bi-truck"></i> Dati Carico & Fornitore
+                                    </h5>
+                                    <a href="report/esporta_carico_pdf.php?id={{ carico.id }}" class="btn"
+                                        id="btn-stampa-carico">
+                                        <h5 class="bi bi-printer"></h5>
+                                    </a>
+                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-fornitore">Fornitore</label>
+                                        <input id="view-fornitore" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-magazzino">Magazzino</label>
+                                        <input id="view-magazzino" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-tipo-documento">Tipologia doc.</label>
+                                        <input id="view-tipo-documento" type="text" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-numero-documento">Numero doc.</label>
+                                        <input id="view-numero-documento" type="text" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-data-documento">Data doc.</label>
+                                        <input id="view-data-documento" type="date" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-data-inserimento">Data Carico</label>
+                                        <input id="view-data-inserimento" type="date" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-causale">Causale</label>
+                                        <input id="view-causale" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label" for="view-pagamento">Pagamento</label>
+                                        <input id="view-pagamento" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label class="form-label" for="view-note">Note</label>
+                                        <input id="view-note" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- SEZIONE 2: Tabella articoli -->
+                        <div class="card border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
+                            <div class="card-body">
+                                <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli Caricati</h5>
+                                <table class="table table-bordered table-hover align-middle">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Cod. Articolo</th>
+                                            <th>Articolo</th>
+                                            <th>Quantità</th>
+                                            <th>Costo Unitario</th>
+                                            <th>Iva</th>
+                                            <th>Note</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="view_tbody_articoli">
+                                        <!-- Righe generate dinamicamente -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary rounded-3"
+                            data-bs-dismiss="modal">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 
 
@@ -218,8 +359,8 @@
                                 <td>${carico.pagamento}</td>
                                 <td>${parseFloat(carico.totale_carico).toFixed(2)} €</td>
                                 <td class="text-center">
-                                <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${carico.id}"><i class="bi bi-pencil"></i></button>
-                        <button style="margin-right: 0%" class="actions-btn btn-print" data-id="${carico.id}"><i class="bi bi-printer"></i></button>
+                                <button class="actions-btn btn-show-carico" style="margin-right: 15%" data-id="${carico.id}"><i class="bi bi-eye"></i></button>  
+                                <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${carico.id}"><i class="bi bi-paperclip"></i></button>
                                 </td>
                             `;
 
@@ -237,7 +378,164 @@
         }
     </script>
 
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.btn-edit-articolo')) {
+                const btn = e.target.closest('.btn-edit-articolo');
+                const idCarico = btn.getAttribute('data-id');
+
+                console.log('Apri modal allegati per carico ID:', idCarico);
+
+                // Apri il modal Bootstrap
+                const modalAllegati = new bootstrap.Modal(document.getElementById('modalAllegati'));
+                modalAllegati.show();
+
+                // Seleziona il tbody della tabella
+                const tbody = document.querySelector('#tabella-allegati tbody');
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center">Caricamento...</td></tr>';
+
+                // Carica allegati via API
+                fetch(`api/carichi/allegati/${idCarico}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        tbody.innerHTML = '';
+
+                        if (!Array.isArray(data) || data.length === 0) {
+                            tbody.innerHTML = '<tr><td colspan="3" class="text-center">Nessun allegato presente</td></tr>';
+                            return;
+                        }
+
+                        data.forEach(allegato => {
+                            const fileName = allegato.percorso_file.split('/').pop();
+                            const url = allegato.url; // Assumendo che il path sia accessibile direttamente
+
+                            const row = `
+                            <tr>
+                                <td>${fileName}</td>
+                                <td>${new Date(allegato.data_caricamento).toLocaleString()}</td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm" href="${url}" target="_blank">
+                                        <i class="bi bi-file-earmark-pdf"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        `;
+                            tbody.insertAdjacentHTML('beforeend', row);
+                        });
+                    })
+                    .catch(() => {
+                        tbody.innerHTML = '<tr><td colspan="3" class="text-center text-danger">Errore nel caricamento</td></tr>';
+                    });
+            }
+        });
     </script>
+
+    <script>
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('.btn-show-carico')) {
+                const btn = e.target.closest('.btn-show-carico');
+                const idCarico = btn.getAttribute('data-id');
+
+                console.log('Visualizza carico ID:', idCarico);
+
+                // Apri il modal Bootstrap
+                const modal = new bootstrap.Modal(document.getElementById('modalVisualizzaCarico'));
+                modal.show();
+
+                document.querySelector('#btn-stampa-carico').setAttribute('data-id', idCarico);
+
+                // Chiamata API per recuperare i dati del carico
+                fetch(`api/carichi/${idCarico}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error('Errore nel caricamento del carico');
+                        return res.json();
+                    })
+                    .then(data => {
+                        // Popola i campi input con i dati ricevuti
+                        document.getElementById('view-fornitore').value = data.fornitore || '';
+                        document.getElementById('view-magazzino').value = data.magazzino || '';
+                        document.getElementById('view-tipo-documento').value = data.tipo_documento || '';
+                        document.getElementById('view-numero-documento').value = data.numero_documento || '';
+                        document.getElementById('view-data-documento').value = data.data_documento || '';
+                        document.getElementById('view-data-inserimento').value = data.data_inserimento ? data.data_inserimento.split(' ')[0] : ''; // solo data senza orario
+                        document.getElementById('view-causale').value = data.causali_carico || '';
+                        document.getElementById('view-pagamento').value = data.pagamento || '';
+                        document.getElementById('view-note').value = data.note || '';
+
+                        // Popola la tabella articoli
+                        const tbody = document.querySelector('#modalVisualizzaCarico tbody');
+                        tbody.innerHTML = ''; // Pulisce la tabella
+
+                        if (Array.isArray(data.articoli) && data.articoli.length > 0) {
+                            data.articoli.forEach(articolo => {
+                                // Formatta il prezzo in euro con 2 decimali
+                                const prezzo = parseFloat(articolo.prezzo_unitario).toFixed(2).replace('.', ',');
+
+                                // Calcola l'IVA in percentuale (supponendo 22% come esempio)
+                                // Se hai bisogno di recuperare l’iva dal database, servirebbe un altro dato
+                                const ivaPercent = '22%';
+
+                                const note = articolo.note || '';
+
+                                const row = `
+                            <tr>
+                                <td>${articolo.id_articolo}</td>
+                                <td>${articolo.nome_articolo}</td>
+                                <td>${articolo.quantita}</td>
+                                <td>${prezzo} €</td>
+                                <td>${ivaPercent}</td>
+                                <td>${note}</td>
+                            </tr>
+                        `;
+                                tbody.insertAdjacentHTML('beforeend', row);
+                            });
+                        } else {
+                            tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nessun articolo presente</td></tr>';
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Errore nel caricamento del carico');
+                    });
+            }
+        });
+
+    </script>
+
+    <script>
+        document.getElementById("search-input").addEventListener("keyup", function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#tabella-carichi tbody tr");
+
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+    <script>
+        document.getElementById('btn-stampa-carico').addEventListener('click', function (e) {
+            e.preventDefault(); // Previeni il comportamento di default del link
+
+            const idCarico = this.getAttribute('data-id'); // Prendo l'id dal data-attribute
+
+            const popup = window.open(
+                `report/esporta_carico_pdf.php?id=${encodeURIComponent(idCarico)}`,
+                'pdfPopup',
+                'width=900,height=700,scrollbars=yes,resizable=yes'
+            );
+
+            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                alert("Popup bloccato dal browser. Abilita i popup per continuare.");
+            }
+        });
+    </script>
+
 
     <script>
         // Recupero nome e cognome dall'archivio locale

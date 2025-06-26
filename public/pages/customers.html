@@ -133,14 +133,20 @@
     <div class="content">
 
         <div class="alert alert-warning text-center container" role="alert">
-            Attenzione, non è possibile eliminare i clienti! Prestare attenzione nel censimento e inserire sempre il codice fiscale corretto.
+            Attenzione, non è possibile eliminare i clienti! Prestare attenzione nel censimento e inserire sempre il
+            codice fiscale corretto.
         </div>
 
         <div class="container text-center">
             <div class="div-customer">
                 <div class="container bg-white p-4 rounded shadow">
-                    <div class="d-flex justify-content-between mb-3">
-                        <h5>Clienti</h5>
+                    <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
+                        <h5 class="mb-0">Clienti</h5>
+
+                        <div class="flex-grow-1 d-flex justify-content-center">
+                            <input type="text" id="search-input" class="form-control form-control-sm w-75"
+                                placeholder="Cerca...">
+                        </div>
                         <div>
                             <button class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#modalNuovoCliente"
                                 style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;"><b>+
@@ -154,7 +160,7 @@
                         </div>
                     </div>
 
-                    <table class="table table-striped align-middle" id="tabella-clienti">
+                    <table class="table table-striped align-middle tabella-clienti" id="tabella-clienti">
                         <thead class="custom-thead">
                             <tr class="text-start">
                                 <th class="custom-thead"><input type="checkbox"></th>
@@ -598,6 +604,22 @@
                     });
             }
 
+        });
+    </script>
+
+    <script>
+        document.getElementById("search-input").addEventListener("keyup", function () {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll("#tabella-clienti tbody tr");
+
+            rows.forEach(row => {
+                const rowText = row.textContent.toLowerCase();
+                if (rowText.includes(searchTerm)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
+                }
+            });
         });
     </script>
 
