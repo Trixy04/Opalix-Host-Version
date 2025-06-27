@@ -844,7 +844,7 @@
                             if (!response.ok) {
                                 const conferma = confirm('❌ Articolo non trovato. Vuoi andare alla pagina di inserimento articolo?');
                                 if (conferma) {
-                                    window.location.href = `add_articolo_carico?codice=${codice}`;
+                                    apriPopupInserimentoArticolo(codice);
                                 }
                                 return;
                             }
@@ -867,7 +867,7 @@
                             } else {
                                 const conferma = confirm('❌ Articolo non trovato. Vuoi andare alla pagina di inserimento articolo?');
                                 if (conferma) {
-                                    window.location.href = `add_articolo_carico?codice=${codice}`;
+                                    apriPopupInserimentoArticolo(codice);
                                 }
                             }
                         } catch (error) {
@@ -879,123 +879,143 @@
                 }
             });
         });
-    </script>
 
-<script>
-    document.getElementById('formCarico').addEventListener('submit', async function (e) {
-        e.preventDefault();
-
-        const form = e.target;
-        const token = localStorage.getItem("jwt"); // ✅ Recupero token per autenticazione
-
-        if (!token) {
-            alert("Utente non autenticato. Effettua nuovamente il login.");
-            return;
+        function apriPopupInserimentoArticolo(codice) {
+            const url = `add_articolo_carico?codice=${encodeURIComponent(codice)}`;
+            window.open(url, 'popupInserimentoArticolo', 'width=1200,height=700');
         }
 
-        const id_utente = localStorage.getItem("id_utente"); // ✅ Recupero id utente
-        if (!id_utente) {
-            alert("Impossibile identificare l'utente. Effettua nuovamente il login.");
-            return;
-        }
-
-        // Costruzione oggetto principale
-        const datiCarico = {
-            numero_documento: form.numeroDdt.value.trim(),
-            id_tipo_documento: form.tipoDtt.value,
-            data_documento: form.dataDdt.value,
-            data_carico: form.dataCarico.value,
-            id_fornitore: form.fornitoreId.value,
-            id_magazzino: form.magazzinoId.value,
-            id_causale: form.causaleId.value,
-            id_pagamento: form.pagamentoId.value,
-            note: form.noteDdt.value.trim() || null,
-            allegato_documento: null,
-            id_utente: id_utente,
-            totale_carico: 0,
-            articoli: []
-        };
-
-        // Raccolta articoli dalla tabella
-        const righe = document.querySelectorAll("#tabellaArticoli tbody tr");
-        let totale = 0;
-
-        righe.forEach(riga => {
-            const id_articolo = riga.querySelector('input.id-articolo')?.value;
-            const codice_articolo = riga.querySelector('input.codice-articolo')?.value.trim();
-            const quantita = parseInt(riga.querySelector('input.qty-input')?.value) || 0;
-            const prezzo_unitario = parseFloat(riga.querySelector('input.costo-input')?.value) || 0;
-            const id_iva = riga.querySelector('select.iva-select')?.value;
-            const note = riga.querySelector('input.note-input')?.value.trim() || null;
-
-            if (!id_articolo || quantita <= 0) {
-                console.warn('Riga ignorata: dati incompleti o errati', { id_articolo, codice_articolo });
-                return;
-            }
-
-            totale += quantita * prezzo_unitario;
-
-            datiCarico.articoli.push({
-                id_articolo,
-                quantita,
-                prezzo_unitario,
-                id_iva,
-                note
-            });
-        });
-
-        datiCarico.totale_carico = totale;
-
-        try {
-            // Invio dati carico al server
-            const response = await fetch('api/carichi', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify(datiCarico)
-            });
-
-            if (!response.ok) {
-                const err = await response.json();
-                alert('Errore: ' + (err.error || 'Errore nel salvataggio'));
-                return;
-            }
-
-            const result = await response.json();
-
-            // Upload allegato, se presente
-            const fileInput = form.documentoDdt;
-            if (fileInput.files.length > 0) {
-                const formData = new FormData();
-                formData.append('file', fileInput.files[0]);
-                formData.append('id_carico', result.id_carico);
-
-                const uploadResp = await fetch('api/carichi/upload-allegato', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': 'Bearer ' + token
-                    },
-                    body: formData
-                });
-
-                if (!uploadResp.ok) {
-                    alert('Carico salvato, ma errore nel caricamento allegato');
-                    window.location.href = 'carichi';
-                    return;
+        function articoloInseritoCallback(articolo) {
+            // Trova la riga con campo codice non compilato
+            const righe = document.querySelectorAll('#tabellaArticoli tbody tr');
+            for (const riga of righe) {
+                const codiceInput = riga.querySelector('.codice-articolo');
+                if (codiceInput && codiceInput.value.trim() === articolo.codice) {
+                    riga.querySelector('.id-articolo').value = articolo.id;
+                    riga.querySelector('.nome-articolo').value = articolo.nome;
+                    riga.querySelector('.costo-input').value = articolo.prezzo_acquisto;
+                    codiceInput.setAttribute('readonly', true);
+                    break;
                 }
             }
-
-            alert('✅ Carico inserito con successo!');
-            window.location.href = 'carichi';
-            document.querySelector("#tabellaArticoli tbody").innerHTML = ''; // ✅ svuoto tabella articoli
-
-        } catch (error) {
-            alert('Errore di rete o server: ' + error.message);
         }
-    });
-</script>
+    </script>
+
+    <script>
+        document.getElementById('formCarico').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const token = localStorage.getItem("jwt"); // ✅ Recupero token per autenticazione
+
+            if (!token) {
+                alert("Utente non autenticato. Effettua nuovamente il login.");
+                return;
+            }
+
+            const id_utente = localStorage.getItem("id_utente"); // ✅ Recupero id utente
+            if (!id_utente) {
+                alert("Impossibile identificare l'utente. Effettua nuovamente il login.");
+                return;
+            }
+
+            // Costruzione oggetto principale
+            const datiCarico = {
+                numero_documento: form.numeroDdt.value.trim(),
+                id_tipo_documento: form.tipoDtt.value,
+                data_documento: form.dataDdt.value,
+                data_carico: form.dataCarico.value,
+                id_fornitore: form.fornitoreId.value,
+                id_magazzino: form.magazzinoId.value,
+                id_causale: form.causaleId.value,
+                id_pagamento: form.pagamentoId.value,
+                note: form.noteDdt.value.trim() || null,
+                allegato_documento: null,
+                id_utente: id_utente,
+                totale_carico: 0,
+                articoli: []
+            };
+
+            // Raccolta articoli dalla tabella
+            const righe = document.querySelectorAll("#tabellaArticoli tbody tr");
+            let totale = 0;
+
+            righe.forEach(riga => {
+                const id_articolo = riga.querySelector('input.id-articolo')?.value;
+                const codice_articolo = riga.querySelector('input.codice-articolo')?.value.trim();
+                const quantita = parseInt(riga.querySelector('input.qty-input')?.value) || 0;
+                const prezzo_unitario = parseFloat(riga.querySelector('input.costo-input')?.value) || 0;
+                const id_iva = riga.querySelector('select.iva-select')?.value;
+                const note = riga.querySelector('input.note-input')?.value.trim() || null;
+
+                if (!id_articolo || quantita <= 0) {
+                    console.warn('Riga ignorata: dati incompleti o errati', { id_articolo, codice_articolo });
+                    return;
+                }
+
+                totale += quantita * prezzo_unitario;
+
+                datiCarico.articoli.push({
+                    id_articolo,
+                    quantita,
+                    prezzo_unitario,
+                    id_iva,
+                    note
+                });
+            });
+
+            datiCarico.totale_carico = totale;
+
+            try {
+                // Invio dati carico al server
+                const response = await fetch('api/carichi', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(datiCarico)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    alert('Errore: ' + (err.error || 'Errore nel salvataggio'));
+                    return;
+                }
+
+                const result = await response.json();
+
+                // Upload allegato, se presente
+                const fileInput = form.documentoDdt;
+                if (fileInput.files.length > 0) {
+                    const formData = new FormData();
+                    formData.append('file', fileInput.files[0]);
+                    formData.append('id_carico', result.id_carico);
+
+                    const uploadResp = await fetch('api/carichi/upload-allegato', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: formData
+                    });
+
+                    if (!uploadResp.ok) {
+                        alert('Carico salvato, ma errore nel caricamento allegato');
+                        window.location.href = 'carichi';
+                        return;
+                    }
+                }
+
+                alert('✅ Carico inserito con successo!');
+                window.location.href = 'carichi';
+                document.querySelector("#tabellaArticoli tbody").innerHTML = ''; // ✅ svuoto tabella articoli
+
+            } catch (error) {
+                alert('Errore di rete o server: ' + error.message);
+            }
+        });
+    </script>
 
 
 

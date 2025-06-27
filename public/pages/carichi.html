@@ -236,10 +236,9 @@
                                     <h5 class="fw-semibold m-0">
                                         <i class="bi bi-truck"></i> Dati Carico & Fornitore
                                     </h5>
-                                    <a href="report/esporta_carico_pdf.php?id={{ carico.id }}" class="btn"
-                                        id="btn-stampa-carico">
+                                    <button data-id="{{ carico.id }}" class="btn" id="btn-stampa-carico">
                                         <h5 class="bi bi-printer"></h5>
-                                    </a>
+                                        </button>
                                 </div>
                                 <div class="row g-3">
                                     <div class="col-md-3">
@@ -536,6 +535,23 @@
         });
     </script>
 
+    <script>
+        document.getElementById('btn-stampa-carico-pdf').addEventListener('click', function (e) {
+            e.preventDefault(); // Previeni il comportamento di default del link
+
+            const idCarico = this.getAttribute('data-id'); // Prendo l'id dal data-attribute
+
+            const popup = window.open(
+                `report/esporta_carico_pdf.php?id=${encodeURIComponent(idCarico)}`,
+                'pdfPopup',
+                'width=900,height=700,scrollbars=yes,resizable=yes'
+            );
+
+            if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+                alert("Popup bloccato dal browser. Abilita i popup per continuare.");
+            }
+        });
+    </script>
 
     <script>
         // Recupero nome e cognome dall'archivio locale

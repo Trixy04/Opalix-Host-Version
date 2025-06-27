@@ -39,115 +39,17 @@
 
 <body class="back-color">
 
-    <nav class="navbar navbar-expand-lg navbar-dark fixed-top"
-        style="box-shadow: 2px 0 5px rgba(0,0,0,0.1); background-color: #2C3E50;">
-        <div class="container-fluid">
-            <!-- LOGO + NOME -->
-            <a class="navbar-brand" href="#"><span class="font-cinzel"><i class="bi bi-gem me-2"></i>OPALIX</span></a>
+    <div class="w-100">
 
-            <!-- TOGGLER MOBILE -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent"
-                aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-
-            <!-- CONTENUTO NAVBAR -->
-            <div class="collapse navbar-collapse" id="navbarContent">
-
-                <!-- SINISTRA: eventualmente shortcut -->
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <!-- Esempi di shortcut -->
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#"><i class="bi bi-plus-circle me-1"></i>Nuova
-                            Riparazione</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#"><i class="bi bi-box-seam me-1"></i>Articoli</a>
-                    </li>
-                </ul>
-
-                <!-- DESTRA: barra ricerca, notifiche, utente -->
-                <form class="d-flex me-3" role="search">
-                    <input class="form-control form-control-sm me-2" type="search" placeholder="Cerca..."
-                        aria-label="Search">
-                    <button class="btn btn-light btn-sm" type="submit"><i class="bi bi-search"></i></button>
-                </form>
-
-                <button class="btn btn-outline-light btn-sm me-3 position-relative">
-                    <i class="bi bi-bell"></i>
-                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                        3
-                    </span>
-                </button>
-
-            </div>
-        </div>
-    </nav>
-
-    <div class=" sidebar">
-        <div class="sidebar-header">
-            <h4>Roddi Gioielli</h4>
-            <h5 class="datetime mt-3" id="datetime"></h5>
-        </div>
-
-        <div class="user-info">
-            <img src="assets/images/user.jfif" alt="Profilo" class="user-avatar">
-            <span id="sidebarUser"></span>
-        </div>
-
-        <ul class="menu-section">
-            <li class="menu-title">Gestione</li>
-            <a href="../public">
-                <li class=""><i class="bi bi-clipboard2-data"></i>Dashboard</li>
-            </a>
-            <li class="has-submenu open" onclick="toggleSubmenu(this)">
-                <div class="menu-item-left">
-                    <i class="bi bi-boxes"></i>
-                    <span>Magazzino</span>
-                </div>
-                <i class="bi bi-chevron-down submenu-arrow"></i>
-            </li>
-            <ul class="submenu" style="display: block;">
-                <li><i class="bi bi-collection"></i><a href="articoli">Articoli</a></li>
-                <ul>
-                    <li class="active"><i class="bi bi-plus-circle me-1"></i> Articolo</li>
-                </ul>
-                <li><i class="bi bi-box-arrow-in-down"></i> Carico merce</li>
-                <li><i class="bi bi-box-arrow-up"></i> Scarico merce</li>
-                <li><i class="bi bi-search"></i> Giacenze</li>
-            </ul>
-            <li><i class="bi bi-tools"></i> Laboratorio</li>
-            <a href="customers">
-                <li class=""><i class="bi bi-people-fill"></i>Clienti</li>
-            </a>
-        </ul>
-
-        <ul class="menu-section">
-            <li class="menu-title">Reportistica</li>
-            <li><i class="bi bi-printer"></i> Report</li>
-        </ul>
-
-        <ul class="menu-section">
-            <li class="menu-title">Impostazioni</li>
-            <li><i class="bi bi-gear-wide-connected"></i><a href="controlpanel">Control Panel</a></li>
-            <li class="text-danger"><i class="bi bi-box-arrow-left"></i> <a href="#" class="logoutLink text-danger"
-                    style="text-decoration: none;">Logout</a></li>
-        </ul>
-    </div>
-
-
-
-    <div class="content">
-
-        <div class="container text-center">
+        <div class="container text-center" style="width: 100%;">
             <div class="div-customer mb-3">
                 <div class="container bg-white p-4 rounded shadow">
                     <div class="d-flex justify-content-between">
                         <h4>Inserisci articolo da carico</h4>
                         <form action="" id="formArticolo">
                             <div class="btn-group">
-                                <button class="btn btn-light" style="margin-right: 5%;" type="button"
-                                    id="annulla">Annulla</button>
+                                <button class="btn btn-light" id="annulla1" style="margin-right: 5%;"
+                                    type="button">Annulla</button>
 
                                 <button class="btn" style="background-color: #2C3E50; color: white;"
                                     type="submit">Inserisci</button>
@@ -497,8 +399,8 @@
                     <div class="d-flex justify-content-between">
                         <h4>Inserisci articolo</h4>
                         <div class="btn-group">
-                            <button type="button" class="btn btn-light" style="margin-right: 5%;"
-                                onclick="window.location.href='articoli'">Annulla</button>
+                            <button type="button" class="btn btn-light" id="annulla2"
+                                style="margin-right: 5%;">Annulla</button>
                             <button class="btn" style="background-color: #2C3E50; color: white;"
                                 type="submit">Inserisci</button>
                         </div>
@@ -604,9 +506,19 @@
                     .then(data => {
                         if (data.message) {
                             alert('Inserimento andato a buon fine!');
-                            stampaEtichettaEPL(document.getElementById('codice').value, document.getElementById('nome').value, document.getElementById('prezzo_vendita').value)
-                            // Reindirizza alla pagina "articoli"
-                            window.location.href = "/articoli";
+
+                            // Se esiste una finestra opener e la funzione callback è definita
+                            if (window.opener && typeof window.opener.articoloInseritoCallback === 'function') {
+                                window.opener.articoloInseritoCallback({
+                                    id: data.id,
+                                    codice: document.getElementById('codice').value,
+                                    nome: document.getElementById('nome').value,
+                                    prezzo_acquisto: document.getElementById('prezzo_acquisto').value
+                                });
+                            }
+
+                            window.close(); // ✅ Chiude il popup
+
                         } else if (data.error) {
                             alert('Errore: ' + data.error);
                         }
@@ -717,8 +629,12 @@
     </script>
 
     <script>
-        document.getElementById('annulla').addEventListener('click', () => {
-            window.history.back();
+        document.getElementById('annulla1').addEventListener('click', () => {
+            window.close(); // ✅ Chiude il popup
+        });
+
+        document.getElementById('annulla2').addEventListener('click', () => {
+            window.close(); // ✅ Chiude il popup
         });
 
     </script>

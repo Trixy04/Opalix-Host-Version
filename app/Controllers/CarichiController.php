@@ -265,6 +265,82 @@ class CarichiController
         }
     }
 
+    public function getCarichiByArticolo($idArticolo)
+    {
+        global $conn;
+
+        try {
+            // Query per carichi che includono l'articolo specificato
+            $sql = "
+        SELECT 
+            c.id,
+            c.numero_documento,
+            c.data_documento,
+            c.data_inserimento,
+            c.totale_carico,
+            c.note,
+            c.allegato_documento,
+            f.ragione_sociale AS fornitore,
+            f.partita_iva AS partitaIva,
+            indF.indirizzo,
+            indF.citta,
+            indF.cap,
+            indF.provincia,
+            indF.nazione,
+            m.nome AS magazzino,
+            td.descrizione AS tipo_documento,
+            td.codice AS codice_documento,
+            p.descrizione AS pagamento,
+            ca.descrizione AS causali_carico,
+            ca.codice AS codice_causale
+        FROM carichi c
+        INNER JOIN carichi_dettagli cd ON c.id = cd.id_carico
+        LEFT JOIN fornitori f ON c.id_fornitore = f.id
+        LEFT JOIN magazzini m ON c.id_magazzino = m.id
+        LEFT JOIN tipologie_documenti td ON c.id_tipo_documento = td.id
+        LEFT JOIN pagamenti p ON c.id_pagamento = p.id
+        LEFT JOIN causali_carico ca ON c.id_causale = ca.id
+        INNER JOIN indirizzi_fornitori indF ON f.id = indF.fornitore_id
+        WHERE cd.id_articolo = :idArticolo
+        GROUP BY c.id
+        ORDER BY c.data_documento DESC
+        ";
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bindParam(':idArticolo', $idArticolo, PDO::PARAM_INT);
+            $stmt->execute();
+            $carichi = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            // Query per i dettagli degli articoli per ogni carico
+            $stmtDettagli = $conn->prepare("
+        SELECT 
+            cd.id,
+            cd.id_carico,
+            cd.id_articolo,
+            a.codice_articolo,
+            a.nome AS nome_articolo,
+            cd.quantita,
+            cd.prezzo_unitario,
+            cd.id_iva,
+            iva.aliquota,
+            cd.note
+        FROM carichi_dettagli cd
+        LEFT JOIN articoli a ON cd.id_articolo = a.id
+        INNER JOIN aliquote_iva iva ON cd.id_iva = iva.id
+        WHERE cd.id_carico = ?
+        ");
+
+            foreach ($carichi as &$carico) {
+                $stmtDettagli->execute([$carico['id']]);
+                $carico['articoli'] = $stmtDettagli->fetchAll(PDO::FETCH_ASSOC);
+            }
+
+            sendJsonResponse($carichi, 200);
+
+        } catch (PDOException $e) {
+            sendJsonResponse(['error' => 'Errore DB: ' . $e->getMessage()], 500);
+        }
+    }
 
 
 
