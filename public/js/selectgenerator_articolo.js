@@ -67,6 +67,7 @@ document.addEventListener("DOMContentLoaded", function () {
   popolaSelect("ivaId", "/opalix_server/public/api/iva", "codice", "id");
   popolaSelect("tipoDtt", "/opalix_server/public/api/doc", "codice", "id");
   popolaSelect("magazzinoId", "/opalix_server/public/api/magazzini", "nome", "id");
+  popolaSelect("destinazione", "/opalix_server/public/api/destinazioni", "nome", "id");
 });
 
 

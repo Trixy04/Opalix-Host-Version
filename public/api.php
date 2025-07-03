@@ -17,7 +17,9 @@ require_once '../app/Controllers/PagamentiController.php';
 require_once '../app/Controllers/IvaController.php';
 require_once '../app/Controllers/DocumentiController.php';
 require_once '../app/Controllers/CarichiController.php';
+require_once '../app/Controllers/ScarichiController.php';
 require_once '../app/Controllers/MagazziniController.php';
+require_once '../app/Controllers/DestinazioniController.php';
 require_once '../app/Helpers/functions.php';
 
 $router = new Router();
@@ -66,6 +68,9 @@ $router->put('/api/fornitori', 'FornitoriController@modificaFornitore');
 // Causali
 $router->get('/api/causali', 'CausaliController@getCausali');
 
+// Destinazioni
+$router->get('/api/destinazioni', 'DestinazioniController@getDestinazioni');
+
 // Pagamenti
 $router->get('/api/pagamenti', 'PagamentiController@getPagamenti');
 
@@ -80,6 +85,12 @@ $router->get('/api/carichi', 'CarichiController@getCarichi');
 $router->get('/api/carichi/{id}', 'CarichiController@getCarichi');
 $router->get('/api/carichi/articolo/{id}', 'CarichiController@getCarichiByArticolo');
 $router->post('/api/carichi', 'CarichiController@creaCarico');
+
+// Scarichi
+$router->get('/api/scarichi', 'ScarichiController@getScarichi');
+$router->get('/api/scarichi/{id}', 'ScarichiController@getScarichi');
+$router->get('/api/scarichi/articolo/{id}', 'ScarichiController@getScarichiByArticolo');
+$router->post('/api/scarichi', 'ScarichiController@creaScarico');
 
 // Documenti carico
 $router->get('/api/carichi/allegati/{id}', 'CarichiController@getAllegatiCarico');

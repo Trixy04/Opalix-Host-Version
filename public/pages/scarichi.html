@@ -17,7 +17,7 @@
             window.location.href = '../login';
         }
     </script>
-    <title>CARICHI - Opalix</title>
+    <title>SCARICHI - Opalix</title>
 
     <style>
         .table-striped tbody tr:nth-child(odd) {
@@ -105,8 +105,8 @@
             </li>
             <ul class="submenu" style="display: block;">
                 <li><i class="bi bi-collection"></i><a href="articoli">Articoli</a></li>
-                <li class="active"><i class="bi bi-box-arrow-in-down"></i><a href="carichi">Carico merce</a></li>
-                <li><i class="bi bi-box-arrow-up"></i><a href="scarichi">Scarico merce</a></li>
+                <li><i class="bi bi-box-arrow-in-down"></i><a href="carichi">Carico merce</a></li>
+                <li class="active"><i class="bi bi-box-arrow-up"></i><a href="scarichi">Scarico merce</a></li>
                 <li><i class="bi bi-search"></i> Giacenze</li>
             </ul>
             <li><i class="bi bi-tools"></i> Laboratorio</li>
@@ -137,7 +137,7 @@
             <div class="div-customer">
                 <div class="container bg-white p-4 rounded shadow">
                     <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-3">
-                        <h5 class="mb-0">Carichi effettuati</h5>
+                        <h5 class="mb-0">Scarichi effettuati</h5>
 
                         <div class="flex-grow-1 d-flex justify-content-center">
                             <input type="text" id="search-input" class="form-control form-control-sm w-75"
@@ -145,7 +145,7 @@
                         </div>
 
                         <div class="d-flex align-items-center gap-2">
-                            <a href="add_carico">
+                            <a href="add_scarico">
                                 <button class="btn btn-sm"
                                     style="box-shadow: 0 8px 5px rgba(0, 0, 0, 0.1); border: 1px solid rgba(116, 112, 112, 0.377); color: rgb(82, 76, 76) !important;">
                                     <b>+ Nuovo</b>
@@ -159,14 +159,14 @@
                         </div>
                     </div>
 
-                    <table class="table table-striped align-middle" id="tabella-carichi">
+                    <table class="table table-striped align-middle" id="tabella-scarichi">
                         <thead class="custom-thead">
                             <tr class="text-start">
                                 <th class="custom-thead"><input type="checkbox"></th>
                                 <th class="custom-thead">Id</th>
                                 <th class="custom-thead">Numero Doc</th>
                                 <th class="custom-thead">Data Doc</th>
-                                <th class="custom-thead">Fornitore</th>
+                                <th class="custom-thead">Destinazione</th>
                                 <th class="custom-thead">Magazzino</th>
                                 <th class="custom-thead">Tipo Documento</th>
                                 <th class="custom-thead">Causale</th>
@@ -179,8 +179,6 @@
                             <!-- Le righe verranno popolate via JavaScript -->
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
         </div>
@@ -215,72 +213,79 @@
             </div>
         </div>
 
-        <!-- Modal Visualizzazione Carico -->
-        <div class="modal fade" id="modalVisualizzaCarico" tabindex="-1" aria-labelledby="modalVisualizzaCaricoLabel"
+        <!-- Modal Visualizzazione Scarico -->
+        <div class="modal fade" id="modalVisualizzaScarico" tabindex="-1" aria-labelledby="modalVisualizzaScaricoLabel"
             aria-hidden="true">
             <div class="modal-dialog modal-xl modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header" style="background-color: #2C3E50;">
-                        <h5 class="modal-title text-white" id="modalVisualizzaCaricoLabel">
-                            <i class="bi bi-eye"></i> Dettagli Carico
+                        <h5 class="modal-title text-white" id="modalVisualizzaScaricoLabel">
+                            <i class="bi bi-eye"></i> Dettagli Scarico
                         </h5>
                         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
                             aria-label="Chiudi"></button>
                     </div>
                     <div class="modal-body">
 
-                        <!-- SEZIONE 1: Dati DDT, Fornitore, Magazzino, Date -->
+                        <!-- SEZIONE 1: Dati Documento, Cliente/Destinatario, Magazzino, Date -->
                         <div class="card mb-4 border-0 shadow-sm rounded-3">
                             <div class="card-body">
 
                                 <div class="d-flex justify-content-between align-items-center mb-3">
                                     <h5 class="fw-semibold m-0">
-                                        <i class="bi bi-truck"></i> Dati Carico & Fornitore
+                                        <i class="bi bi-truck"></i> Dati Documento & Destinatario
                                     </h5>
-                                    <button data-id="{{ carico.id }}" class="btn" id="btn-stampa-carico">
+                                    <button data-id="" class="btn" id="btn-stampa-scarico">
                                         <h5 class="bi bi-printer"></h5>
-                                        </button>
+                                    </button>
                                 </div>
+
                                 <div class="row g-3">
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-fornitore">Fornitore</label>
-                                        <input id="view-fornitore" type="text" class="form-control rounded-3" disabled>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-magazzino">Magazzino</label>
-                                        <input id="view-magazzino" type="text" class="form-control rounded-3" disabled>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-tipo-documento">Tipologia doc.</label>
-                                        <input id="view-tipo-documento" type="text" class="form-control rounded-3"
-                                            disabled>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-numero-documento">Numero doc.</label>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="view-numero-documento">Numero Documento</label>
                                         <input id="view-numero-documento" type="text" class="form-control rounded-3"
                                             disabled>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-data-documento">Data doc.</label>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="view-data-documento">Data Documento</label>
                                         <input id="view-data-documento" type="date" class="form-control rounded-3"
                                             disabled>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-data-inserimento">Data Carico</label>
+                                    <div class="col-md-4">
+                                        <label class="form-label" for="view-data-inserimento">Data Inserimento</label>
                                         <input id="view-data-inserimento" type="date" class="form-control rounded-3"
                                             disabled>
                                     </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label" for="view-causale">Causale</label>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="view-magazzino">Magazzino</label>
+                                        <input id="view-magazzino" type="text" class="form-control rounded-3" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="view-tipo-documento">Tipo Documento</label>
+                                        <input id="view-tipo-documento" type="text" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="form-label" for="view-causale">Causale Scarico</label>
                                         <input id="view-causale" type="text" class="form-control rounded-3" disabled>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-6">
                                         <label class="form-label" for="view-pagamento">Pagamento</label>
                                         <input id="view-pagamento" type="text" class="form-control rounded-3" disabled>
                                     </div>
+
+                                    <!-- Destinatario (cliente o altro) -->
+                                    <div class="col-md-12">
+                                        <label class="form-label" for="view-destinatario">Destinatario</label>
+                                        <input id="view-destinatario" type="text" class="form-control rounded-3"
+                                            disabled>
+                                    </div>
+
                                     <div class="col-md-12">
                                         <label class="form-label" for="view-note">Note</label>
-                                        <input id="view-note" type="text" class="form-control rounded-3" disabled>
+                                        <textarea id="view-note" class="form-control rounded-3" rows="2"
+                                            disabled></textarea>
                                     </div>
                                 </div>
                             </div>
@@ -289,19 +294,19 @@
                         <!-- SEZIONE 2: Tabella articoli -->
                         <div class="card border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
                             <div class="card-body">
-                                <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli Caricati</h5>
+                                <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli Scaricati</h5>
                                 <table class="table table-bordered table-hover align-middle">
                                     <thead class="table-light">
                                         <tr>
                                             <th>Cod. Articolo</th>
                                             <th>Articolo</th>
                                             <th>Quantità</th>
-                                            <th>Costo Unitario</th>
+                                            <th>Prezzo Unitario</th>
                                             <th>Iva</th>
                                             <th>Note</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="view_tbody_articoli">
+                                    <tbody id="view_tbody_articoli_scarico">
                                         <!-- Righe generate dinamicamente -->
                                     </tbody>
                                 </table>
@@ -319,72 +324,86 @@
 
 
 
+
     </div>
 
 
 
     <script src="js/auth.js"></script>
 
-    <script src="js/selectgenerator_articolo.js"></script>
-
     <script src="js/sidebar_dati.js"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            fetchCarichi();
+            fetchScarichi();
         });
 
-        function fetchCarichi() {
-            fetch('api/carichi') // aggiorna il percorso se necessario
+        function fetchScarichi() {
+            fetch('api/scarichi') // aggiorna il percorso se necessario
                 .then(response => {
                     if (!response.ok) throw new Error('Errore nella richiesta API');
                     return response.json();
                 })
                 .then(data => {
-                    const tbody = document.querySelector("#tabella-carichi tbody");
+                    const tbody = document.querySelector("#tabella-scarichi tbody");
                     tbody.innerHTML = ""; // Pulisce la tabella prima di riempirla
 
-                    data.forEach(carico => {
+                    data.forEach(scarico => {
                         const tr = document.createElement("tr");
 
+                        // dentro il forEach scarico, sostituisci la riga di destinatario con questa logica:
+                        const destinatario = (scarico.cliente_nome && scarico.cliente_cognome)
+                            ? `${scarico.cliente_nome} ${scarico.cliente_cognome}`
+                            : scarico.causali_scarico || 'N/A';
+
+
+                        // Calcolo totale scarico (somma quantità * prezzo_unitario)
+                        let totaleScarico = 0;
+                        scarico.articoli.forEach(art => {
+                            totaleScarico += parseFloat(art.quantita) * parseFloat(art.prezzo_unitario);
+                        });
+
                         tr.innerHTML = `
-                                <td><input type="checkbox" data-id="${carico.id}"></td>
-                                <td>00${carico.id}</td>
-                                <td>${carico.numero_documento}</td>
-                                <td>${carico.data_documento}</td>
-                                <td>${carico.fornitore}</td>
-                                <td>${carico.magazzino}</td>
-                                <td>${carico.codice_documento}</td>
-                                <td>${carico.codice_causale}</td>
-                                <td>${carico.pagamento}</td>
-                                <td>${parseFloat(carico.totale_carico).toFixed(2)} €</td>
-                                <td class="text-center">
-                                <button class="actions-btn btn-show-carico" style="margin-right: 15%" data-id="${carico.id}"><i class="bi bi-eye"></i></button>  
-                                <button class="actions-btn btn-edit-articolo" style="margin-right: 15%" data-id="${carico.id}"><i class="bi bi-paperclip"></i></button>
-                                </td>
-                            `;
+                        <td><input type="checkbox" data-id="${scarico.id}"></td>
+                        <td>00${scarico.id}</td>
+                        <td>${scarico.numero_documento}</td>
+                        <td>${scarico.data_documento}</td>
+                        <td>${destinatario}</td>
+                        <td>${scarico.magazzino}</td>
+                        <td>${scarico.codice_documento}</td>
+                        <td>${scarico.codice_causale}</td>
+                        <td>${scarico.pagamento}</td>
+                        <td>${totaleScarico.toFixed(2)} €</td>
+                        <td class="text-center">
+                            <button class="actions-btn btn-show-scarico" style="margin-right: 15%" data-id="${scarico.id}">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="actions-btn btn-edit-scarico" style="margin-right: 15%" data-id="${scarico.id}">
+                                <i class="bi bi-paperclip"></i>
+                            </button>
+                        </td>
+                    `;
 
                         tbody.appendChild(tr);
                     });
                 })
                 .catch(error => {
-                    console.error('Errore durante il recupero dei carichi:', error);
+                    console.error('Errore durante il recupero degli scarichi:', error);
                 });
         }
 
-        function visualizzaCarico(id) {
-            // Logica per mostrare un modal o andare in dettaglio
-            alert("Visualizza carico ID: " + id);
+        function visualizzaScarico(id) {
+            alert("Visualizza scarico ID: " + id);
         }
     </script>
 
     <script>
         document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-edit-articolo')) {
-                const btn = e.target.closest('.btn-edit-articolo');
-                const idCarico = btn.getAttribute('data-id');
+            if (e.target.closest('.btn-edit-scarico')) {
+                const btn = e.target.closest('.btn-edit-scarico');
+                const idScarico = btn.getAttribute('data-id');
 
-                console.log('Apri modal allegati per carico ID:', idCarico);
+                console.log('Apri modal allegati per scarico ID:', idScarico);
 
                 // Apri il modal Bootstrap
                 const modalAllegati = new bootstrap.Modal(document.getElementById('modalAllegati'));
@@ -395,7 +414,7 @@
                 tbody.innerHTML = '<tr><td colspan="3" class="text-center">Caricamento...</td></tr>';
 
                 // Carica allegati via API
-                fetch(`api/carichi/allegati/${idCarico}`)
+                fetch(`api/scarichi/allegati/${idScarico}`)
                     .then(res => res.json())
                     .then(data => {
                         tbody.innerHTML = '';
@@ -410,16 +429,16 @@
                             const url = allegato.url; // Assumendo che il path sia accessibile direttamente
 
                             const row = `
-                            <tr>
-                                <td>${fileName}</td>
-                                <td>${new Date(allegato.data_caricamento).toLocaleString()}</td>
-                                <td class="text-center">
-                                    <a class="btn btn-sm" href="${url}" target="_blank">
-                                        <i class="bi bi-file-earmark-pdf"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                        `;
+                        <tr>
+                            <td>${fileName}</td>
+                            <td>${new Date(allegato.data_caricamento).toLocaleString()}</td>
+                            <td class="text-center">
+                                <a class="btn btn-sm" href="${url}" target="_blank">
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    `;
                             tbody.insertAdjacentHTML('beforeend', row);
                         });
                     })
@@ -430,63 +449,50 @@
         });
     </script>
 
+
     <script>
         document.addEventListener('click', function (e) {
-            if (e.target.closest('.btn-show-carico')) {
-                const btn = e.target.closest('.btn-show-carico');
-                const idCarico = btn.getAttribute('data-id');
+            if (e.target.closest('.btn-show-scarico')) {
+                const btn = e.target.closest('.btn-show-scarico');
+                const idScarico = btn.getAttribute('data-id');
+                console.log('Visualizza scarico ID:', idScarico);
 
-                console.log('Visualizza carico ID:', idCarico);
+                const modalElement = document.getElementById('modalVisualizzaScarico');
+                if (!modalElement) {
+                    console.error('Modal non trovato');
+                    return;
+                }
 
-                // Apri il modal Bootstrap
-                const modal = new bootstrap.Modal(document.getElementById('modalVisualizzaCarico'));
+                const modal = new bootstrap.Modal(modalElement);
                 modal.show();
 
-                document.querySelector('#btn-stampa-carico').setAttribute('data-id', idCarico);
-
-                // Chiamata API per recuperare i dati del carico
-                fetch(`api/carichi/${idCarico}`)
+                fetch(`api/scarichi/${idScarico}`)
                     .then(res => {
-                        if (!res.ok) throw new Error('Errore nel caricamento del carico');
+                        if (!res.ok) throw new Error('Errore nel caricamento');
                         return res.json();
                     })
                     .then(data => {
-                        // Popola i campi input con i dati ricevuti
-                        document.getElementById('view-fornitore').value = data.fornitore || '';
                         document.getElementById('view-magazzino').value = data.magazzino || '';
-                        document.getElementById('view-tipo-documento').value = data.tipo_documento || '';
-                        document.getElementById('view-numero-documento').value = data.numero_documento || '';
-                        document.getElementById('view-data-documento').value = data.data_documento || '';
-                        document.getElementById('view-data-inserimento').value = data.data_inserimento ? data.data_inserimento.split(' ')[0] : ''; // solo data senza orario
-                        document.getElementById('view-causale').value = data.causali_carico || '';
-                        document.getElementById('view-pagamento').value = data.pagamento || '';
-                        document.getElementById('view-note').value = data.note || '';
+                        // Popola altri campi...
 
-                        // Popola la tabella articoli
-                        const tbody = document.querySelector('#modalVisualizzaCarico tbody');
-                        tbody.innerHTML = ''; // Pulisce la tabella
+                        const tbody = document.getElementById('view_tbody_articoli_scarico');
+                        if (!tbody) {
+                            console.error('tbody articoli non trovato');
+                            return;
+                        }
+                        tbody.innerHTML = '';
 
                         if (Array.isArray(data.articoli) && data.articoli.length > 0) {
                             data.articoli.forEach(articolo => {
-                                // Formatta il prezzo in euro con 2 decimali
-                                const prezzo = parseFloat(articolo.prezzo_unitario).toFixed(2).replace('.', ',');
-
-                                // Calcola l'IVA in percentuale (supponendo 22% come esempio)
-                                // Se hai bisogno di recuperare l’iva dal database, servirebbe un altro dato
-                                const ivaPercent = '22%';
-
-                                const note = articolo.note || '';
-
-                                const row = `
+                                let row = `
                             <tr>
-                                <td>${articolo.id_articolo}</td>
+                                <td>${articolo.codice_articolo}</td>
                                 <td>${articolo.nome_articolo}</td>
                                 <td>${articolo.quantita}</td>
-                                <td>${prezzo} €</td>
-                                <td>${ivaPercent}</td>
-                                <td>${note}</td>
-                            </tr>
-                        `;
+                                <td>${articolo.prezzo_unitario}</td>
+                                <td>${articolo.aliquota}%</td>
+                                <td>${articolo.note || ''}</td>
+                            </tr>`;
                                 tbody.insertAdjacentHTML('beforeend', row);
                             });
                         } else {
@@ -495,27 +501,92 @@
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Errore nel caricamento del carico');
+                        alert('Errore caricamento scarico');
                     });
             }
         });
 
+
     </script>
 
     <script>
-        document.getElementById("search-input").addEventListener("keyup", function () {
-            const searchTerm = this.value.toLowerCase();
-            const rows = document.querySelectorAll("#tabella-carichi tbody tr");
+        document.addEventListener('DOMContentLoaded', () => {
+            const modalElement = document.getElementById('modalVisualizzaScarico');
+            const modalVisualizzaScarico = new bootstrap.Modal(modalElement);
 
-            rows.forEach(row => {
-                const rowText = row.textContent.toLowerCase();
-                if (rowText.includes(searchTerm)) {
-                    row.style.display = "";
-                } else {
-                    row.style.display = "none";
+            modalElement.addEventListener('hidden.bs.modal', () => {
+                document.querySelectorAll('.modal-backdrop').forEach(el => el.remove());
+                document.body.classList.remove('modal-open');
+            });
+
+            document.addEventListener('click', function (e) {
+                if (e.target.closest('.btn-show-scarico')) {
+                    const btn = e.target.closest('.btn-show-scarico');
+                    const idScarico = btn.getAttribute('data-id');
+
+                    console.log('Visualizza scarico ID:', idScarico);
+
+                    modalVisualizzaScarico.show();
+
+                    document.querySelector('#btn-stampa-scarico').setAttribute('data-id', idScarico);
+
+                    fetch(`api/scarichi/${idScarico}`)
+                        .then(res => {
+                            if (!res.ok) throw new Error('Errore nel caricamento dello scarico');
+                            return res.json();
+                        })
+                        .then(data => {
+
+                            const destinatario = (data.cliente_nome && data.cliente_cognome)
+                                ? `${data.cliente_nome} ${data.cliente_cognome}`
+                                : data.causali_scarico || 'N/A';
+
+                            document.getElementById('view-magazzino').value = data.magazzino || '';
+                            document.getElementById('view-tipo-documento').value = data.tipo_documento || '';
+                            document.getElementById('view-numero-documento').value = data.numero_documento || '';
+                            document.getElementById('view-data-documento').value = data.data_documento || '';
+                            document.getElementById('view-data-inserimento').value = data.data_inserimento || '';
+                            document.getElementById('view-causale').value = data.causali_scarico || '';
+                            document.getElementById('view-pagamento').value = data.pagamento || '';
+                            document.getElementById('view-note').value = data.note || '';
+                            document.getElementById('view-destinatario').value = destinatario;
+
+                            const tbody = document.querySelector('#view_tbody_articoli_scarico');
+                            tbody.innerHTML = '';
+
+                            if (Array.isArray(data.articoli) && data.articoli.length > 0) {
+                                data.articoli.forEach(articolo => {
+                                    const codiceArticolo = articolo.codice_articolo || articolo.id_articolo || '';
+                                    const nomeArticolo = articolo.nome_articolo || '';
+                                    const quantita = articolo.quantita || 0;
+                                    const prezzo = parseFloat(articolo.prezzo_unitario).toFixed(2).replace('.', ',');
+                                    const ivaPercent = articolo.aliquota ? articolo.aliquota + '%' : 'N/A';
+                                    const note = articolo.note || '';
+
+                                    const row = `
+                                <tr>
+                                    <td>${codiceArticolo}</td>
+                                    <td>${nomeArticolo}</td>
+                                    <td>${quantita}</td>
+                                    <td>${prezzo} €</td>
+                                    <td>${ivaPercent}</td>
+                                    <td>${note}</td>
+                                </tr>
+                            `;
+                                    tbody.insertAdjacentHTML('beforeend', row);
+                                });
+                            } else {
+                                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nessun articolo presente</td></tr>';
+                            }
+                        })
+                        .catch(err => {
+                            console.error(err);
+                            alert('Errore nel caricamento dello scarico');
+                        });
                 }
             });
         });
+
     </script>
 
     <script>
@@ -537,13 +608,13 @@
     </script>
 
     <script>
-        document.getElementById('btn-stampa-carico-pdf').addEventListener('click', function (e) {
+        document.getElementById('btn-stampa-scarico').addEventListener('click', function (e) {
             e.preventDefault(); // Previeni il comportamento di default del link
 
-            const idCarico = this.getAttribute('data-id'); // Prendo l'id dal data-attribute
+            const idScarico = this.getAttribute('data-id'); // Prendo l'id dal data-attribute
 
             const popup = window.open(
-                `report/esporta_carico_pdf.php?id=${encodeURIComponent(idCarico)}`,
+                `report/esporta_scarico_pdf.php?id=${encodeURIComponent(idScarico)}`,
                 'pdfPopup',
                 'width=900,height=700,scrollbars=yes,resizable=yes'
             );

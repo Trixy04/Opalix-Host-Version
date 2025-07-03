@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Creato il: Giu 17, 2025 alle 17:21
+-- Creato il: Lug 02, 2025 alle 17:32
 -- Versione del server: 10.4.32-MariaDB
 -- Versione PHP: 8.2.12
 
@@ -51,6 +51,52 @@ INSERT INTO `aliquote_iva` (`id`, `codice`, `aliquota`, `descrizione`, `attiva`,
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `allegati_carichi`
+--
+
+CREATE TABLE `allegati_carichi` (
+  `id` int(11) NOT NULL,
+  `id_carico` int(11) NOT NULL,
+  `percorso_file` varchar(255) NOT NULL,
+  `data_caricamento` datetime NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `allegati_carichi`
+--
+
+INSERT INTO `allegati_carichi` (`id`, `id_carico`, `percorso_file`, `data_caricamento`) VALUES
+(1, 13, 'assets/documenti_carico/carico_13_1750752749.pdf', '2025-06-24 10:12:29'),
+(2, 14, 'assets/documenti_carico/carico_14_1750754571.pdf', '2025-06-24 10:42:51'),
+(3, 15, 'assets/documenti_carico/carico_15_1750754678.pdf', '2025-06-24 10:44:38'),
+(4, 16, 'assets/documenti_carico/carico_16_1751030454.pdf', '2025-06-27 15:20:54');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `allegati_scarichi`
+--
+
+CREATE TABLE `allegati_scarichi` (
+  `id` int(11) NOT NULL,
+  `id_scarico` int(11) NOT NULL,
+  `nome_file` varchar(255) NOT NULL,
+  `percorso_file` varchar(500) NOT NULL,
+  `tipo_documento` varchar(100) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `data_caricamento` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `allegati_scarichi`
+--
+
+INSERT INTO `allegati_scarichi` (`id`, `id_scarico`, `nome_file`, `percorso_file`, `tipo_documento`, `note`, `data_caricamento`) VALUES
+(2, 1, '', 'allegati/scarichi/SC-2025-001.pdf', NULL, NULL, '2025-07-02 06:54:01');
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `articoli`
 --
 
@@ -78,8 +124,10 @@ CREATE TABLE `articoli` (
 --
 
 INSERT INTO `articoli` (`id`, `codice_articolo`, `nome`, `descrizione`, `categoria_id`, `marca_id`, `materiale_id`, `peso_materiale`, `carati_materiale`, `prezzo_acquisto`, `prezzo_vendita`, `quantita`, `ubicazione`, `stato_id`, `note`, `foto`) VALUES
-(1, '34242', 'vdsfds', NULL, 1, 3, 2, 1.00, 1.00, 1111.00, 12090.00, 1, NULL, 2, NULL, 'assets/articoli/foto_684c240545a0f4.63991028.jpeg'),
-(2, 'GAN0880J', 'Ring Calla', 'Calla Series Ring, 18Kt Orange Apricot Gold with Diamonds', 1, 21, 1, 8.00, 18.00, 700.00, 1610.00, 1, 'Vetrina', 1, NULL, 'assets/articoli/foto_68511f885bee24.70714338.jpeg');
+(1, '34242', 'vdsfds', NULL, 1, 3, 2, 1.00, 1.00, 1111.00, 12090.00, 3, NULL, 2, NULL, 'assets/articoli/foto_684c240545a0f4.63991028.jpeg'),
+(2, 'GAN0880J', 'Ring Calla', 'Calla Series Ring, 18Kt Orange Apricot Gold with Diamonds', 1, 21, 1, 8.00, 18.00, 700.00, 1610.00, 17, 'Vetrina', 1, NULL, 'assets/articoli/foto_68511f885bee24.70714338.jpeg'),
+(3, '360704', 'Serpenti Viper Bracciale', 'Bracciale a spirale Serpenti Viper in oro rosa 18 kt con testa e coda con pavé di diamanti.', 2, 3, 3, 10.00, 18.00, 9000.00, 15300.00, 1, 'Vetrina', 1, NULL, 'assets/articoli/foto_685e73877fd988.28981177.avif'),
+(5, '103926', 'Octo Roma Orologio', 'Orologio automatico Octo Roma con cinturino intercambiabile in caucciù blu, cassa e bracciale in acciaio inossidabile lucido-satinato, lunetta in oro rosa 18 kt, quadrante blu con finiture Clous de Paris. Movimento meccanico di manifattura a carica automatica. Impermeabile fino a 100 metri.', 1, 3, 6, 120.00, NULL, 6000.00, 12000.00, 2, 'Cassaforte', 1, NULL, 'assets/articoli/1642475.avif');
 
 -- --------------------------------------------------------
 
@@ -102,7 +150,8 @@ CREATE TABLE `articoli_pietre` (
 INSERT INTO `articoli_pietre` (`id`, `id_pietra`, `id_articolo`, `qta_pietra`, `caratura_pietra`) VALUES
 (1, 16, 1, 1, 1),
 (2, 5, 1, 1, 1),
-(3, 1, 2, 1, 0.01);
+(3, 1, 2, 1, 0.01),
+(4, 1, 3, 7, 0.47);
 
 -- --------------------------------------------------------
 
@@ -113,7 +162,7 @@ INSERT INTO `articoli_pietre` (`id`, `id_pietra`, `id_articolo`, `qta_pietra`, `
 CREATE TABLE `carichi` (
   `id` int(11) NOT NULL,
   `numero_documento` varchar(50) NOT NULL,
-  `tipo_documento` enum('DDT','Fattura','Scontrino','Altro') NOT NULL DEFAULT 'DDT',
+  `id_tipo_documento` int(11) NOT NULL,
   `data_documento` date NOT NULL,
   `data_inserimento` timestamp NOT NULL DEFAULT current_timestamp(),
   `id_fornitore` int(11) NOT NULL,
@@ -123,8 +172,30 @@ CREATE TABLE `carichi` (
   `id_pagamento` int(11) DEFAULT NULL,
   `allegato_documento` varchar(255) DEFAULT NULL,
   `note` text DEFAULT NULL,
-  `id_causale` int(11) DEFAULT NULL
+  `id_causale` int(11) DEFAULT NULL,
+  `id_magazzino` int(11) DEFAULT NULL,
+  `data_carico` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `carichi`
+--
+
+INSERT INTO `carichi` (`id`, `numero_documento`, `id_tipo_documento`, `data_documento`, `data_inserimento`, `id_fornitore`, `id_utente`, `id_sede`, `totale_carico`, `id_pagamento`, `allegato_documento`, `note`, `id_causale`, `id_magazzino`, `data_carico`) VALUES
+(1, 'FAT-2025-045', 2, '2025-06-17', '2025-06-19 07:04:18', 3, 1, NULL, 750.00, 4, NULL, 'Carico automatico', 2, 1, '2025-06-19 09:04:18'),
+(3, '00001', 4, '2025-06-18', '2025-06-20 06:48:57', 25, 1, NULL, 0.00, 2, NULL, NULL, 11, 2, '2025-06-20 08:48:57'),
+(5, '00002', 1, '2025-06-18', '2025-06-20 07:10:07', 25, 1, NULL, 0.00, 2, NULL, NULL, 11, 1, '2025-06-20 09:10:07'),
+(6, '00003', 1, '2025-06-18', '2025-06-20 08:51:19', 1, 1, NULL, 1200.00, 1, NULL, NULL, 1, 1, '2025-06-20 10:51:19'),
+(7, '00004', 4, '2025-06-18', '2025-06-20 14:25:59', 1, 1, NULL, 7000.00, 1, NULL, NULL, 1, 1, '2025-06-20 16:25:59'),
+(8, '00005', 1, '2025-06-24', '2025-06-24 06:34:06', 25, 1, NULL, 1200.00, 3, 'ddt_8_1750746846.pdf', NULL, 1, 1, '2025-06-24 08:34:06'),
+(9, '00006', 4, '2025-06-24', '2025-06-24 06:35:53', 25, 1, NULL, 1000.00, 3, 'ddt_9_1750746953.pdf', NULL, 2, 1, '2025-06-24 08:35:53'),
+(10, '00007', 1, '2025-06-24', '2025-06-24 06:44:11', 27, 1, NULL, 1200.00, 1, NULL, NULL, 7, 1, '2025-06-24 08:44:11'),
+(11, '00008', 1, '2025-06-24', '2025-06-24 06:49:01', 25, 1, NULL, 1200.00, 3, NULL, NULL, 1, 1, '2025-06-24 08:49:01'),
+(12, '00009', 4, '2025-06-24', '2025-06-24 08:06:46', 1, 1, NULL, 1200.00, 1, NULL, NULL, 1, 1, '2025-06-24 10:06:46'),
+(13, '00010', 1, '2025-06-24', '2025-06-24 08:12:29', 1, 1, NULL, 1200.00, 1, NULL, NULL, 1, 1, '2025-06-24 10:12:29'),
+(14, '00011', 4, '2025-06-24', '2025-06-24 08:42:51', 1, 1, NULL, 1200.00, 1, NULL, NULL, 1, 1, '2025-06-24 10:42:51'),
+(15, '00011', 4, '2025-06-24', '2025-06-24 08:44:38', 1, 1, NULL, 1200.00, 1, NULL, NULL, 1, 1, '2025-06-24 10:44:38'),
+(16, 'DDT-0419283', 1, '2025-06-27', '2025-06-27 13:20:54', 24, 1, NULL, 6000.00, 3, NULL, 'Primo ingresso articolo', 1, 1, '2025-06-27 15:20:54');
 
 -- --------------------------------------------------------
 
@@ -139,7 +210,7 @@ CREATE TABLE `carichi_dettagli` (
   `codice_fornitore` varchar(100) DEFAULT NULL,
   `quantita` int(11) NOT NULL DEFAULT 1,
   `prezzo_unitario` decimal(15,4) NOT NULL DEFAULT 0.0000,
-  `iva` decimal(5,2) NOT NULL DEFAULT 22.00,
+  `id_iva` int(11) NOT NULL,
   `sconto` decimal(5,2) DEFAULT 0.00,
   `scadenza_garanzia` date DEFAULT NULL,
   `data_scadenza` date DEFAULT NULL,
@@ -148,6 +219,27 @@ CREATE TABLE `carichi_dettagli` (
   `ubicazione` varchar(100) DEFAULT NULL,
   `note` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `carichi_dettagli`
+--
+
+INSERT INTO `carichi_dettagli` (`id`, `id_carico`, `id_articolo`, `codice_fornitore`, `quantita`, `prezzo_unitario`, `id_iva`, `sconto`, `scadenza_garanzia`, `data_scadenza`, `codice_lotto`, `serial_number`, `ubicazione`, `note`) VALUES
+(1, 1, 2, NULL, 5, 150.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, 'Prodotto con garanzia'),
+(3, 3, 2, NULL, 1, 1.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 5, 2, NULL, 5, 1000.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 6, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 7, 2, NULL, 2, 2000.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 7, 1, NULL, 2, 1500.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 8, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 9, 2, NULL, 1, 1000.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 10, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 11, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 12, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(14, 13, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(15, 14, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 15, 2, NULL, 1, 1200.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL),
+(17, 16, 5, NULL, 1, 6000.0000, 1, 0.00, NULL, NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -212,6 +304,41 @@ INSERT INTO `causali_carico` (`id`, `codice`, `descrizione`, `attivo`) VALUES
 (10, 'LAB', 'Reso da laboratorio esterno', 1),
 (11, 'ADM', 'Movimentazione amministrativa', 1),
 (12, 'TERZ', 'Restituzione da terzista', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `causali_scarico`
+--
+
+CREATE TABLE `causali_scarico` (
+  `id` int(11) NOT NULL,
+  `codice` varchar(20) NOT NULL,
+  `descrizione` varchar(100) NOT NULL,
+  `contabilizza` tinyint(1) DEFAULT 1,
+  `attivo` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `causali_scarico`
+--
+
+INSERT INTO `causali_scarico` (`id`, `codice`, `descrizione`, `contabilizza`, `attivo`) VALUES
+(1, 'VEND', 'Vendita al cliente', 1, 1),
+(2, 'RESCLI', 'Reso cliente (uscita errata)', 0, 1),
+(3, 'TRASF', 'Trasferimento ad altro magazzino', 0, 1),
+(4, 'RIP', 'Invio in laboratorio per riparazione', 0, 1),
+(5, 'OMAGGIO', 'Uscita per omaggio/promozione', 1, 1),
+(6, 'GUASTO', 'Rottura o guasto', 1, 1),
+(7, 'SMARR', 'Smarrimento', 1, 1),
+(8, 'FURTO', 'Furto o perdita', 1, 1),
+(9, 'RICONV', 'Riconversione articolo', 1, 1),
+(10, 'USOINTR', 'Uso interno', 1, 1),
+(11, 'RETT', 'Rettifica inventariale (errore stock)', 1, 1),
+(12, 'SCADUTO', 'Articolo scaduto o fuori corso', 1, 1),
+(13, 'DEMO', 'Uscita per esposizione o dimostrazione', 0, 1),
+(14, 'SOST', 'Sostituzione articolo danneggiato', 1, 1),
+(15, 'DONAZ', 'Donazione', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -603,7 +730,40 @@ INSERT INTO `contatti_fornitori` (`id`, `fornitore_id`, `tipo`, `valore`, `descr
 (59, 32, 'Email', 'teriaca.mattia@gmail.com', 'resposabile'),
 (60, 33, 'Email', '43636', NULL),
 (61, 33, 'Email', '6346363', NULL),
-(64, 1, 'telefono', '+390612345001', 'Ufficio principale');
+(64, 1, 'telefono', '+390612345001', 'Ufficio principale'),
+(65, 34, 'Email', '7278647328', NULL),
+(66, 35, 'Email', '7278647328', NULL),
+(67, 36, 'Email', '7278647328', NULL),
+(68, 37, 'Email', '7278647328', NULL),
+(69, 38, 'Email', '7278647328', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `destinazione_scarichi`
+--
+
+CREATE TABLE `destinazione_scarichi` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL,
+  `descrizione` text DEFAULT NULL,
+  `attivo` tinyint(1) DEFAULT 1,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `destinazione_scarichi`
+--
+
+INSERT INTO `destinazione_scarichi` (`id`, `nome`, `descrizione`, `attivo`, `created_at`, `updated_at`) VALUES
+(1, 'Cliente', 'Destinazione a un cliente finale', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(2, 'Fornitore', 'Reso o restituzione al fornitore', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(3, 'Laboratorio', 'Articolo inviato per lavorazione esterna', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(4, 'Trasferimento', 'Movimentazione verso altro magazzino o sede', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(5, 'Smaltimento', 'Articolo inutilizzabile, avviato allo smaltimento', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(6, 'Furto', 'Articolo mancante per furto', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31'),
+(7, 'Uso interno', 'Articolo destinato all’uso aziendale interno', 1, '2025-07-02 10:34:31', '2025-07-02 10:34:31');
 
 -- --------------------------------------------------------
 
@@ -657,7 +817,12 @@ INSERT INTO `fornitori` (`id`, `codice_fornitore`, `ragione_sociale`, `partita_i
 (29, 'F029', 'Iota Kappa Spa', '01234567891', 'CDEFGH89I01J234K', 'attivo', '2025-06-13 16:32:46'),
 (30, 'F030', 'Lambda Mu Srl', '11234567891', 'DEFGHI90J12K345L', 'attivo', '2025-06-13 16:32:46'),
 (32, 'F031', 'Mattia Gioielli srl', 'TRCMTT04P13D612R', 'TRCMTT04P13D612R', 'attivo', '2025-06-16 11:15:35'),
-(33, 'F032', 'Studente', '63643', '64363466', 'attivo', '2025-06-16 11:32:07');
+(33, 'F032', 'Studente', '63643', '64363466', 'attivo', '2025-06-16 11:32:07'),
+(34, 'F033', 'Test', '0294840382', '0294840382', 'attivo', '2025-06-20 10:22:07'),
+(35, 'F034', 'Italia', '383727974', '383727974', 'attivo', '2025-06-20 10:23:06'),
+(36, 'F035', 'Italiaa', '64362879463928', '8468932642964', 'attivo', '2025-06-20 10:35:12'),
+(37, 'F036', 'Italiaaa', '6436287rew9463928', '8468932642964', 'attivo', '2025-06-20 10:36:34'),
+(38, 'F037', 'Italiaaaaaaaaaaa', '6436287rew94639281', '8468932642964', 'attivo', '2025-06-20 10:40:23');
 
 -- --------------------------------------------------------
 
@@ -783,7 +948,31 @@ INSERT INTO `indirizzi_fornitori` (`id`, `fornitore_id`, `tipo`, `indirizzo`, `c
 (28, 28, 'sede legale', 'Via Grosseto 28', '58100', 'Grosseto', 'GR', 'Italia'),
 (29, 29, 'sede legale', 'Via Rimini 29', '47900', 'Rimini', 'RN', 'Italia'),
 (30, 32, 'Sede legale', 'Via Mario Rossi 45', '50019', 'Sesto Fiorentino', 'FI', 'ITALIA'),
-(31, 33, 'Via Alfredo Contini, 7, Sesto Fiorentino, FI', '63463634', '50019', 'Sesto Fiorentino (FI)', 'FI', 'Italia');
+(31, 33, 'Via Alfredo Contini, 7, Sesto Fiorentino, FI', '63463634', '50019', 'Sesto Fiorentino (FI)', 'FI', 'Italia'),
+(33, 34, 'Sede Legale', 'Via Testi ste', '503938', 'Firenze (FI)', 'FI', 'Italia'),
+(34, 35, 'Sede Legale', 'Via Testi ste', '503938', 'Firenze (FI)', 'FI', 'Italia'),
+(35, 36, 'Sede Legale', 'Via Testi ste', '503938', 'Firenze (FI)', 'FI', 'Italia'),
+(36, 37, 'Sede Legale', 'Via Testi ste', '503938', 'Firenze (FI)', 'FI', 'Italia'),
+(37, 38, 'Sede Legale', 'Via Testi ste', '503938', 'Firenze (FI)', 'FI', 'Italia');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `magazzini`
+--
+
+CREATE TABLE `magazzini` (
+  `id` int(11) NOT NULL,
+  `nome` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `magazzini`
+--
+
+INSERT INTO `magazzini` (`id`, `nome`) VALUES
+(1, 'Magazzino centrale'),
+(2, 'Magazzino laboratorio');
 
 -- --------------------------------------------------------
 
@@ -948,6 +1137,73 @@ INSERT INTO `pietre` (`id`, `nome`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Struttura della tabella `scarichi`
+--
+
+CREATE TABLE `scarichi` (
+  `id` int(11) NOT NULL,
+  `numero_documento` varchar(50) NOT NULL,
+  `data_documento` date NOT NULL,
+  `id_cliente` int(11) DEFAULT NULL,
+  `id_magazzino` int(11) NOT NULL,
+  `id_tipo_documento` int(11) NOT NULL,
+  `id_causale` int(11) NOT NULL,
+  `id_pagamento` int(11) NOT NULL,
+  `totale` decimal(10,2) DEFAULT 0.00,
+  `note` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `data_inserimento` date NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `scarichi`
+--
+
+INSERT INTO `scarichi` (`id`, `numero_documento`, `data_documento`, `id_cliente`, `id_magazzino`, `id_tipo_documento`, `id_causale`, `id_pagamento`, `totale`, `note`, `created_at`, `data_inserimento`) VALUES
+(1, 'SC-2025-001', '2025-06-27', 1, 1, 1, 1, 1, 0.00, 'Vendita articolo di prova', '2025-07-02 06:51:49', '2025-07-02');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `scarichi_allegati`
+--
+
+CREATE TABLE `scarichi_allegati` (
+  `id` int(11) NOT NULL,
+  `id_scarico` int(11) NOT NULL,
+  `nome_file` varchar(255) NOT NULL,
+  `percorso_file` varchar(500) NOT NULL,
+  `tipo_documento` varchar(100) DEFAULT NULL,
+  `note` text DEFAULT NULL,
+  `data_caricamento` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `scarichi_dettagli`
+--
+
+CREATE TABLE `scarichi_dettagli` (
+  `id` int(11) NOT NULL,
+  `id_scarico` int(11) NOT NULL,
+  `id_articolo` int(11) NOT NULL,
+  `quantita` int(11) NOT NULL,
+  `prezzo_unitario` decimal(10,2) NOT NULL,
+  `id_iva` int(11) DEFAULT NULL,
+  `note` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dump dei dati per la tabella `scarichi_dettagli`
+--
+
+INSERT INTO `scarichi_dettagli` (`id`, `id_scarico`, `id_articolo`, `quantita`, `prezzo_unitario`, `id_iva`, `note`) VALUES
+(2, 1, 5, 2, 120.00, 2, 'Scarico simulato per test');
+
+-- --------------------------------------------------------
+
+--
 -- Struttura della tabella `sedi`
 --
 
@@ -1038,6 +1294,20 @@ ALTER TABLE `aliquote_iva`
   ADD UNIQUE KEY `codice` (`codice`);
 
 --
+-- Indici per le tabelle `allegati_carichi`
+--
+ALTER TABLE `allegati_carichi`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_carico` (`id_carico`);
+
+--
+-- Indici per le tabelle `allegati_scarichi`
+--
+ALTER TABLE `allegati_scarichi`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_scarico` (`id_scarico`);
+
+--
 -- Indici per le tabelle `articoli`
 --
 ALTER TABLE `articoli`
@@ -1055,10 +1325,10 @@ ALTER TABLE `articoli_pietre`
 ALTER TABLE `carichi`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_fornitore` (`id_fornitore`),
-  ADD KEY `id_utente` (`id_utente`),
-  ADD KEY `id_sede` (`id_sede`),
+  ADD KEY `id_tipo_documento` (`id_tipo_documento`),
   ADD KEY `id_pagamento` (`id_pagamento`),
-  ADD KEY `id_causale` (`id_causale`);
+  ADD KEY `id_causale` (`id_causale`),
+  ADD KEY `id_magazzino` (`id_magazzino`);
 
 --
 -- Indici per le tabelle `carichi_dettagli`
@@ -1066,7 +1336,8 @@ ALTER TABLE `carichi`
 ALTER TABLE `carichi_dettagli`
   ADD PRIMARY KEY (`id`),
   ADD KEY `id_carico` (`id_carico`),
-  ADD KEY `id_articolo` (`id_articolo`);
+  ADD KEY `id_articolo` (`id_articolo`),
+  ADD KEY `id_iva` (`id_iva`);
 
 --
 -- Indici per le tabelle `categorie`
@@ -1078,6 +1349,13 @@ ALTER TABLE `categorie`
 -- Indici per le tabelle `causali_carico`
 --
 ALTER TABLE `causali_carico`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `codice` (`codice`);
+
+--
+-- Indici per le tabelle `causali_scarico`
+--
+ALTER TABLE `causali_scarico`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `codice` (`codice`);
 
@@ -1122,6 +1400,12 @@ ALTER TABLE `contatti_fornitori`
   ADD KEY `fornitore_id` (`fornitore_id`);
 
 --
+-- Indici per le tabelle `destinazione_scarichi`
+--
+ALTER TABLE `destinazione_scarichi`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indici per le tabelle `fornitori`
 --
 ALTER TABLE `fornitori`
@@ -1141,6 +1425,12 @@ ALTER TABLE `indirizzi`
 ALTER TABLE `indirizzi_fornitori`
   ADD PRIMARY KEY (`id`),
   ADD KEY `fornitore_id` (`fornitore_id`);
+
+--
+-- Indici per le tabelle `magazzini`
+--
+ALTER TABLE `magazzini`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indici per le tabelle `magazzino_movimenti`
@@ -1174,6 +1464,33 @@ ALTER TABLE `pagamenti`
 --
 ALTER TABLE `pietre`
   ADD PRIMARY KEY (`id`);
+
+--
+-- Indici per le tabelle `scarichi`
+--
+ALTER TABLE `scarichi`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_cliente` (`id_cliente`),
+  ADD KEY `id_magazzino` (`id_magazzino`),
+  ADD KEY `id_tipo_documento` (`id_tipo_documento`),
+  ADD KEY `id_causale` (`id_causale`),
+  ADD KEY `id_pagamento` (`id_pagamento`);
+
+--
+-- Indici per le tabelle `scarichi_allegati`
+--
+ALTER TABLE `scarichi_allegati`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_scarico` (`id_scarico`);
+
+--
+-- Indici per le tabelle `scarichi_dettagli`
+--
+ALTER TABLE `scarichi_dettagli`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `id_scarico` (`id_scarico`),
+  ADD KEY `id_articolo` (`id_articolo`),
+  ADD KEY `id_iva` (`id_iva`);
 
 --
 -- Indici per le tabelle `sedi`
@@ -1212,28 +1529,40 @@ ALTER TABLE `aliquote_iva`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT per la tabella `allegati_carichi`
+--
+ALTER TABLE `allegati_carichi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT per la tabella `allegati_scarichi`
+--
+ALTER TABLE `allegati_scarichi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT per la tabella `articoli`
 --
 ALTER TABLE `articoli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `articoli_pietre`
 --
 ALTER TABLE `articoli_pietre`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `carichi`
 --
 ALTER TABLE `carichi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT per la tabella `carichi_dettagli`
 --
 ALTER TABLE `carichi_dettagli`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT per la tabella `categorie`
@@ -1246,6 +1575,12 @@ ALTER TABLE `categorie`
 --
 ALTER TABLE `causali_carico`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- AUTO_INCREMENT per la tabella `causali_scarico`
+--
+ALTER TABLE `causali_scarico`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT per la tabella `clienti`
@@ -1269,13 +1604,19 @@ ALTER TABLE `contatti`
 -- AUTO_INCREMENT per la tabella `contatti_fornitori`
 --
 ALTER TABLE `contatti_fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=65;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
+
+--
+-- AUTO_INCREMENT per la tabella `destinazione_scarichi`
+--
+ALTER TABLE `destinazione_scarichi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT per la tabella `fornitori`
 --
 ALTER TABLE `fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT per la tabella `indirizzi`
@@ -1287,7 +1628,13 @@ ALTER TABLE `indirizzi`
 -- AUTO_INCREMENT per la tabella `indirizzi_fornitori`
 --
 ALTER TABLE `indirizzi_fornitori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT per la tabella `magazzini`
+--
+ALTER TABLE `magazzini`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `magazzino_movimenti`
@@ -1320,6 +1667,24 @@ ALTER TABLE `pietre`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
+-- AUTO_INCREMENT per la tabella `scarichi`
+--
+ALTER TABLE `scarichi`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT per la tabella `scarichi_allegati`
+--
+ALTER TABLE `scarichi_allegati`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT per la tabella `scarichi_dettagli`
+--
+ALTER TABLE `scarichi_dettagli`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT per la tabella `sedi`
 --
 ALTER TABLE `sedi`
@@ -1348,21 +1713,34 @@ ALTER TABLE `users`
 --
 
 --
+-- Limiti per la tabella `allegati_carichi`
+--
+ALTER TABLE `allegati_carichi`
+  ADD CONSTRAINT `allegati_carichi_ibfk_1` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`);
+
+--
+-- Limiti per la tabella `allegati_scarichi`
+--
+ALTER TABLE `allegati_scarichi`
+  ADD CONSTRAINT `allegati_scarichi_ibfk_1` FOREIGN KEY (`id_scarico`) REFERENCES `scarichi` (`id`) ON DELETE CASCADE;
+
+--
 -- Limiti per la tabella `carichi`
 --
 ALTER TABLE `carichi`
   ADD CONSTRAINT `carichi_ibfk_1` FOREIGN KEY (`id_fornitore`) REFERENCES `fornitori` (`id`),
-  ADD CONSTRAINT `carichi_ibfk_2` FOREIGN KEY (`id_utente`) REFERENCES `users` (`id`),
-  ADD CONSTRAINT `carichi_ibfk_3` FOREIGN KEY (`id_sede`) REFERENCES `sedi` (`id`),
-  ADD CONSTRAINT `carichi_ibfk_4` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamenti` (`id`),
-  ADD CONSTRAINT `carichi_ibfk_5` FOREIGN KEY (`id_causale`) REFERENCES `causali_carico` (`id`);
+  ADD CONSTRAINT `carichi_ibfk_2` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipologie_documenti` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_3` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamenti` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_4` FOREIGN KEY (`id_causale`) REFERENCES `causali_carico` (`id`),
+  ADD CONSTRAINT `carichi_ibfk_5` FOREIGN KEY (`id_magazzino`) REFERENCES `magazzini` (`id`);
 
 --
 -- Limiti per la tabella `carichi_dettagli`
 --
 ALTER TABLE `carichi_dettagli`
-  ADD CONSTRAINT `carichi_dettagli_ibfk_1` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`),
-  ADD CONSTRAINT `carichi_dettagli_ibfk_2` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`);
+  ADD CONSTRAINT `carichi_dettagli_ibfk_1` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `carichi_dettagli_ibfk_2` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`),
+  ADD CONSTRAINT `carichi_dettagli_ibfk_3` FOREIGN KEY (`id_iva`) REFERENCES `aliquote_iva` (`id`);
 
 --
 -- Limiti per la tabella `clienti_contatti`
@@ -1397,6 +1775,30 @@ ALTER TABLE `magazzino_movimenti`
   ADD CONSTRAINT `magazzino_movimenti_ibfk_1` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`),
   ADD CONSTRAINT `magazzino_movimenti_ibfk_2` FOREIGN KEY (`id_carico`) REFERENCES `carichi` (`id`),
   ADD CONSTRAINT `magazzino_movimenti_ibfk_3` FOREIGN KEY (`id_operatore`) REFERENCES `users` (`id`);
+
+--
+-- Limiti per la tabella `scarichi`
+--
+ALTER TABLE `scarichi`
+  ADD CONSTRAINT `scarichi_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clienti` (`id`),
+  ADD CONSTRAINT `scarichi_ibfk_2` FOREIGN KEY (`id_magazzino`) REFERENCES `magazzini` (`id`),
+  ADD CONSTRAINT `scarichi_ibfk_3` FOREIGN KEY (`id_tipo_documento`) REFERENCES `tipologie_documenti` (`id`),
+  ADD CONSTRAINT `scarichi_ibfk_4` FOREIGN KEY (`id_causale`) REFERENCES `causali_scarico` (`id`),
+  ADD CONSTRAINT `scarichi_ibfk_5` FOREIGN KEY (`id_pagamento`) REFERENCES `pagamenti` (`id`);
+
+--
+-- Limiti per la tabella `scarichi_allegati`
+--
+ALTER TABLE `scarichi_allegati`
+  ADD CONSTRAINT `scarichi_allegati_ibfk_1` FOREIGN KEY (`id_scarico`) REFERENCES `scarichi` (`id`) ON DELETE CASCADE;
+
+--
+-- Limiti per la tabella `scarichi_dettagli`
+--
+ALTER TABLE `scarichi_dettagli`
+  ADD CONSTRAINT `scarichi_dettagli_ibfk_1` FOREIGN KEY (`id_scarico`) REFERENCES `scarichi` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `scarichi_dettagli_ibfk_2` FOREIGN KEY (`id_articolo`) REFERENCES `articoli` (`id`),
+  ADD CONSTRAINT `scarichi_dettagli_ibfk_3` FOREIGN KEY (`id_iva`) REFERENCES `aliquote_iva` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

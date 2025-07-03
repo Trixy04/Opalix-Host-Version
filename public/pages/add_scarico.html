@@ -17,7 +17,7 @@
             window.location.href = '../login';
         }
     </script>
-    <title>CARICO ARTICOLI - Opalix</title>
+    <title>SCARICO ARTICOLI - Opalix</title>
 
     <style>
         .table-striped tbody tr:nth-child(odd) {
@@ -133,96 +133,85 @@
 
     <div class="content">
         <div class="container">
-
-            <form id="formCarico" class="p-4" enctype="multipart/form-data">
-
-                <!-- SEZIONE 1: Dati DDT, Fornitore, Magazzino, Date -->
+            <form id="formScarico" class="p-4" enctype="multipart/form-data">
+                <!-- SEZIONE 1: Dati Scarico -->
                 <div class="card mb-4 border-0 shadow-sm rounded-3" style="background-color: white;">
                     <div class="card-body">
-                        <h5 class="fw-semibold mb-3"><i class="bi bi-truck"></i> Dati Carico & Fornitore</h5>
+                        <h5 class="fw-semibold mb-3"><i class="bi bi-box-arrow-up"></i> Dati Scarico</h5>
 
                         <div class="row g-3">
 
                             <div class="col-md-3">
-                                <label for="fornitoreId" class="form-label">Fornitore</label>
-                                <div style="display: flex; align-items: center;">
-                                    <select id="fornitoreId" name="fornitoreId" class="form-select rounded-3" required
-                                        style="flex-grow: 1;">
-                                        <!-- Opzioni caricate da DB -->
-                                    </select>
-                                    <button type="button" class="btn btn-sm"
-                                        style="margin-left: 8px; background-color: #2C3E50; color: white;"
-                                        data-bs-toggle="modal" data-bs-target="#modalNuovoFornitore">+</button>
-                                </div>
-                            </div>
-
-
-                            <div class="col-md-3">
-                                <label for="magazzinoId" class="form-label">Magazzino</label>
+                                <label for="magazzinoId" class="form-label">Magazzino di origine</label>
                                 <select id="magazzinoId" name="magazzinoId" class="form-select rounded-3" required>
                                     <!-- Opzioni magazzini -->
                                 </select>
                             </div>
 
                             <div class="col-md-3">
-                                <label for="numeroDdt" class="form-label">Tipologia doc.</label>
-                                <select id="tipoDtt" name="tipoDtt" class="form-select rounded-3" required></select>
+                                <label for="tipoDocumento" class="form-label">Tipologia doc.</label>
+                                <select id="tipoDocumento" name="tipoDocumento" class="form-select rounded-3" required>
+                                    <!-- Vendita, Reso, Trasferimento, Rettifica, Smarrimento -->
+                                </select>
                             </div>
 
                             <div class="col-md-3">
-                                <label for="numeroDdt" class="form-label">Numero doc.</label>
-                                <input type="text" id="numeroDdt" name="numeroDdt" class="form-control rounded-3"
+                                <label for="numeroDocumento" class="form-label">Numero doc.</label>
+                                <input type="text" id="numeroDocumento" name="numeroDocumento"
+                                    class="form-control rounded-3" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="dataDocumento" class="form-label">Data doc.</label>
+                                <input type="date" id="dataDocumento" name="dataDocumento"
+                                    class="form-control rounded-3" required>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="dataScarico" class="form-label">Data Scarico</label>
+                                <input type="date" id="dataScarico" name="dataScarico" class="form-control rounded-3"
                                     required>
                             </div>
 
                             <div class="col-md-3">
-                                <label for="dataDdt" class="form-label">Data doc.</label>
-                                <input type="date" id="dataDdt" name="dataDdt" class="form-control rounded-3" required>
+                                <label for="destinazione" class="form-label">Destinazione</label>
+                                <select id="destinazione" name="destinazione" class="form-select rounded-3" required>
+                                </select>
                             </div>
 
                             <div class="col-md-3">
-                                <label for="dataCarico" class="form-label">Data Carico</label>
-                                <input type="date" id="dataCarico" name="dataCarico" class="form-control rounded-3"
-                                    required value="">
+                                <label for="destinatario" class="form-label">Destinatario</label>
+                                <select id="destinatario" name="destinatarioId" class="form-select rounded-3">
+                                    <!-- Opzioni da popolare dinamicamente (clienti/laboratori) -->
+                                </select>
                             </div>
 
                             <div class="col-md-3">
                                 <label for="causaleId" class="form-label">Causale</label>
                                 <select id="causaleId" name="causaleId" class="form-select rounded-3" required>
-                                    <!-- Opzioni causali -->
-
-                                </select>
-                            </div>
-
-                            <div class="col-md-3">
-                                <label for="pagamentoId" class="form-label">Pagamento</label>
-                                <select id="pagamentoId" name="pagamentoId" class="form-select rounded-3" required>
-                                    <!-- Opzioni causali -->
-
+                                    <!-- Opzioni causali scarico -->
                                 </select>
                             </div>
 
                             <div class="col-md-6">
-                                <label for="noteDdt" class="form-label">Note</label>
-                                <input type="text" id="noteDdt" name="noteDdt" class="form-control rounded-3"
+                                <label for="noteScarico" class="form-label">Note</label>
+                                <input type="text" id="noteScarico" name="noteScarico" class="form-control rounded-3"
                                     placeholder="Eventuali note o riferimenti">
                             </div>
 
                             <div class="col-md-6">
-                                <label for="documentoDdt" class="form-label">Allega Documento (PDF)</label>
-                                <input type="file" id="documentoDdt" name="documentoDdt" name="documentoDdt"
+                                <label for="documentoAllegato" class="form-label">Allega Documento (PDF)</label>
+                                <input type="file" id="documentoAllegato" name="documentoAllegato"
                                     class="form-control rounded-3" accept=".pdf">
                             </div>
-
-
                         </div>
                     </div>
                 </div>
 
-                <!-- SEZIONE 2: Tabella articoli da caricare -->
+                <!-- SEZIONE 2: Tabella articoli da scaricare -->
                 <div class="card border-0 shadow-sm rounded-3" style="background-color: #F2F2F2;">
                     <div class="card-body">
-                        <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli da Caricare</h5>
+                        <h5 class="fw-semibold mb-3"><i class="bi bi-box-seam"></i> Articoli da Scaricare</h5>
 
                         <table class="table table-bordered table-hover align-middle" id="tabellaArticoli">
                             <thead class="table-light">
@@ -230,14 +219,14 @@
                                     <th style="width: 15%;">Cod. Articolo</th>
                                     <th style="width: 25%;">Articolo</th>
                                     <th style="width: 10%;">Quantità</th>
-                                    <th style="width: 15%;">Costo Unitario</th>
+                                    <th style="width: 15%;">Valore Unitario</th>
                                     <th style="width: 10%;">Iva</th>
                                     <th style="width: 15%;">Note</th>
                                     <th style="width: 5%;">Azioni</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Righe aggiunte dinamicamente -->
+                                <!-- Righe dinamiche -->
                             </tbody>
                         </table>
 
@@ -247,18 +236,18 @@
                     </div>
                 </div>
 
-                <!-- Pulsanti di invio -->
+                <!-- Pulsanti -->
                 <div class="mt-4 text-end">
                     <button type="submit" class="btn btn-primary rounded-3"
                         style="background-color: #2C3E50; border-color: #2C3E50;">
-                        Salva Carico
+                        Salva Scarico
                     </button>
-                    <a href="carichi"><button type="button"
+                    <a href="scarichi"><button type="button"
                             class="btn btn-secondary rounded-3 ms-2">Annulla</button></a>
                 </div>
-
             </form>
         </div>
+
 
         <!-- Modal Nuovo Fornitore -->
         <div class="modal fade" id="modalNuovoFornitore" tabindex="-1" aria-labelledby="modalNuovoFornitoreLabel"
@@ -740,8 +729,6 @@
 
     </script>
 
-
-
     <script>
         // Funzione per caricare aliquote IVA in un select passato come parametro
         async function caricaIva(select) {
@@ -1018,6 +1005,33 @@
         });
     </script>
 
+    <script>
+        document.getElementById('destinazione').addEventListener('change', function () {
+            const destinatarioSelect = document.getElementById('destinatario');
+            const tipo = this.value;
+
+            destinatarioSelect.innerHTML = '';
+
+            if (tipo === '1') {
+                // Simuliamo caricamento clienti (esempio statico)
+                destinatarioSelect.disabled = false;
+
+                popolaSelect("destinatario", "/opalix_server/public/api/clienti", "nome_completo", "id");
+
+            } else if (tipo === '2') {
+                // Simuliamo caricamento fornitori
+                
+                destinatarioSelect.disabled = false;
+                popolaSelect("destinatario", "/opalix_server/public/api/fornitori", "ragione_sociale", "id");
+
+            } else {
+                // Per "furto" o altri tipi non previsti disabilitiamo il destinatario
+                destinatarioSelect.disabled = true;
+                destinatarioSelect.innerHTML = '<option value="">Nessun destinatario</option>';
+            }
+        });
+
+    </script>
 
 
     <script>
